@@ -1,0 +1,8 @@
+3.2 
+  下拉适配
+  页面点击全部下一页
+  title
+  时间适配 yyyy-mm-dd hh:mm:ss
+3.2.1
+  shelf click update 时间
+  list click read信息

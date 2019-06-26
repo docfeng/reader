@@ -198,16 +198,17 @@ window.MyObject.Shelf = {
 		var arr = arr;
 		var url = arr.url;
 		var name = arr.name;
-		console.add(name)
+		//console.add(name)
 		var urlArr = await List.get(url);
 		if (!urlArr) {
 			console.add(`>>${i}.${name}List未获得;<br>-------<br>`);
 		} else {
-			List.save(name, urlArr)
+			List.save(name, urlArr);
 			try {
 				//最新章节
 				console.add(i)
 				urlArr = urlArr.pop();
+				
 				arr.updateTitle = urlArr[1];
 				arr.updateURL = urlArr[0];
 				arr.updateAt = formatDate(new Date());

@@ -95,12 +95,12 @@
   .console{
       display:none;
       position: fixed;
-      bottom: 25%;
+      bottom: 50%;
       color: #fff;
       background-color: rgba(0,0,0,0.7);
       left:30%;
       width: 40%;
-      height:50%;
+      height:50px;
       text-align: center;
       overflow-y:scroll;
   }
@@ -209,17 +209,19 @@
 				var task = "";
 				var bool = true;
 				var t = false;
-				var msg = document.getElementsByClassName('console')[0];
+				document.querySelector(".console").onclick=function(){
+					this.style.display = "none";
+				}
 				var console = {
 					add: function(value) {
+						var msg=document.querySelector(".console");
 						task += value + "<br>";
 						msg.innerHTML = task;
 						msg.scrollTop = msg.scrollHeight - msg.offsetHeight;
 						if (t) clearTimeout(t)
 						t = setTimeout(function() {
 							msg.style.display = "none";
-
-							alert(task);
+							//alert(task);
 							task = "";
 							bool = true;
 						}, 30000);
@@ -230,6 +232,7 @@
 					show: function() {
 						bool = false;
 						setTimeout(function() {
+							var msg=document.querySelector(".console");
 							msg.style.display = "block";
 						}, 100);
 					}

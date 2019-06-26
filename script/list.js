@@ -51,12 +51,15 @@ window.MyObject.List={
     //读取目录
     read:async function(name){
         var name=name||win.name;
-        if(!name){alert("List.read参数name错误");return 0;}
+        if(!name){
+			alert("List.read参数name错误");
+			return false;
+		}
         var path=`Shelf/${name}.json`;
-		    var txt=await fso.read(path);
-		    if(txt=="false"||!txt){
-		    	return false;
-		    }
+		var txt=await fso.read(path);
+		if(txt=="false"||!txt){
+			return false;
+		}
         this.arr=JSON.parse(txt);
         return this.arr;
     },
@@ -268,12 +271,16 @@ window.MyObject.List={
     },
     update:async function(url){
         var json=await this.get(url);
-        var arr=this.arr=json;
-        this.showarr(arr);
-        var newpage=arr[arr.length-1];
-        this.save();
-        alert(newpage)
-        f4_new.value=newpage[1];
+		if(json.length==this.arr.length){
+			console.add("目前没有新更新");
+		}else{
+			var arr=this.arr=json;
+			this.showarr(arr);
+			var newpage=arr[arr.length-1];
+			this.save();
+			console.add("已更新"+newpage[1]);
+			f4_new.value=newpage[1];
+		}
     },
     changeSource:async function(name){
         f6_name.value=name;

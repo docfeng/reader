@@ -256,7 +256,7 @@ window.MyObject.List={
          json.readTitle=title;
          json.readURL=url;
          json.readIndex=i;
-         arr.readAt=formatDate(new Date());
+         json.readAt=formatDate(new Date());
          Shelf.setKeyData(json);
          var his=localStorage.getItem("his");
          if(his&&(his=JSON.parse(his),his.name!=name)){

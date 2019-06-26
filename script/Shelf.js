@@ -40,6 +40,12 @@ window.MyObject.Shelf = {
 	hisPath: "Shelf/Shelf1.json",
 	max: 2,
 	//获取书架信息
+	get:async function(name){
+		return await this.getKeyData(name);
+	},
+	getAll:async function(){
+		return await this.read();
+	},
 	read: async function() {
 		var json = await this.getAllIndexData("readAt");
 		json = json.reverse();
@@ -154,6 +160,7 @@ window.MyObject.Shelf = {
 			var json = this.json;
 			var name = json[i].name;
 			var url = json[i].url;
+			var readIndex=json[i].readIndex;
 			List.show(name, url, []);
 			//显示目录
 			var arr = await List.read(name);
@@ -162,15 +169,16 @@ window.MyObject.Shelf = {
 				List.save(name, arr);
 			}
 			List.show(name, url, arr);
-			//保存书架
-			var arr = json.splice(i, 1)[0];
+			List.scroll(readIndex);
+			//更新，保存书架
+			/*var arr = json.splice(i, 1)[0];
 			arr.readAt = formatDate(new Date());
 			json.unshift(arr);
 			this.show({
 				json: json
 			})
-			//alert(JSON.stringify(arr,null,4))
 			this.setKeyData(arr);
+			*/
 		}
 		if (order == "delete") {
 			this.delete(i);
@@ -198,27 +206,34 @@ window.MyObject.Shelf = {
 		var arr = arr;
 		var url = arr.url;
 		var name = arr.name;
-		//console.add(name)
+		console.add(name)
 		var urlArr = await List.get(url);
+		//alert(urlArr)
 		if (!urlArr) {
 			console.add(`>>${i}.${name}List未获得;<br>-------<br>`);
 		} else {
-			List.save(name, urlArr);
-			try {
-				//最新章节
-				console.add(i)
-				urlArr = urlArr.pop();
-				
-				arr.updateTitle = urlArr[1];
-				arr.updateURL = urlArr[0];
-				arr.updateAt = formatDate(new Date());
-				arr.updateIndex = i;
-				this.show({
-					index: i
-				});
-				this.setKeyData(arr);
-			} catch (e) {
-				console.add(`>>${i}.${name}出错;<br>-------<br>`);
+			var len=urlArr.length;
+			if(arr.updateIndex!=len){
+				List.save(name, urlArr);
+				try {
+					//最新章节
+					console.add(name+"已更新")
+					urlArr = urlArr.pop();
+					
+					arr.updateTitle = urlArr[1];
+					arr.updateURL = urlArr[0];
+					arr.updateAt = formatDate(new Date());
+					arr.updateIndex = len;
+					
+					this.show({
+						index: i
+					});
+					this.setKeyData(arr);
+				} catch (e) {
+					console.add(`>>${i}.${name}出错;<br>-------<br>`);
+				}
+			}else{
+				console.add(name+"没有更新")
 			}
 		}
 		//是否保存

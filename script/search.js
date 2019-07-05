@@ -31,7 +31,7 @@ search={
         //搜索
 		this.name=name;
 		var url="http://www.baidu.com/s?q1="+name+
-			"&q2=&q3=&q4=&rn=20&lm=0&ct=0"+
+			"&q2=&q3=&q4=&rn=40&lm=0&ct=0"+
 			"&ft=&q5=1&q6=&tn=baiduadv";
 		if(browser.MyApp){
 			var html=await http.get(url);

@@ -20,7 +20,6 @@
 
 		<script src="script/shift.js"></script>
 		<script src="script/msg.js"></script>
-		<script src="script/menu.js"></script>
 
 		<script src="script/list.js"></script>
 		<script src="script/Shelf.js"></script>
@@ -112,80 +111,38 @@
             text-align: center;
             //transform: translateY(-50px);
         }
+	.model{
+		position:fixed;
+		width: 100%;
+		height: 100%;
+		top: 0px;
+		left: 0px;
+		z-index: 100;
+		display: none;
+		background-color: #FFFFFF;
+	}
+	.show{
+		display: block;
+	}
 </style>
 	</head>
 	<body>
 		<div class="myhead" id="Mytitle" style="height:18px;"></div>
-		<div class="menu fix" id="menu">
-			<ul data-index=1>
-				<li>调试eval</li>
-				<li>书架</li>
-				<li>目录</li>
-				<li>bds</li>
-			</ul>
-			<!--1  调试-->
-			<div>
-				<form id="form_2">
-					<input type="button" value="eval" onclick="eval(form_2.txt1.value);" />
-					<input type="button" value="read" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){form_2.txt1.value+=txt;});}" />
-					<input type="button" value="加载script" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){eval(txt);alert(txt);});}" />
-					<input type="button" value='reload' onclick="document.location.reload();" />
-					<input type="button" value='epub' onclick='fso.writeZip(form_1.novel_name.value+".epub",form_1.novel_name.value)' />
-					<input type=button value="打开" onclick="chrome.openFile(form_1.novel_name.value+'.epub')" />
-					<input type=button value="删除" onclick="fso.delete('zip/OPS')" />
-					<br />
-					<input type="text" id="script1" style="height:10px" />
-					<textarea name="txt1"></textarea>
-				</form>
-			</div>
-			<!--2  书架-->
-			<div>
-				<form id="form_3">
+		<div class="model show" id="shelfDiv">
+			<form id="form_3" style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;">
+				<div>
 					<input type="button" value="搜索" onclick="menu_obj.shift(3)" />
 					<input type="button" value='show' onclick="Shelf.show()" />
 					<input type="button" value='download' onclick="Shelf.download()" />
 					<input type="button" value='upload' onclick="Shelf.upload()" />
 					<input type="button" value='检查更新' onclick="Shelf.update()" />
 					<input type="button" value='删除' onclick="shelf_table.dataset.order='delete'" />
-					<div id="shelf_div" style="height:95%;overflow-x:hidden;overflow-y:auto;">
-						<p class="refreshText"></p>
-						<table id="shelf_table" style="table-layout:fixed" data-order="click" onclick="Shelf.click(event.srcElement,this.dataset.order);this.dataset.order='click';"></table>
-					</div>
-				</form>
-			</div>
-			<!--3 目录-->
-			<div>
-				<form id="form_4">
-					name:<input type="text" size=8 id="f4_name" />
-					url:<input type="text" size=14 id="f4_url" />
-					<br />
-					new:<input type="text" size=14 id="f4_new">
-					count:<input type="text" size=4 id="f4_count">
-					<input type="number" min=0 max=1000 onchange="List.scroll(this.value)" />
-					<input type="button" value="换源" onclick="List.changeSource(f4_name.value);" />
-					<input type="button" value='更新' onclick="List.update(f4_url.value)" />
-					<input type="button" value='添加' onclick="List.addBook()" />
-					<input type="button" value='顶部' onclick="List.scroll(0)" />
-					<input type="button" value='底部' onclick="List.scroll(List.arr.length-1)" />
-					<div id="List_Source" style="display:none;height:95%;overflow-x:hidden;overflow-y:auto;">
-						<table id="list_source" onclick="List.click(event.srcElement);"></table>
-					</div>
-					<div id=s1 style="height:90%;overflow-x:hidden;overflow-y:auto;">
-						<table id="list_table" onclick="List.click(event.srcElement);"></table>
-					</div>
-				</form>
-			</div>
-			<!--搜索-->
-			<div>
-				<form id="form_6">
-					<input type="text" id="f6_name" onchange="">
-					<input type="button" value="搜索" onclick="search.get2(f6_name.value);" />
-					<input type="button" value="重载" onclick="search.get3(f6_name.value);" />
-					<div style="width:100%;height:50%;overflow-y:scroll;">
-						<table id="f6_table" onclick="search.click(event.srcElement);" ondblclick="search.dblclick(event.srcElement);"></table>
-					</div>
-				</form>
-			</div>
+				</div>
+				<div id="shelf_div" style="flex-grow:5;;overflow-x:hidden;overflow-y:auto;">
+					<p class="refreshText"></p>
+					<table id="shelf_table" style="table-layout:fixed" data-order="click" onclick="Shelf.click(event.srcElement,this.dataset.order);this.dataset.order='click';"></table>
+				</div>
+			</form>
 		</div>
 		<div class="alert" style="display:none">
 			<div class="alert_head">
@@ -203,7 +160,65 @@
 		<div class="console">
 
 		</div>
-
+		
+		<div class="model" id="contextmenu">
+			<div style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;">
+				<div>
+					<input type="button" value="eval" onclick="eval(evaltxt.value);" />
+					<input type="button" value="read" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){form_2.txt1.value+=txt;});}" />
+					<input type="button" value="加载script" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){eval(txt);alert(txt);});}" />
+					<input type="button" value='reload' onclick="document.location.reload();" />
+					<input type="button" value='epub' onclick='fso.writeZip(form_1.novel_name.value+".epub",form_1.novel_name.value)' />
+					<input type=button value="打开" onclick="chrome.openFile(form_1.novel_name.value+'.epub')" />
+					<input type=button value="showList" onclick="showList()" />
+					<input type=button value="showList" onclick="showSearch()" />
+					<br />
+					<input type="text" id="script1" style="height:10px" />
+				</div>
+				<textarea id="evaltxt" style="flex-grow:3;"></textarea>
+			</div>
+		</div>
+		<!--3 目录-->
+		<div class="model" id="listDiv">
+			<form id="form_4" style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;">
+				<div>
+					name:<input type="text" size=8 id="f4_name" />
+					url:<input type="text" size=14 id="f4_url" />
+					<br />
+					new:<input type="text" size=14 id="f4_new">
+					count:<input type="text" size=4 id="f4_count">
+					<input type="number" min=0 max=1000 onchange="List.scroll(this.value)" />
+					<input type="button" value="换源" onclick="List.changeSource(f4_name.value);" />
+					<input type="button" value='更新' onclick="List.update(f4_url.value)" />
+					<input type="button" value='添加' onclick="List.addBook()" />
+					<input type="button" value='顶部' onclick="List.scroll(0)" />
+					<input type="button" value='底部' onclick="List.scroll(List.arr.length-1)" />
+				</div>
+				<div id="List_Source" style="display:none;height:95%;overflow-x:hidden;overflow-y:auto;">
+					<table id="list_source" onclick="List.click(event.srcElement);"></table>
+				</div>
+				<div id=s1 style="height:90%;overflow-x:hidden;overflow-y:auto;">
+					<table id="list_table" onclick="List.click(event.srcElement);"></table>
+				</div>
+			</form>
+		</div>
+		<!--搜索-->
+		<div class="model" id="searchDiv" >
+			<form id="form_6" style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;">
+				<div>
+					<input type="text" id="f6_name" onchange="">
+					<input type="button" value="搜索" onclick="search.get2(f6_name.value);" />
+					<input type="button" value="重载" onclick="search.get3(f6_name.value);" />
+				</div>
+				<div style="width:100%;height:100%;overflow-y:scroll;">
+					<table id="f6_table" onclick="search.click(event.srcElement);" ondblclick="search.dblclick(event.srcElement);"></table>
+				</div>
+			</form>
+		</div>
+		
+		<div class="model" id="pageDiv">
+			<iframe id="pageWindow" style="width: 100%;height: 100%;"></iframe>
+		</div>	
 		<script>
 			var console = function() {
 				var task = "";
@@ -327,7 +342,23 @@
 
 			document.oncontextmenu = function() {
 				event.returnValue = false;
-				msg("当前设置不允许使用右键！");
+				document.querySelector("#contextmenu").style.display="block";
+				evt.addEvent(function(){
+					document.querySelector("#contextmenu").style.display="none";
+				})
+			}
+			
+			showList=function(){
+				document.querySelector("#listDiv").style.display="block";
+				evt.addEvent(function(){
+					document.querySelector("#listDiv").style.display="none";
+				})
+			}
+			showSearch=function(){
+				document.querySelector("#searchDiv").style.display="block";
+				evt.addEvent(function(){
+					document.querySelector("#searchDiv").style.display="none";
+				})
 			}
 			var toast = function() {
 				var task = [];

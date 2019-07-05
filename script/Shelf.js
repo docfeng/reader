@@ -156,7 +156,10 @@ window.MyObject.Shelf = {
 		var i = obj.parentNode.rowIndex;
 		if (order == "click") {
 			//显示目录页
-			menu_obj.shift(2);
+			document.querySelector("#listDiv").style.display="block";
+			evt.addEvent(function(){
+				document.querySelector("#listDiv").style.display="none";
+			})
 			var json = this.json;
 			var name = json[i].name;
 			var url = json[i].url;

@@ -266,7 +266,13 @@ window.MyObject.List={
          his={name:name,index:[i,0]};
          var his=JSON.stringify(his,null,2);
          localStorage.setItem("his",his)
-         location.href="page.html";
+         pageDiv.querySelector("iframe").contentWindow.location.href = "page.html";
+		 document.querySelector("#pageDiv").style.display="block";
+		 evt.addEvent(function(){
+		 	document.querySelector("#pageDiv").style.display="none";
+		 })
+		 fullScreen(document.querySelector("#pageDiv"))
+		 //location.href="page.html";
          
     },
     update:async function(url){
@@ -283,8 +289,11 @@ window.MyObject.List={
 		}
     },
     changeSource:async function(name){
+		document.querySelector("#searchDiv").style.display="block";
+		evt.addEvent(function(){
+			document.querySelector("#searchDiv").style.display="none";
+		})
         f6_name.value=name;
-        menu_obj.shift(3);
         search.get2(name);
     },
     addBook(name,url,arr){

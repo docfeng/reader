@@ -381,3 +381,102 @@ var browser = (function () {
         webApp: u.indexOf('Safari') == -1 //是否web应该程序，没有头部与底部
     };
 })();
+
+
+
+
+evt = {
+	num: 0,
+	fun:{},
+	async handleEvent(e) {
+		var type = e.eventType;
+		var fun = this.fun[type];
+		if (fun) {
+			var re = await fun();
+			if (re) {
+				delete this.fun[type];
+			}
+		};
+		if(type!="onback"){
+			window.history.replaceState(null, null, '');
+		}
+		//alert(type)
+		window.history.pushState('forward', null, '');
+		
+	},
+	remove() {
+		window.removeEventListener("back", this, false);
+	},
+	set(state, fun) {
+		window.history.replaceState(state, null, '');
+		window.history.pushState('forward', null, '');
+		//this.state.push(state);
+		this.fun[state] = fun;
+	},
+	addEvent(fun) {
+		var state = "event" + this.num;
+		this.num++;
+		window.history.replaceState(state, null, '');
+		window.history.pushState('forward', null, '');
+		//this.state.push(state);
+		this.fun[state] = fun;
+		return state
+	},
+	removeEvent(state) {
+		if (this.fun[state]) {
+			delete this.fun[state];
+			//window.history.go(-1)
+		}
+	},
+	fireEvent(state) {
+		var event = document.createEvent('HTMLEvents');
+		event.initEvent("back", true, true);
+		event.eventType = state;
+		document.dispatchEvent(event);
+	}
+}
+window.addEventListener('back', evt, false);
+
+if (window.history && window.history.pushState&&window.top==window) {
+	window.addEventListener('popstate', function(e) {
+		var state = e.state;
+		//alert(window.history.state)
+		if(!state){
+			window.history.go(-1);
+		}else if (typeof state == "string") {
+			//alert(state)
+			evt.fireEvent(state);
+		} else {
+			alert(JSON.stringify(state))
+		}
+	}, false);
+	if(!window.history.state){
+		window.history.replaceState('onback', null, '');
+		window.history.pushState('forward', null, '');
+	}
+}
+
+fullScreen = function(obj) {
+	var el = obj || document.documentElement;
+	var rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+	if (typeof rfs != "undefined" && rfs) {
+		rfs.call(el);
+	};
+	return;
+}
+//退出全屏
+exitScreen = function() {
+	if (document.exitFullscreen) {
+		document.exitFullscreen();
+	} else if (document.mozCancelFullScreen) {
+		document.mozCancelFullScreen();
+	} else if (document.webkitCancelFullScreen) {
+		document.webkitCancelFullScreen();
+	} else if (document.msExitFullscreen) {
+		document.msExitFullscreen();
+	}
+	if (typeof cfs != "undefined" && cfs) {
+		cfs.call(el);
+	}
+}
+//evt.addEvent(function(){document.querySelector("#contextmenu").style.display="none";})

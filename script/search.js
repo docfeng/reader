@@ -101,7 +101,8 @@ search={
       var json=this.json;
       var url=json[i][1];
       //显示目录页
-      menu_obj.shift(2);
+      //menu_obj.shift(2);
+      window.history.go(-1);
       List.show(name,url,[]);
 	  if(browser.MyApp){
 		  var o=await http.get(url,{xml:true});

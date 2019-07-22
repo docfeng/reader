@@ -42,33 +42,44 @@ window.MyObject.List={
     path:"Shelf/",
     arr:[],
     html:"",
-    reg:[],
-    getReg:async function(){
-        var json=await fso.read("regs.reg");
-        if(json=="false"){alert("none regs");return false;}
-        this.Regs=JSON.parse(json);
-    },
     //读取目录
-    read:async function(name){
+    read:function(name){
         var name=name||win.name;
         if(!name){
-			alert("List.read参数name错误");
-			return false;
+			return Promise.reject("List.read参数name错误");
 		}
         var path=`Shelf/${name}.json`;
-		var txt=await fso.read(path);
-		if(txt=="false"||!txt){
-			return false;
-		}
-        this.arr=JSON.parse(txt);
-        return this.arr;
+		return fso.read(path).then(function(txt){
+			if(txt=="false"||!txt){
+				return Promise.reject("读取内容为空");
+			}
+			this.arr=JSON.parse(txt);
+			return Promise.resolve(this.arr);
+		});
     },
+	//获取目录
+	get:async function(url){
+		var t=this;
+	    var url=url||win.url
+	    if(!url){
+	        return Promise.reject("没有url");
+	    }
+	    this.url=url;
+	    http.getHTML(url).then(function(html){
+	    	if(!html){return Promise.reject("http没有获取到html");}
+			return t.format({html,url});
+	    }).then(function(arr){
+	    	if(!arr){return Promise.reject("list.format没有arr");}
+			this.arr=arr;
+			return Promise.resolve(arr);
+	    });	    
+	},
     //保存目录
     save:function(name,arr){
         var name=name||this.name||win.name;
         var arr=arr||this.arr;
         if(!name||!arr){
-            alert("参数错误")
+            alert("List.save\n参数错误")
         }
         fso.write(`Shelf/${name}.json`,JSON.stringify(arr),false);
     },
@@ -104,27 +115,7 @@ window.MyObject.List={
         var h=list_table.rows[i].offsetTop
         list_table.parentNode.scrollTop=h
     },
-    //获取目录
-    get:async function(url){
-        var url=url||win.url
-        if(!url){
-            console.add("没有url");
-            return false;
-        }
-        this.url=url;
-        if(browser.MyApp){
-        	var html=await http.get(url);
-        }else{
-        	var html=await http.get(url,{cors:true,corsUrl:"http://gear.docfeng.top/get2.php"});
-        }
-        if(!html){console.add("没有html");return false;}
-        console.add("开始格式化目录");
-        var arr=await this.format({html,url});
-        console.add("目录格式化完成");
-        if(!arr){console.add("没有arr");return false;}
-        this.arr=arr;
-        return arr;
-    },
+    
     format:async function(json){
         var html=json.html;
         var url=json.url;
@@ -186,65 +177,7 @@ window.MyObject.List={
             t.scroll(i);
         });
     },
-    //检查正则
-    checkReg:async function(obj){
-        var t=this;
-        if(typeof(obj)=="string"){
-            t.reg=t.Regs[0];
-            t.Regs.forEach(function(e,i){
-                var url=obj;
-                if(url!=""&&e[0]==url.getBaseUrl()){
-                    t.reg=e;
-                }
-            });
-        }else{
-            obj.style.backgroundColor="red";
-            obj.style.border="2px solid red";
-            t.reg=t.Regs[0];
-            t.Regs.forEach(function(e,i){
-                var url=obj.value;
-                if(url!=""&&e[0]==url.getBaseUrl()){
-                    obj.style.backgroundColor="green";
-                    obj.style.border="2px solid green";
-                    t.reg=e;
-                }
-            });
-            showData({"name_reg":t.reg[1].name,"links":t.reg[1].links});
-        }
-    },
-    //更改正则
-    setReg:function(){
-        var t=this;
-        var reg=this.reg=[
-        form_1.list_url.value.getBaseUrl(),
-      {
-      "name":form_1.name_reg.value,
-      "links":form_1.link_reg.value
-      }
-    ];
-    var bool=false;
-    var index;
-    var Regs=this.Regs;
-    Regs.forEach(function(value,i){
-      if(value[0]==reg[0]){
-     	    bool=true;
-     	    index=i;
-     	 }
-    });
-    if(bool){
-      if(confirm("已存在，是否修改")){
-        Regs[index]=reg;
-      }
-      alert(JSON.stringify(reg));
-    }else{
-      Regs[Regs.length]=reg;
-      alert(JSON.stringify(Regs))  ;
-    }
-  },
-    //保存正则
-    writeReg:function(){
-        fso.write("regs.reg",JSON.stringify(this.Regs),false);
-    },
+	
     click:async function(obj){
          var obj=obj.parentNode;
          var i=obj.parentNode.rowIndex;//*this.max+obj.cellIndex;
@@ -296,7 +229,7 @@ window.MyObject.List={
         f6_name.value=name;
         search.get2(name);
     },
-    addBook(name,url,arr){
+    addBook:function(name,url,arr){
         var name=name||this.name;
         var arr=arr||this.arr;
         var url=url||this.url;

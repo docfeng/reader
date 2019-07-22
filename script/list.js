@@ -65,7 +65,11 @@ window.MyObject.List={
 	        return Promise.reject("没有url");
 	    }
 	    this.url=url;
-	    http.getHTML(url).then(function(html){
+		var listURL = "https://bird.ioliu.cn/v2/"
+	    return http.get(url, {
+	    		cors: true,
+	    		corsUrl: listURL
+	    	}).then(function(html){
 	    	if(!html){return Promise.reject("http没有获取到html");}
 			return t.format({html,url});
 	    }).then(function(arr){

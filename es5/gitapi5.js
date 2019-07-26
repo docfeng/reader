@@ -73,9 +73,13 @@ Git = (function() {
 							return users;
 						} else {
 							if(confirm("login?")){
-								return User.login().then(function(re){
-									return users;
-								});
+								var arr=User.login();
+								var name=arr[0];
+								var author=arr[1];
+								var users={};
+								users[name]=author;
+								store.setItem("users", JSON.stringify(users));
+								return users;
 							}else{
 								return Promise.reject("err:uesr.ini() no cash");
 							}
@@ -100,7 +104,7 @@ Git = (function() {
 		},
 		set: function(name, psw) {
 			var author = "Basic " + btoa(name + ":" + psw);
-			return this.ini().then(function() {
+			return this.get().then(function() {
 				users[name] = author;
 				alert(JSON.stringify(users));
 				return true;
@@ -112,7 +116,8 @@ Git = (function() {
 		login: function(name, psw) {
 			var name = name || prompt("用户名", "docfeng");
 			var psw = psw || prompt("密码:" + name);
-			return this.set(name,psw);
+			var author = "Basic " + btoa(name + ":" + psw);
+			return [name,author];
 		},
 		logout: function(name) {
 			delete users[name];

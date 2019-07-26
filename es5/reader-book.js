@@ -230,6 +230,7 @@ List = (function(a) {
 			});
 			
 			Page.name = name;
+			Page.json=this.json;
 			Page.arr = this.arr;
 			Page.resize()
 			Page.multiIndex(i).then(function(re) {
@@ -301,16 +302,21 @@ Page = (function(a) {
 		multiIndex: function(i) {
 			var name = this.name;
 			var arr = this.arr;
+			if(!name||!arr||!i){
+				alert("Page.multiIndex参数错误：\nname:"+name+"\narr:"+arr)
+				return Promise.reject("Page.multiIndex参数错误：\nname:"+name+"\narr:"+arr);
+			}
 			var title = arr[i][1];
 			var url = arr[i][0];
 			return _Page.multi(name, url).then(function(txt) {
+				
 				Page.write(name, title, url, txt).then(function(re) {
 					//alert(re)
 				}).catch(function(e) {
-					alert("err:Page.multiIndex:\n" + e)
-				})
+					alert("err:Page.write:\n" + e)
+				});
 				return txt;
-			});
+			})
 		},
 		remote: function(url) {
 			return _Page.remote(url);
@@ -370,9 +376,14 @@ Page = (function(a) {
 				str + "</table></div>";
 			msg(name, str, config);
 			//目录滚动到第i个
-			var i = this.index1;
+			var i = this.index1||this.json.readIndex;
 			var table1 = document.querySelector(".msg_body").childNodes[0].childNodes[0];
-			var h = table1.rows[i].offsetTop;
+			var o = table1.rows[i]
+			if(!o){
+				alert("index1"+this.index1)
+				return "";
+			}
+			var h=o.offsetTop;
 			table1.parentNode.scrollTop = h;
 		},
 		//关闭目录,显示文章
@@ -424,7 +435,7 @@ Search=(function(a){
 				Search.write("秦吏",re)
 				Search.show(re);
 			}).catch(function(e){
-				alert(e)
+				alert("Search.multi:\n"+e)
 			})
 		},
 		update:function(name){

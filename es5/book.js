@@ -465,8 +465,6 @@ Book = (function() {
 			//alert(url)
 			return t.read(name,url).then(function(txt) {
 				if(txt){
-					/* alert("read\n"+txt.txt)
-					alert("read\n"+JSON.stringify(txt)) */
 					return txt.txt;
 				}else{
 					return Promise.reject("no");;
@@ -476,7 +474,7 @@ Book = (function() {
 					if(txt){
 						return txt;
 					}else{
-						return Promise.reject("no remote");;
+						return Promise.reject("Page.mult:\n txt:"+txt);;
 					}
 					
 				});
@@ -485,15 +483,18 @@ Book = (function() {
 		remote: function(url) {
 			var t = this;
 			return getHTML(url, "page").then(function(html) {
-				//alert(html)
 				if (html) {
 					return t.format(html, url).then(function(txt) {
-						return txt;
-					}).catch(function(txt) {
-						return txt;
+						if(!txt){
+							return Promise.reject("Page.format:没有获取到txt\n"+txt);
+						}else{
+							return txt;
+						}
+					}).catch(function(e) {
+						return Promise.reject("Page.format:\nerr:"+e);
 					});
 				} else {
-					return Promise.reject(false);
+					return Promise.reject("Page.remote:没有获取到HTML\n"+html);
 				}
 			});
 		},
@@ -586,7 +587,7 @@ Book = (function() {
 				}
 			}
 			txt = txt ? txt[1] : "";
-			if(!txt)return Promise.reject(false);
+			if(!txt)return Promise.reject("没有txt;\nurl="+url+"\nhtml=\n"+html);
 			return Promise.resolve(txt);
 			/* //匹配下一章地址
 			var reg = /<a[^>]*?href="([^"]*?)"[^>]*?>下[^<]*?</;

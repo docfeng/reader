@@ -72,7 +72,14 @@ Git = (function() {
 							users = JSON.parse(_users);
 							return users;
 						} else {
-							return Promise.reject("err:uesr.ini() no cash");
+							if(confirm("login?")){
+								return User.login().then(function(re){
+									return users;
+								});
+							}else{
+								return Promise.reject("err:uesr.ini() no cash");
+							}
+							
 						}
 					})
 				} else {
@@ -93,7 +100,7 @@ Git = (function() {
 		},
 		set: function(name, psw) {
 			var author = "Basic " + btoa(name + ":" + psw);
-			this.ini().then(function() {
+			return this.ini().then(function() {
 				users[name] = author;
 				alert(JSON.stringify(users));
 				return true;
@@ -105,7 +112,7 @@ Git = (function() {
 		login: function(name, psw) {
 			var name = name || prompt("用户名", "docfeng");
 			var psw = psw || prompt("密码:" + name);
-			return this.set(name.psw);
+			return this.set(name,psw);
 		},
 		logout: function(name) {
 			delete users[name];

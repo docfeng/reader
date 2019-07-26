@@ -186,9 +186,9 @@ List = (function(a) {
 			this.name = name;
 			var url = url;
 			this.showarr(arr);
-			f4_name.value = name;
-			f4_count.value = arr.length;
-			f4_url.value = url;
+			listName.innerText = name;
+			listCount.innerText = arr.length;
+			listUrl.innerText = url;
 		},
 		showarr: function(arr) {
 			var str = "";
@@ -210,20 +210,21 @@ List = (function(a) {
 			list_table.parentNode.scrollTop = h
 		},
 
-		click: async function(obj) {
+		click: function(obj) {
 			var obj = obj.parentNode;
 			var i = obj.parentNode.rowIndex; //*this.max+obj.cellIndex;
 			var name = this.name;
-			var arr = this.arr[i];
+			var arr = this.arr;
 			var title = arr[1];
 			var url = arr[0];
-			var json = await Shelf.read(name);
-			json.readTitle = title;
-			json.readURL = url;
-			json.readIndex = i;
-			json.readAt = formatDate(new Date());
-			Shelf.write(json);
-
+			Shelf.read(name).then(function(json){
+				json.readTitle = title;
+				json.readURL = url;
+				json.readIndex = i;
+				json.readAt = formatDate(new Date());
+				Shelf.write(json);
+			});
+			
 			Page.name = name;
 			Page.arr = this.arr;
 			Page.resize()
@@ -234,23 +235,8 @@ List = (function(a) {
 				window.page(i)
 			}).catch(function(e) {
 				alert("err:Page.multiIndex" + e)
-			})
-			/* var list=await novel.getList().;
-			window.page(novel.index1);
-			setTimeout(function(){
-				novel.index2=novel.index2==0?1:novel.index2;
-				//alert(novel.index2)
-			  window.section(novel.index2);
-			},200); */
-
-			/* var his={name:name,index:[i,0]};
-			his=JSON.stringify(his,null,2);
-			localStorage.setItem("his",his)
-			pageDiv.querySelector("iframe").contentWindow.location.href = "page.html"; */
-			//alert()
+			});
 			UI.hidePage();
-			//document.querySelector("#main_contain").style.display="none"
-			//UI.show("#pageDiv");
 			//fullScreen(document.querySelector("#pageDiv"))
 		},
 		update: async function(url) {
@@ -263,7 +249,7 @@ List = (function(a) {
 				var newpage = arr[arr.length - 1];
 				this.save();
 				console.add("已更新" + newpage[1]);
-				f4_new.value = newpage[1];
+				listNew.innerText = newpage[1];
 			}
 		},
 		changeSource: async function(name) {
@@ -283,24 +269,23 @@ List = (function(a) {
 })();
 
 
-
-Page=(function(a){
-	var _Page=Book.Page;
-	var Arr,Json;
-	var Page ={
-		multi: function(name,url) {
-			return _Page.multi(name,url);
+Page = (function(a) {
+	var _Page = Book.Page;
+	var Arr, Json;
+	var Page = {
+		multi: function(name, url) {
+			return _Page.multi(name, url);
 		},
 		multiIndex: function(i) {
-			var name=this.name;
-			var arr=this.arr;
-			var title=arr[i][1];
-			var url=arr[i][0];
-			return _Page.multi(name,url).then(function(txt){
-				Page.write(name, title, url, txt).then(function(re){
+			var name = this.name;
+			var arr = this.arr;
+			var title = arr[i][1];
+			var url = arr[i][0];
+			return _Page.multi(name, url).then(function(txt) {
+				Page.write(name, title, url, txt).then(function(re) {
 					//alert(re)
-				}).catch(function(e){
-					alert("err:Page.multiIndex:\n"+e)
+				}).catch(function(e) {
+					alert("err:Page.multiIndex:\n" + e)
 				})
 				return txt;
 			});
@@ -308,14 +293,14 @@ Page=(function(a){
 		remote: function(url) {
 			return _Page.remote(url);
 		},
-		read: function(name,url) {
-			return _Page.read(name,url);
+		read: function(name, url) {
+			return _Page.read(name, url);
 		},
 		write: function(name, title, url, txt) {
 			return _Page.write(name, title, url, txt);
 		},
 		show: function(txt) {
-			var txt=this.formatUI(txt);
+			var txt = this.formatUI(txt);
 			//document.querySelector("#txt").innerHTML = txt;
 		},
 		formatUI: function(txt) {
@@ -323,49 +308,62 @@ Page=(function(a){
 			//document.querySelector("#txt").innerHTML = txt;
 			return txt;
 		},
-		showList:function(name,arr){
-		  var arr=arr||this.arr;
-		  var name=name||this.name;
-		  if(!name||!arr){
-			  alert("err:Page.showList\n参数错误;\nname:"+name+"\narr:"+arr)
-			  return "err:Page.showList\n参数错误";
-		  }
-			  
-		  var config={"height":(document.body.clientHeight-8)+"px","width":"60%","left":"0px","top":"0px"}
-		  var url_arr=arr;
-		  var str="";
-		  var err=[];
-		  for(var i=0;i<url_arr.length;i++){
-		      if(!url_arr[i]||!url_arr[i][1]){
-		        err[err.length]=i+":"+url_arr[i];
-		      }else{
-		        var d="<h4>"+url_arr[i][1]+"</h4>";
-		        d+="<h5>"+url_arr[i][0]+"</h5>";
-		        //h+="<td>"+d+"</td>";
-		        str+="<tr><td>"+d+"</td></tr>";
-		      }
-		  }
-		
-		  str='<div style="height:580px;overflow-x:hidden;overflow-y:scroll;"><table style="width:100%;height:100%" onclick="Page.closeList(event.srcElement)">'+str+"</table></div>";
-		  msg(name,str,config);
-		  //目录滚动到第i个
-		  var i=this.index1;
-		  var table1=document.querySelector(".msg_body").childNodes[0].childNodes[0];
-		  var h=table1.rows[i].offsetTop;
-		  table1.parentNode.scrollTop=h;
+		clear: function() {
+			DB.Table.clear('book', 'page').then(function(a) {
+				alert('清除page数据表\n成功')
+			}).catch(function() {
+				alert('清除page数据表\n失败')
+			})
+		},
+		showList: function(name, arr) {
+			var arr = arr || this.arr;
+			var name = name || this.name;
+			if (!name || !arr) {
+				alert("err:Page.showList\n参数错误;\nname:" + name + "\narr:" + arr)
+				return "err:Page.showList\n参数错误";
+			}
+
+			var config = {
+				"height": (document.body.clientHeight - 8) + "px",
+				"width": "60%",
+				"left": "0px",
+				"top": "0px"
+			}
+			var url_arr = arr;
+			var str = "";
+			var err = [];
+			for (var i = 0; i < url_arr.length; i++) {
+				if (!url_arr[i] || !url_arr[i][1]) {
+					err[err.length] = i + ":" + url_arr[i];
+				} else {
+					var d = "<h4>" + url_arr[i][1] + "</h4>";
+					d += "<h5>" + url_arr[i][0] + "</h5>";
+					//h+="<td>"+d+"</td>";
+					str += "<tr><td>" + d + "</td></tr>";
+				}
+			}
+
+			str =
+				'<div style="height:580px;overflow-x:hidden;overflow-y:scroll;"><table style="width:100%;height:100%" onclick="Page.closeList(event.srcElement)">' +
+				str + "</table></div>";
+			msg(name, str, config);
+			//目录滚动到第i个
+			var i = this.index1;
+			var table1 = document.querySelector(".msg_body").childNodes[0].childNodes[0];
+			var h = table1.rows[i].offsetTop;
+			table1.parentNode.scrollTop = h;
 		},
 		//关闭目录,显示文章
-		closeList:function(obj){
-		    var obj=obj.parentNode;
-		    var i=obj.parentNode.rowIndex;
-		    window.page(i);
-		    $(".msg").css("display","none");
-		    looseBody();
+		closeList: function(obj) {
+			var obj = obj.parentNode;
+			var i = obj.parentNode.rowIndex;
+			window.page(i);
+			$(".msg").css("display", "none");
+			looseBody();
 		}
 	}
 	return Page;
 })();
-
 
 Search=(function(a){
 	var _Search=Book.Search;
@@ -755,4 +753,4 @@ Shelf=(function(a){
 	}
 	return Shelf;
 })();
-//
+//

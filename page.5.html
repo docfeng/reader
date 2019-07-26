@@ -365,18 +365,20 @@
 			.head-menu{
 				width: 100%;
 				height: auto;
+				position: relative;
 			}
 			.head-menu-head{
 				width: 100%;
 				height: 20px;
 			}
 			.head-menu-body{
-				position: relative;
+				position: absolute;
 				display: none;
-				top: 0px;
+				top: 20px;
 				right: 0px;
 				width: 100%;
-				height: 60px;
+				height: auto;
+				background-color: #008000;
 			}
 			.head-menu-body>div{
 				display: flex;
@@ -399,6 +401,7 @@
 			.icon-Button>span:last-child{
 				text-align: center;
 				word-break: keep-all;
+				font-size: 0.7em;
 			}
 		</style>
 	</head>
@@ -467,18 +470,45 @@
 			<!--3 目录-->
 			<div class="model" id="listDiv">
 				<form id="form_4" style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;">
+					<div class="head-menu">
+						<div class="head-menu-head" onclick="var style=this.nextElementSibling.style;if(!style.display||style.display=='block'){style.display='none';}else{style.display='block';}">
+							name:<span id="listName"></span>
+							url:<span id="listUrl"></span>
+							new:<span id="listNew"></span>
+							count:<span id="listCount"></span>
+						</div>
+						<div class="head-menu-body" style="display: none;">
+							<div>
+								<div class="icon-Button">
+									<span class="iconfont icon-chaxun" value="换源" onclick="List.changeSource(listName.innerText);"></span>
+									<span >换源</span>
+								</div>
+								<div class="icon-Button">
+									<span class="iconfont icon-reload" title="更新" onclick="List.update(listUrl.innerText);"></span>
+									<span >更新</span>
+								</div>
+								<div class="icon-Button">
+									<span class="iconfont icon-plus" title='添加' onclick="List.addBook()"></span>
+									<span >添加</span>
+								</div>
+								<div class="icon-Button">
+									<span class="iconfont icon-cloud-sync" title='检查更新' onclick="Shelf.update()"></span>
+									<span >检查更新</span>
+								</div>
+								<div class="icon-Button">
+									<span class="iconfont icon-vertical-align-top" title="顶部" onclick="List.scroll(0)"></span>
+									<span >顶部</span>
+								</div>
+								<div class="icon-Button">
+									<span class="iconfont icon-vertical-align-botto" title='底部' onclick="List.scroll(List.arr.length-1)"></span>
+									<span >底部</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					
 					<div>
-						name:<input type="text" size=8 id="f4_name" />
-						url:<input type="text" size=14 id="f4_url" />
-						<br />
-						new:<input type="text" size=14 id="f4_new">
-						count:<input type="text" size=4 id="f4_count">
-						<input type="number" min=0 max=1000 onchange="List.scroll(this.value)" />
-						<input type="button" value="换源" onclick="List.changeSource(f4_name.value);" />
-						<input type="button" value='更新' onclick="List.update(f4_url.value)" />
-						<input type="button" value='添加' onclick="List.addBook()" />
-						<input type="button" value='顶部' onclick="List.scroll(0)" />
-						<input type="button" value='底部' onclick="List.scroll(List.arr.length-1)" />
+						
 					</div>
 					<div id="List_Source" style="display:none;height:95%;overflow-x:hidden;overflow-y:auto;">
 						<table id="list_source" onclick="List.click(event.srcElement);"></table>

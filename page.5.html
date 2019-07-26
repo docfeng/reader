@@ -304,8 +304,8 @@
 						<input type="button" value='reload' onclick="document.location.reload();" />
 						<input type="button" value='epub' onclick='fso.writeZip(form_1.novel_name.value+".epub",form_1.novel_name.value)' />
 						<input type=button value="打开" onclick="chrome.openFile(form_1.novel_name.value+'.epub')" />
-						<input type=button value="showList" onclick="showList()" />
-						<input type=button value="showList" onclick="showSearch()" />
+						<input type=button value="moveData" onclick="Shelf.moveData()" />
+						<input type=button value="delBookDB" onclick="DB.DB.delete('book').then(function(a){alert('删除book数据库\n成功')}).catch(function(){alert('删除book数据库\n失败')})" />
 						<br />
 						<input type="text" id="script1" style="height:10px" />
 					</div>

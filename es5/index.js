@@ -63,7 +63,7 @@ addDownFlush = function(obj, fun) {
 	        e.stopPropagation && e.stopPropagation();
 	    },
 	    start: function(e) {
-			if(isMobile){
+			if(e.touches){
 				Y = e.touches[0].pageY;
 				X =  e.touches[0].pageX;
 				obj.addEventListener("touchmove", this, !1),
@@ -76,7 +76,7 @@ addDownFlush = function(obj, fun) {
 			}
 	    },
 	    move: function(e) {
-			if(isMobile){
+			if(e.touches){
 				M = event.touches[0].pageY - Y;
 			}else{
 				M = event.pageY - Y;
@@ -111,27 +111,24 @@ addDownFlush = function(obj, fun) {
 				refreshText.innerHTML = "";
 			}
 			M = 0;
-			if(!isMobile){
-				obj.removeEventListener("mousemove", u, !1),
-				obj.removeEventListener("mouseup", u, !1)
-			}else{
+			if(e.touches){
 				obj.removeEventListener("touchmove", u, !1),
 				obj.removeEventListener("touchend", u, !1)
+			}else{
+				obj.removeEventListener("mousemove", u, !1),
+				obj.removeEventListener("mouseup", u, !1)
 			}
 	    }
 	};
-	if(isMobile){
 		obj.addEventListener("touchstart", u, !1)
-	}else{
 		obj.addEventListener("mousedown", u, !1)
-	}
 	document.onselectstart=function(e){
 		return false;
 	};
 	var isTop = function() {
 		var t = obj.scrollTop || document.documentElement.scrollTop || document.body.scrollTop;
 		//alert("t:"+t)
-		return t === 0||1 ? true : false;
+		return t === 0 ? true : false;
 	}
 }
 

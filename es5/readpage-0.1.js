@@ -806,7 +806,7 @@ show=function(str){
                 }
             },
             move: function(i) {
-				if(isMobile){
+				if(i.touches){
 					var r = i.touches[0];
 					var bool = ! (i.touches.length > 1 || i.scale && 1 !== i.scale)
 				}else{
@@ -841,7 +841,7 @@ show=function(str){
                     n.y < 0 && et.scrollTop() + h.height() >= et.height() && (l++, l >= 2 && nextChapter()),
                     n.y > 0 && et.scrollTop() <= 0 && (f++, f >= 2 && upPage(200)/* upChapter() */)
                 }
-				if(isMobile){
+				if(e.touches){
 					i.removeEventListener("touchmove", u, !1);
 					i.removeEventListener("touchend", u, !1);
 				}else{
@@ -850,11 +850,11 @@ show=function(str){
 				}
             }
         };
-		if(isMobile){
+		//if(isMobile){
 			i.addEventListener("touchstart", u, !1)
-		}else{
+		//}else{
 			i.addEventListener("mousedown", u, !1);
-		}
+		//}
     })();
     //console.log("readCtl inited @ " + +new Date),
     //t.exports = st

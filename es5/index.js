@@ -153,7 +153,7 @@ shiftDiv = function(div) {
 
 UI = {
 	show: function(id) {
-		document.querySelector(id).style.display = "block";
+		document.querySelector(id).style.display = "flex";
 		evt.addEvent(function() {
 			document.querySelector(id).style.display = "none";
 		});

@@ -371,13 +371,17 @@ Page = (function(a) {
 				}
 			}
 
-			str =
-				'<div style="height:580px;overflow-x:hidden;overflow-y:scroll;"><table style="width:100%;height:100%" onclick="Page.closeList(event.srcElement)">' +
-				str + "</table></div>";
-			msg(name, str, config);
+			//str ='<div style="height:580px;overflow-x:hidden;overflow-y:scroll;"><table style="width:100%;height:100%" onclick="Page.closeList(event.srcElement)">' +
+			//	str + "</table></div>";
+			str='' +
+				str + "";
+			//msg(name, str, config);
+			document.querySelector("#listName2").innerHTML=name;
+			var table1=document.querySelector("#list_table2")
+			table1.innerHTML=str;
+			document.querySelector("#listDiv2").style.display="flex";
 			//目录滚动到第i个
 			var i = this.index1||this.json.readIndex;
-			var table1 = document.querySelector(".msg_body").childNodes[0].childNodes[0];
 			var o = table1.rows[i]
 			if(!o){
 				alert("index1"+this.index1)
@@ -391,8 +395,8 @@ Page = (function(a) {
 			var obj = obj.parentNode;
 			var i = obj.parentNode.rowIndex;
 			window.page(i);
-			$(".msg").css("display", "none");
-			looseBody();
+			/* $(".msg").css("display", "none");
+			looseBody(); */
 		}
 	}
 	return Page;
@@ -429,20 +433,21 @@ Search=(function(a){
 		search:function(name){
 			var t=this;
 			Search.multi(name).then(function(re){
+				alert(re)
 				//alert(JSON.stringify(re,null,4));
 				t.arr=re;
 				t.name=name;
-				Search.write("秦吏",re)
+				Search.write(name,re)
 				Search.show(re);
 			}).catch(function(e){
-				alert("Search.multi:\n"+e)
+				alert("Search.search:\n"+e)
 			})
 		},
 		update:function(name){
+			var t=this;
 			Search.remote(name).then(function(re){
-				alert(re);
-				alert(JSON.stringify(re))
-				Search.write("秦吏",re)
+				t.arr=re;
+				Search.write(name,re)
 				Search.show(re);
 			}).catch(function(e){
 				alert(e)
@@ -455,23 +460,22 @@ Search=(function(a){
 		    var arr=this.arr[i];
 		    var url=arr[0];
 			//显示目录页
-		    //menu_obj.shift(2);
-			
-			List.remote(url).then(function(arr){
-				alert(arr)
+			_Search.getRealPath(url).then(function(re){
+				var url=re[0];
+				var arr=re[1];
 				List.show(name,url,arr);
 				Shelf.add(name,url,arr).then(function(re){
 					alert("添加书本成功")
 				}).catch(function(e){
 					alert("添加书本失败")
 				})
-				//window.history.go(-1);
 				//UI.showList()
-				//
 				List.write(name,arr);
+				window.history.go(-1);	
 			}).catch(function(e){
 				alert(e)
 			});
+			
 		    //f6_table.rows[i].innerHTML=`<tr><td><h4>${json[i][0]}</h4><h3>${json[i][1]}</h3></td></tr>`;
 		}
 	}

@@ -34,27 +34,46 @@
  */
 
 Book = (function() {
+	var localModel="";
+	store.getItem("localModel").then(function(url){
+		if(url){
+			localModel=url;
+		}
+	}).catch(function(e){
+		alert("err:localModel:\n"+e)
+	});
 	var getHTML = function(url, para) {
 		var URL = "";
-		switch (para) {
-			case "search":
-				URL = "https://bird.ioliu.cn/v1/";
-				break;
-			case "real":
-				URL = "http://gear.docfeng.top/get2.php";
-				break;
-			case "list":
-				URL = "https://bird.ioliu.cn/v2/";
-				break;
-			case "page":
-				URL = "http://gear.docfeng.top/get2.php";//"https://bird.ioliu.cn/v2/";
-				break;
-			default:
-				URL = "http://gear.docfeng.top/get2.php";
-				break;
+		var xml=false;
+		if(localModel){
+			if(para=="real"){
+				xml=true;
+			}
+			URL=localModel;
+		}else{
+			switch (para) {
+				case "search":
+					URL = "https://bird.ioliu.cn/v1/";
+					break;
+				case "real":
+				    xml=true;
+					URL = "http://gear.docfeng.top/get2.php";
+					break;
+				case "list":
+					URL = "https://bird.ioliu.cn/v2/";
+					break;
+				case "page":
+					URL = "http://gear.docfeng.top/get2.php";//"https://bird.ioliu.cn/v2/";
+					break;
+				default:
+					URL = "http://gear.docfeng.top/get2.php";
+					break;
+			}
 		}
 		url=URL+"?url="+url;
-		return http.get(url).then(function(html){
+		return http.get(url,{xml:xml}).then(function(html){
+			var html=html;
+			if(para=="search")html = eval(html);
 			return html
 		});;
 	}
@@ -256,6 +275,11 @@ Book = (function() {
 		ini: function() {
 			alert("开始创建表格");
 			return Promise.all([this.createShelfTable(), this.createListTable(), this.createPageTable()]);
+		},
+		setModel:function(url){
+			localModel=url;
+			store.setItem('localModel',url);
+			alert(localModel)
 		}
 	}
 
@@ -389,19 +413,23 @@ Book = (function() {
 			var t = this;
 			return getHTML(url, "list").then(function(html) {
 				if (!html) return Promise.reject("error no html");
-				var charset = html.match(/charset=([^"]+)"/);
-				charset = charset && charset[1].toLowerCase();
-				switch (charset) {
-					case "gbk":
-					case "gb2312":
-						return Promise.reject("error charset:" + charset)
-						break;
-					case "utf-8":
-						return t.format(html, url);
-						break;
-					default:
-						//return List.format(html,url);
-						return Promise.reject("error charset:" + charset);
+				if(localModel){
+					return t.format(html, url);
+				}else{
+					var charset = html.match(/charset=([^"]+)"/);
+					charset = charset && charset[1].toLowerCase();
+					switch (charset) {
+						case "gbk":
+						case "gb2312":
+							return Promise.reject("error charset:" + charset)
+							break;
+						case "utf-8":
+							return t.format(html, url);
+							break;
+						default:
+							//return List.format(html,url);
+							return Promise.reject("error charset:" + charset);
+					}
 				}
 			});
 		},
@@ -617,12 +645,14 @@ Book = (function() {
 					/* alert("read\n"+txt.txt)
 					alert("read\n"+JSON.stringify(txt)) */
 					//alert(json.arr)
-					return json.arrA;
+					return json.arr;
 				}else{
 					return Promise.reject("no");;
 				}
 			}).catch(function() {
+				alert(3)
 				return t.remote(name).then(function(arr) {
+					alert(arr)
 					if(arr){
 						return arr;
 					}else{
@@ -635,7 +665,7 @@ Book = (function() {
 			var t=this;
 			var url = "https://www.baidu.com/s?q1=" + name + "&rn=10";
 			return getHTML(url, "search").then(function(html) {
-				var html = eval(html);
+				alert(html)
 				return t.format(html);
 			});
 		},
@@ -696,13 +726,20 @@ Book = (function() {
 			h.innerHTML = html;
 			var d = h.getElementsByTagName("div");
 			var re = [];
-			var p = [];
 			for (var i = 0; i < d.length; i++) {
 				if (d[i].id >= 1) {
 					var a = d[i].querySelector("a");
 					re.push([a.href, a.innerHTML])
-					p.push(this.checkCharset(a.href));
 				}
+			}
+			return Promise.resolve(re);;
+		},
+		formatAll:function(arr){
+			var p=[];
+			var t=this;
+			for (var i = 0; i < arr.length; i++) {
+					var url=arr[i][0];
+					p.push(this.checkCharset(url));
 			}
 			return Promise.all(p).then(function(a) {
 				var r = [];
@@ -710,14 +747,13 @@ Book = (function() {
 				for (var i =0;i< a.length; i++) {
 					if(a[i]){
 						r.push(re[i]);
-						p.push(t.getRealPath(re[i][0],re[i][1]))
+						p.push(t.getRealPath(arr[i][0],arr[i][1]))
 					}
 				}
-				
 				return Promise.all(p);
 			}).catch(function(a) {
-				alert(a)
-				return a;
+				alert("err:book.search.formatAll:\n"+a)
+				return Promise.reject("err:book.search.formatAll:\n"+a);
 			});
 		},
 		checkCharset: function(url) {
@@ -728,22 +764,23 @@ Book = (function() {
 					return false;
 				}
 			}).catch(function(a) {
-				return false;
+				alert("err:book.search.checkCharset:\n"+a)
+				return Promise.reject("err:book.search.checkCharset:\n"+a);
 			});
 		},
 		getRealPath: function(url,title) {
-			var para = {
-				cors: true,
-				corsUrl: "http://gear.docfeng.top/get2.php",
-				xml: true
-			};
-			return http.get(url, para).then(function(json) {
+			var t=this;
+			return getHTML(url, "real").then(function(json) {
 				var url = json.xml.getResponseHeader("url");
-				return [url,title];
+				if(title){
+					return [url,title];
+				}else{
+					var arr=List.format(json.html,url);
+					return [url,arr];
+				}
 			}).catch(function(a) {
-				return a;
+				return Promise.resolve("book.search.getRealPath:\n"+a);;
 			});
-
 		},
 		createTable: function() {
 			var data = {

@@ -361,24 +361,88 @@
 				text-align: center;
 			}
 		</style>
+		<style type="text/css">
+			.head-menu{
+				width: 100%;
+				height: auto;
+			}
+			.head-menu-head{
+				width: 100%;
+				height: 20px;
+			}
+			.head-menu-body{
+				position: relative;
+				display: none;
+				top: 0px;
+				right: 0px;
+				width: 100%;
+				height: 60px;
+			}
+			.head-menu-body>div{
+				display: flex;
+				flex-direction: row;
+			}
+			.head-menu-body>div>div{
+				display: flex;
+				flex-direction: column;
+			}
+			.icon-Button{
+				border: 1px solid #AAF;
+				flex-direction: column;
+				width: 30px;
+			}
+			.icon-Button>span:first-child{
+				font-size: 2em;
+				text-align: center;
+				word-break: keep-all;
+			}
+			.icon-Button>span:last-child{
+				text-align: center;
+				word-break: keep-all;
+			}
+		</style>
 	</head>
 	<body ontouchstart class=" fstep-2 bg-2 page-lr rd-day ">
 		<div class="main_contain" id="main_contain">
-			<div class="model show" id="shelfDiv">
-				<form id="form_3" style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;">
-					<div>
-						<span class="iconfont icon-chaxun" value="搜索" onclick="UI.showSearch()"></span>
-						<span class="iconfont icon-reload" title="刷新" onclick="document.location.reload();"></span>
-						<span class="iconfont icon-cloud-sync" title='check' onclick="Shelf.checkChange()"></span>
-						<span class="iconfont icon-cloud-upload" title='检查更新' onclick="Shelf.update()"></span>
-						<span class="iconfont icon-setting" title="设置" onclick="UI.showSetting()"></span>
-						<span class="iconfont icon-delete" title='删除' onclick="shelf_table.dataset.order='delete'"></span>
+			<div class="model show" id="shelfDiv" style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;">
+
+					<div class="head-menu">
+						<div class="head-menu-head" onclick="var style=this.nextElementSibling.style;if(!style.display||style.display=='block'){style.display='none';}else{style.display='block';}">
+							
+						</div>
+						<div class="head-menu-body" style="display: none;">
+							<div>
+								<div class="icon-Button">
+									<span class="iconfont icon-chaxun" value="搜索" onclick="UI.showSearch()"></span>
+									<span >搜索</span>
+								</div>
+								<div class="icon-Button">
+									<span class="iconfont icon-reload" title="刷新" onclick="document.location.reload();"></span>
+									<span >刷新</span>
+								</div>
+								<div class="icon-Button">
+									<span class="iconfont icon-cloud-sync" title='check' onclick="Shelf.checkChange()"></span>
+									<span >check</span>
+								</div>
+								<div class="icon-Button">
+									<span class="iconfont icon-cloud-upload" title='检查更新' onclick="Shelf.update()"></span>
+									<span >检查更新</span>
+								</div>
+								<div class="icon-Button">
+									<span class="iconfont icon-setting" title="设置" onclick="UI.showSetting()"></span>
+									<span >设置</span>
+								</div>
+								<div class="icon-Button">
+									<span class="iconfont icon-delete" title='删除' onclick="shelf_table.dataset.order='delete'"></span>
+									<span >删除</span>
+								</div>
+							</div>
+						</div>
 					</div>
 					<div id="shelf_div" style="flex-grow:5;;overflow-x:hidden;overflow-y:auto;">
 						<p class="refreshText"></p>
 						<table id="shelf_table" style="table-layout:fixed" data-order="click" onclick="Shelf.click(event.srcElement,this.dataset.order);this.dataset.order='click';"></table>
 					</div>
-				</form>
 			</div>
 			<div class="model" id="contextmenu">
 				<div style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;">

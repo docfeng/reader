@@ -109,6 +109,7 @@ Book = (function() {
 
 		},
 		readAll: function() {
+			var t=this;
 			return DB.Data.getIndex("book", "shelf", "readAt", null).then(function(json) {
 				DB.DB.close();
 				var json = json.reverse();

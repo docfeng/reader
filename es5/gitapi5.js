@@ -31,7 +31,7 @@ var formatDate = function(d) {
 	hours == hours < 10 ? "0" + hours : hours;
 	minute == minute < 10 ? "0" + minute : minute;
 	second == second < 10 ? "0" + second : second;
-	date = yyyy + "-" + mm + "-" + dd + "T" + hours + ":" + minute + ":" + second;
+	date = yyyy + "-" + mm + "-" + dd + " " + hours + ":" + minute + ":" + second;
 	return date;
 }
 var formatUTCDate = function(d) {

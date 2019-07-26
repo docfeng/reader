@@ -39,7 +39,7 @@ List = (function(a) {
 		},
 		remote: function(url) {
 			return _List.remote(url).then(function(arr) {
-				List.arr = arr;
+				//List.arr = arr;
 				return arr;
 			});
 		},
@@ -191,6 +191,10 @@ List = (function(a) {
 			listUrl.innerText = url;
 		},
 		showarr: function(arr) {
+			if(!arr){
+				alert("list.showarr 没有arr");
+				return false
+			}
 			var str = "";
 			var err = [];
 			for (var i = 0; i < arr.length; i++) {
@@ -214,7 +218,7 @@ List = (function(a) {
 			var obj = obj.parentNode;
 			var i = obj.parentNode.rowIndex; //*this.max+obj.cellIndex;
 			var name = this.name;
-			var arr = this.arr;
+			var arr = this.arr[i];
 			var title = arr[1];
 			var url = arr[0];
 			Shelf.read(name).then(function(json){
@@ -239,18 +243,36 @@ List = (function(a) {
 			UI.hidePage();
 			//fullScreen(document.querySelector("#pageDiv"))
 		},
-		update: async function(url) {
-			var json = await this.get(url);
-			if (json.length == this.arr.length) {
-				console.add("目前没有新更新");
-			} else {
-				var arr = this.arr = json;
-				this.showarr(arr);
-				var newpage = arr[arr.length - 1];
-				this.save();
-				console.add("已更新" + newpage[1]);
-				listNew.innerText = newpage[1];
+		update: function(url) {
+			var arr=this.arr
+			if(!url||!arr){
+				alert("参数错误：\nurl:"+url+"\narr:"+ arr)
+				return false
 			}
+			var t=this;
+			this.remote(url).then(function(_arr){
+				if (_arr.length == t.arr.length) {
+					alert("目前没有新更新");
+				} else {
+					var arr = t.arr = _arr;
+					t.showarr(arr);
+					t.write(name,arr);
+					
+					var title = arr[arr.length - 1][1];
+					var url = arr[arr.length - 1][0];
+					var newpage = title;
+					alert("已更新" + title);
+					listNew.innerText = title;
+					var json=t.json;
+					json.updateTitle = title;
+					json.updateURL = url;
+					json.updateIndex = arr.length - 1;
+					json.updateAt = formatDate(new Date());
+					Shelf.write(json);
+				}
+			}).catch(function(e){
+				alert("更新出错"+e)
+			})
 		},
 		changeSource: async function(name) {
 			UI.showSearch();
@@ -581,6 +603,8 @@ Shelf=(function(a){
 				if (shelf_table) {
 					shelf_table.innerHTML = str;
 				}
+			}).catch(function(e){
+				alert("Shelf.showAll:\n"+e)
 			});
 		},
 		checkChange:function(){
@@ -664,7 +688,8 @@ Shelf=(function(a){
 			alert(re);
 		},
 		
-		click: async function(obj, order = "click") {
+		click:function(obj, order) {
+			var order = order ||"click"
 			var obj = obj.parentNode;
 			var i = obj.parentNode.rowIndex;
 			if (order == "click") {
@@ -676,24 +701,24 @@ Shelf=(function(a){
 				var readIndex=json.readIndex;
 				//显示目录
 				List.show(name, url, []);
+				List.json=json;
+				List.name=name;
 				List.read(name).then(function(list_arr){
 					if (!list_arr) {
-						return List.remote(url);
+						return List.remote(url).then(function(list_arr){
+							List.write(name, list_arr);
+							return list_arr;
+						});
 					}else{
+						
 						return list_arr;
 					}
 				}).then(function(list_arr){
-					List.write(name, list_arr);
+					List.arr=list_arr;
+					List.shelfIndex=i;
+					List.listIndex=readIndex
 					List.show(name, url, list_arr);
 					List.scroll(readIndex); 
-					//更新，保存书架
-					/* var arr = json.splice(i, 1)[0];
-					arr.readAt = formatDate(new Date());
-					json.unshift(arr);
-					this.show({
-						json: json
-					})
-					this.setKeyData(arr); */
 				});
 			}
 			if (order == "delete") {
@@ -701,54 +726,53 @@ Shelf=(function(a){
 			}
 		},
 		
-		update: async function() {
-			var json = this.json || await this.read();
-			var t = this;
-			console.add("开始更新");
-			var count = 0;
+		updateTop10:function() {
+			var arr = this.arr;
+			if(!arr){
+				alert("shelf 没有 arr数据");
+				return false;
+			}
+			var p=[];
 			for (var i = 0; i < 10; i++) {
-				this.update1(json[i], i);
+				p.push(this.update(i));
 			}
+			Promise.all(p).then(function(re){
+				alert(JSON.stringify(re,null,4))
+			});
 		},
-		update1: async function(arr, i) {
-			var arr = arr;
-			var url = arr.url;
-			var name = arr.name;
-			console.add(name)
-			var urlArr = await Shelf.get(url);
-			//alert(urlArr)
-			if (!urlArr) {
-				console.add(`>>${i}.${name}Shelf未获得;<br>-------<br>`);
-			} else {
-				var len=urlArr.length;
-				if(arr.updateIndex!=len){
-					Shelf.save(name, urlArr);
-					try {
-						//最新章节
-						console.add(name+"已更新")
-						urlArr = urlArr.pop();
-						
-						arr.updateTitle = urlArr[1];
-						arr.updateURL = urlArr[0];
-						arr.updateAt = formatDate(new Date());
-						arr.updateIndex = len;
-						
-						this.show({
-							index: i
-						});
-						this.setKeyData(arr);
-					} catch (e) {
-						console.add(`>>${i}.${name}出错;<br>-------<br>`);
-					}
-				}else{
-					console.add(name+"没有更新")
-				}
+		update:function(i) {
+			var arr=this.arr;
+			if(!arr){
+				return Promise.resolve(i+"shelf 没有 arr数据");
 			}
-			//是否保存
-			/*count++;
-			if(count==15&&confirm("save?\n"+this.json)){
-			    fso.write(this.hisPath,JSON.stringify(this.json),false);
-			}*/
+			var json = arr[i];
+			if(!json){
+				return Promise.resolve(i+"shelf 没有 json数据");
+			}
+			var url = json.url;
+			var name = json.name;
+			//Shelf.get(name).then(function(json){
+			return List.remote(url).then(function(arr){
+				var arr=arr;
+				if(!arr){
+					return i+"List.remote 没有arr";
+				}
+				if(json.updateIndex!=arr.length){
+						arr = arr.pop();
+						json.updateTitle = arr[1];
+						json.updateURL = arr[0];
+						json.updateAt = formatDate(new Date());
+						json.updateIndex = arr.length;
+						Shelf.write(json);
+						var str =Shelf.formatUI(json);
+						shelf_table.rows[i].innerHTML=str;
+						return i+"更新完成";
+				}else{
+					return i+"没有更新";
+				}
+			}).catch(function(e){
+				return i+"List.remote 错误\n\t"+e;
+			});
 		}
 	}
 	return Shelf;

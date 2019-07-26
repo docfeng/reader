@@ -32,7 +32,7 @@
 		<link rel="stylesheet" href="https://s.zhulang.com/wap/pub/v2/style/read-3873a62e78.css" type="text/css">
 		<link rel="stylesheet" href="css5/main5.css" type="text/css">
 		<link rel="stylesheet" href="css/test.css" type="text/css">
-		
+		<link rel="stylesheet" type="text/css" href="fonticon/iconfont.css"/>
 		<title>阅读器</title>
 
 		<style type="text/css">
@@ -276,18 +276,103 @@
 				background-color: red;
 			}
 		</style>
+		<style type="text/css">
+			/* //清除滚动条 */
+			
+			div::-webkit-scrollbar {
+				display: none;
+			}
+			
+			.circle-menu {
+				position: fixed;
+				bottom: 10%;
+				right: 10%;
+				width: 120px;
+				height: auto;
+				z-index: 100;
+				//background:greenyellow;
+			}
+		
+			.circle-menu-control1 {
+				width: 28px;
+				height: 28px;
+				//display:block;
+				background-color: white;
+				border: 1px solid #AAF;
+				border-radius: 50%;
+				-moz-border-radius: 50%;
+				-webkit-border-radius: 50%;
+				filter: alpha(Opacity=80);
+				-moz-opacity: 0.5;
+				opacity: 0.5;
+				
+			}
+		
+			.circle-menu-container {
+				width: 30px;
+				min-height: 180px;;
+				max-height: 300px;
+				overflow-x: scroll;
+				//overflow-y:hidden;
+				background-color: green;
+			}
+		
+			/* .circle-menu-container>div {
+				display: flex;
+				flex-direction: row; //column;
+				height: 100%;
+				width: 300%;
+				background-color: white;
+			} */
+		
+			.circle-menu-container>div {
+				flex: 1 1;
+				//background:red;
+				display: flex;
+				flex-direction: column;
+			}
+		
+			.circle-menu-container>div>div ,.circle-menu-container>div>span,.circle-menu-control1>div{
+				flex: 1 1;
+				width: 28px;
+				height: 28px;
+				background-color: white;
+				border: 1px solid #AAF;
+				border-radius: 50%;
+				-moz-border-radius: 50%;
+				-webkit-border-radius: 50%;
+				filter: alpha(Opacity=80);
+				-moz-opacity: 0.5;
+				opacity: 0.5;
+				font-size: 1.2em;
+				text-align: center;
+				vertical-align:middle
+				//line-height:0px;
+			}
+		
+			
+			span{
+				//display: inline-block;
+				/* width: 100%;
+				height: 100%; */
+				width: 28px;
+				height: 28px;
+				font-size: 1.2em;
+				text-align: center;
+			}
+		</style>
 	</head>
 	<body ontouchstart class=" fstep-2 bg-2 page-lr rd-day ">
 		<div class="main_contain" id="main_contain">
 			<div class="model show" id="shelfDiv">
 				<form id="form_3" style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;">
 					<div>
-						<input type="button" value="搜索" onclick="UI.showSearch()" />
-						<input type="button" value='reload' onclick="document.location.reload();" />
-						<input type="button" value='check' onclick="Shelf.checkChange()" />
-						<input type="button" value='检查更新' onclick="Shelf.update()" />
-						<input type="button" value='设置' onclick="UI.showSetting()" />
-						<input type="button" value='删除' onclick="shelf_table.dataset.order='delete'" />
+						<span class="iconfont icon-chaxun" value="搜索" onclick="UI.showSearch()"></span>
+						<span class="iconfont icon-reload" title="刷新" onclick="document.location.reload();"></span>
+						<span class="iconfont icon-cloud-sync" title='check' onclick="Shelf.checkChange()"></span>
+						<span class="iconfont icon-cloud-upload" title='检查更新' onclick="Shelf.update()"></span>
+						<span class="iconfont icon-setting" title="设置" onclick="UI.showSetting()"></span>
+						<span class="iconfont icon-delete" title='删除' onclick="shelf_table.dataset.order='delete'"></span>
 					</div>
 					<div id="shelf_div" style="flex-grow:5;;overflow-x:hidden;overflow-y:auto;">
 						<p class="refreshText"></p>
@@ -298,7 +383,9 @@
 			<div class="model" id="contextmenu">
 				<div style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;">
 					<div>
-						<input type="button" value="eval" onclick="eval(evaltxt.value);" />
+						<span class="iconfont icon-reload" onclick="document.location.reload();"></span>
+						<span class="iconfont icon-shuji">ee</span>
+						<input type="button" value="eval33" onclick="eval(evaltxt.value);" />
 						<input type="button" value="read" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){form_2.txt1.value+=txt;});}" />
 						<input type="button" value="加载script" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){eval(txt);alert(txt);});}" />
 						<input type="button" value='reload' onclick="document.location.reload();" />
@@ -517,7 +604,44 @@
 				显示
 			</div>
 		</div>
-		
+		<div class="circle-menu">
+			<div class="circle-menu-container">
+				<div class="circle-menu-body">
+					<span class="iconfont icon-chaxun" value="搜索" onclick="UI.showSearch()"></span>
+					<span class="iconfont icon-reload" title="刷新" onclick="document.location.reload();"></span>
+					<span class="iconfont icon-cloud-sync" title='check' onclick="Shelf.checkChange()"></span>
+					<span class="iconfont icon-cloud-upload" title='检查更新' onclick="Shelf.update()"></span>
+					<span class="iconfont icon-setting" title="设置" onclick="UI.showSetting()"></span>
+					<span class="iconfont icon-delete" title='删除' onclick="shelf_table.dataset.order='delete'"></span>
+					
+						<div onclick="window.location.reload()">↺</div>
+						<div>⇶</div>
+						<div>⌂</div>
+						<div>⌫</div>
+						<div>╳</div>
+						<div>≔</div>
+					
+						<div class="iconfont">&#xe699;</div>
+						<div>⇅</div>
+						<div>⇌</div>
+						<div>💾</div>
+						<div>☾</div>
+						<div>☀</div>
+						<div></div>
+						<div>⌫</div>
+						<div>✍</div>
+						<div>✂</div>
+						<div>❏</div>
+						<div>❐</div>
+						<div>❒</div>
+						<div>⊗</div>
+						<div>🗑</div>
+				</div>
+			</div>
+			<div class="circle-menu-control1" onclick="var style=this.previousElementSibling.style;if(!style.display||style.display=='block'){style.display='none';}else{style.display='block';}">
+				<div>⊗</div>
+			</div>
+		</div>
 		<script type="text/javascript" src="script/geth.js"></script>
 		<script type="text/javascript" src="es5/readpage-0.1.js"></script>
 	</body>

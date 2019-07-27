@@ -76,7 +76,7 @@ Book = (function() {
 			var html=html;
 			if(!localModel&&para=="search")html = eval(html);
 			if(!html){
-				return Promise.reject("err:getHTML:\nno html:+"+html);
+				return Promise.reject("err:getHTML:\nno html:+"+html+"\nurl:"+url+"\nURL:"+URL);
 			}
 			return html
 		}).catch(function(e){
@@ -666,7 +666,8 @@ Book = (function() {
 			var t=this;
 			var url = "https://www.baidu.com/s?q1=" + name + "&rn=10";
 			return getHTML(url, "search").then(function(html) {
-				alert(html)
+				fj.tip("已获取到数据，开始格式化")
+				//alert(html)
 				return t.format(html);
 			}).catch(function(e){
 				return Promise.reject("err:book.search.remote:\n"+e);
@@ -726,6 +727,7 @@ Book = (function() {
 			if(!html){
 				return Promise.reject("book.search.format:no html:\n"+html);
 			}
+			fj.tip("开始格式化")
 			var t=this;
 			var html=html.replace(/<img.*?>/g,"");
 			var h = document.createElement("html");
@@ -739,8 +741,10 @@ Book = (function() {
 				}
 			}
 			if(re.length==0){
+				fj.tip("格式化成功")
 				return Promise.reject("book.search.format:no arr:\n"+JSON.stringify(re,null,4));
 			}
+			fj.tip("格式化失败")
 			return Promise.resolve(re);;
 		},
 		formatAll:function(arr){

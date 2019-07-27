@@ -28,9 +28,9 @@ var formatDate = function(d) {
 	var hours = date.getHours();
 	var minute = date.getMinutes();
 	var second = date.getSeconds();
-	hours == hours < 10 ? "0" + hours : hours;
-	minute == minute < 10 ? "0" + minute : minute;
-	second == second < 10 ? "0" + second : second;
+	hours = hours < 10 ? "0" + hours : hours;
+	minute = minute < 10 ? "0" + minute : minute;
+	second = second < 10 ? "0" + second : second;
 	date = yyyy + "-" + mm + "-" + dd + " " + hours + ":" + minute + ":" + second;
 	return date;
 }

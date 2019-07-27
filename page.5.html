@@ -13,7 +13,8 @@
 		<meta name="keywords" content="阅读器" />
 		<meta name="description" content="阅读器。" />		
 
-		<script src="script/base.js"></script>
+		<script src="es5/base5.js"></script>
+		<script src="es5/fj.js" type="text/javascript" charset="utf-8"></script>
 		<script src="script/flexible.0.3.4.js"></script>
 		
 		<script src="es5/http5.js"></script>
@@ -27,6 +28,7 @@
 		<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 
 		<link href="https://s.zhulang.com/images/zl-logo114.png" rel="apple-touch-icon-precomposed">
+		<link rel="stylesheet" type="text/css" href="css5/fj.css"/>
 		<link rel="stylesheet" href="css5/msg5.css" type="text/css">
 		<link rel="stylesheet" href="https://s.zhulang.com/wap/pub/v2/style/read-3873a62e78.css" type="text/css">
 		<link rel="stylesheet" href="css5/main5.css" type="text/css">
@@ -129,6 +131,18 @@
 
 			.free-downs a {
 				color: #EEB422;
+			}
+		</style>
+		<style type="text/css">
+			body.msg-on .msg-cnt {
+				z-index:200;
+				visibility:visible;
+				-webkit-animation-name:msgfrm;
+				animation-name:msgfrm;
+				-webkit-animation-duration:5s;
+				animation-duration:5s;
+				-webkit-animation-iteration-count:1;
+				animation-iteration-count:1
 			}
 		</style>
 
@@ -426,6 +440,7 @@
 		</style>
 	</head>
 	<body ontouchstart class=" fstep-2 bg-2 page-lr rd-day ">
+		<progress id=p1 max=100 value="50" style="position: absolute;width: 100%;height: 4px;z-index: 500;"></progress>
 		<div class="main_contain" id="main_contain">
 			<div class="model show" id="shelfDiv">
 					<div class="head-menu">

@@ -249,15 +249,16 @@ List = (function(a) {
 		},
 		
 		update: function(url) {
+			fj.tip("开始更新");
 			var arr=this.arr
 			if(!url||!arr){
-				alert("参数错误：\nurl:"+url+"\narr:"+ arr)
+				fj.tip("参数错误：\nurl:"+url+"\narr:"+ arr,2)
 				return false
 			}
 			var t=this;
 			this.remote(url).then(function(_arr){
 				if (_arr.length == t.arr.length) {
-					alert("目前没有新更新");
+					fj.tip("目前没有新更新",1.5);
 				} else {
 					var arr = t.arr = _arr;
 					t.showarr(arr);
@@ -266,7 +267,7 @@ List = (function(a) {
 					var title = arr[arr.length - 1][1];
 					var url = arr[arr.length - 1][0];
 					var newpage = title;
-					alert("已更新" + title);
+					fj.tip("已更新" + title,2);
 					listNew.innerText = title;
 					var json=t.json;
 					json.updateTitle = title;
@@ -439,8 +440,10 @@ Search=(function(a){
 		},
 		search:function(name){
 			var t=this;
+			fj.tip("开始获取数据")
 			Search.multi(name).then(function(re){
-				alert(re)
+				//alert(re)
+				fj.tip("已获取数据<br ><pre>"+re+"</pre>",3)
 				//alert(JSON.stringify(re,null,4));
 				t.arr=re;
 				t.name=name;
@@ -452,12 +455,15 @@ Search=(function(a){
 		},
 		update:function(name){
 			var t=this;
+			fj.tip("开始更新数据")
 			Search.remote(name).then(function(re){
+				fj.tip("已获取数据<br ><pre>"+JSON.stringify(re,null,4)+"</pre>",3)
+				alert(JSON.stringify(re,null,4))
 				t.arr=re;
 				Search.write(name,re)
 				Search.show(re);
 			}).catch(function(e){
-				alert(e)
+				alert("search.update:\nname"+name+"\nerr:"+e)
 			})
 		},
 		click: function(obj){
@@ -466,21 +472,24 @@ Search=(function(a){
 		    var name=this.name;
 		    var arr=this.arr[i];
 		    var url=arr[0];
+			fj.tip("开始获取目录数据")
 			//显示目录页
 			_Search.getRealPath(url).then(function(re){
+				fj.tip("已获取目录数据，开始显示",1)
 				var url=re[0];
 				var arr=re[1];
 				List.show(name,url,arr);
 				Shelf.add(name,url,arr).then(function(re){
-					alert("添加书本成功")
+					fj.tip("添加书本成功",2)
 				}).catch(function(e){
-					alert("添加书本失败")
+					fj.tip("添加书本失败",2)
 				})
 				//UI.showList()
 				List.write(name,arr);
+				alert("name="+name+"\nurl="+url+"\narr:"+JSON.stringify(arr,null,4))
 				window.history.go(-1);	
 			}).catch(function(e){
-				alert(e)
+				alert("search.click:err:\n"+e)
 			});
 			
 		    //f6_table.rows[i].innerHTML=`<tr><td><h4>${json[i][0]}</h4><h3>${json[i][1]}</h3></td></tr>`;
@@ -754,6 +763,7 @@ Shelf=(function(a){
 				alert("shelf 没有 arr数据");
 				return false;
 			}
+			fj.tip("开始更新前10个");
 			var p=[];
 			for (var i = 0; i < 10; i++) {
 				p.push(this.update(i));
@@ -779,6 +789,7 @@ Shelf=(function(a){
 				if(!arr){
 					return i+"List.remote 没有arr";
 				}
+				fj.tip("完成第"+i+"个；name="+name);
 				if(json.updateIndex!=arr.length){
 						arr = arr.pop();
 						json.updateTitle = arr[1];

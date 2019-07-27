@@ -71,11 +71,17 @@ Book = (function() {
 			}
 		}
 		url=URL+"?url="+url;
+		//prompt("getHTML url",url)
 		return http.get(url,{xml:xml}).then(function(html){
 			var html=html;
-			if(para=="search")html = eval(html);
+			if(!localModel&&para=="search")html = eval(html);
+			if(!html){
+				return Promise.reject("err:getHTML:\nno html:+"+html);
+			}
 			return html
-		});;
+		}).catch(function(e){
+			return Promise.reject("err:getHTML:\n"+e);
+		});
 	}
 	var isJSON = function(str) {
 		if (typeof str == 'string') {
@@ -641,22 +647,17 @@ Book = (function() {
 		multi: function(name) {
 			var t = this;
 			return t.read(name).then(function(json) {
-				if(json){
-					/* alert("read\n"+txt.txt)
-					alert("read\n"+JSON.stringify(txt)) */
-					//alert(json.arr)
+				if(json&&json.arr){
 					return json.arr;
 				}else{
-					return Promise.reject("no");;
+					return Promise.reject("book.search.read:no json:"+json);;
 				}
 			}).catch(function() {
-				alert(3)
 				return t.remote(name).then(function(arr) {
-					alert(arr)
 					if(arr){
 						return arr;
 					}else{
-						return Promise.reject("no remote");;
+						return Promise.reject("book.search.remote:no arr"+arr);;
 					}
 				});
 			});
@@ -667,7 +668,9 @@ Book = (function() {
 			return getHTML(url, "search").then(function(html) {
 				alert(html)
 				return t.format(html);
-			});
+			}).catch(function(e){
+				return Promise.reject("err:book.search.remote:\n"+e);
+			})
 		},
 		read: function(name) {
 			var t = this;
@@ -720,6 +723,9 @@ Book = (function() {
 			return Promise.resolve(txt);
 		},
 		format: function(html) {
+			if(!html){
+				return Promise.reject("book.search.format:no html:\n"+html);
+			}
 			var t=this;
 			var html=html.replace(/<img.*?>/g,"");
 			var h = document.createElement("html");
@@ -731,6 +737,9 @@ Book = (function() {
 					var a = d[i].querySelector("a");
 					re.push([a.href, a.innerHTML])
 				}
+			}
+			if(re.length==0){
+				return Promise.reject("book.search.format:no arr:\n"+JSON.stringify(re,null,4));
 			}
 			return Promise.resolve(re);;
 		},

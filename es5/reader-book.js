@@ -217,6 +217,10 @@ List = (function(a) {
 		click: function(obj) {
 			var obj = obj.parentNode;
 			var i = obj.parentNode.rowIndex; //*this.max+obj.cellIndex;
+			this.showPageIndex(i);
+			//fullScreen(document.querySelector("#pageDiv"))
+		},
+		showPageIndex:function(i){
 			var name = this.name;
 			var arr = this.arr[i];
 			var title = arr[1];
@@ -242,8 +246,8 @@ List = (function(a) {
 				alert("err:Page.multiIndex" + e)
 			});
 			UI.hidePage();
-			//fullScreen(document.querySelector("#pageDiv"))
 		},
+		
 		update: function(url) {
 			var arr=this.arr
 			if(!url||!arr){
@@ -303,8 +307,11 @@ Page = (function(a) {
 			var name = this.name;
 			var arr = this.arr;
 			if(!name||!arr||!i){
-				alert("Page.multiIndex参数错误：\nname:"+name+"\narr:"+arr)
-				return Promise.reject("Page.multiIndex参数错误：\nname:"+name+"\narr:"+arr);
+				alert("Page.multiIndex参数错误：\nname:"+name+"\narr:"+arr+"\ni:"+i)
+				return Promise.reject("Page.multiIndex参数错误：\nname:"+name+"\narr:"+arr+"\ni:"+i);
+			}
+			if(i>arr.length-1||i<0){
+				return Promise.reject("Page.multiIndex参数i超出范围：\nname:"+name+"\ni:"+i);
 			}
 			var title = arr[i][1];
 			var url = arr[i][0];

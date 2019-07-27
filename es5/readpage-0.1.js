@@ -675,25 +675,32 @@ show=function(str){
     function nextChapter() {
         window.page(Page.index1+1);
     }
-    window.page=async function(i){
+    window.page=function(i){
 		//页数等于第1页;
         pageIndex=1;
         if(i<0)i=0;
 		//alert(i)
-        var txt=await Page.multiIndex(i).catch(function(e){
+        Page.multiIndex(i).then(function(txt){
+			//alert(txt);
+			if(!txt)return Promise.reject("err:window.page:\nno txt"+txt);
+        	txt=Page.formatUI(txt);
+        	//alert(txt)
+        	Page.index1=i;
+        	var nextindex=i+1;
+        	if(nextindex<Page.arr.length){
+        		Page.multiIndex(nextindex);
+        	}else{
+        		alert("已阅读到书本末尾")
+        	}
+        	$("#rd-txt").html(txt);
+        	$("#page-name").html(Page.arr[i][1]+":    "+Page.name);
+        	$("#novelName").html(Page.name);
+        	Z = (pageIndex / pageCount).toFixed(2);
+        	scroll(pageIndex, 0);
+        	void cacl();
+        }).catch(function(e){
         	alert(e)
         });
-		txt=Page.formatUI(txt);
-		//alert(txt)
-        Page.index1=i;
-        var nextindex=i+1;
-        Page.multiIndex(nextindex);
-        $("#rd-txt").html(txt);
-		$("#page-name").html(Page.arr[i][1]+":    "+Page.name);
-		$("#novelName").html(Page.name);
-		Z = (pageIndex / pageCount).toFixed(2);
-		scroll(pageIndex, 0);
-		void cacl();
     }
     	//上一页
     function upPage(t) {

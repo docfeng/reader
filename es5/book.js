@@ -472,7 +472,7 @@ Book = (function() {
 				return Promise.reject("err list.format: no re");
 			}
 		},
-		format:function(html,url){
+		format2:function(html,url){
 			var t=this;
 		    var html=html;
 		    var url=url;
@@ -502,6 +502,41 @@ Book = (function() {
 				//alert("开始分析json:arr:%s\nnexturl:%s".fill(arr,url));
 				return arr;
 		    }); 
+		},
+		format:function(html,url){
+			var t=this;
+		    var html=html;
+		    var url=url;
+			if(!html||!url)return Promise.reject("err:list.format:参数错误\nurl="+url+"\nhtml"+html);
+		    var arr=[];
+		    var format=function(html){
+		        var reg_di=new RegExp("<a[^>]*?href[ ]?=[\"']([^\"'>]*?)[\"'][^>]*?>(第[^\-<]*?)<","g");
+		        var reg_dl=new RegExp("<dl>([\\s\\S]*?)<\/dl>","g");
+				var arr=html.match(reg_dl);
+				if(arr){
+					arr=arr[0].matches(reg_di);
+					for(var i=0;i<arr.length;i++){
+					    arr[i][0]=arr[i][0].getFullUrl(url);
+					}
+				}
+				
+				if(!arr||arr.length==0){
+					alert(html)
+					arr=html.matches(reg_di);
+					for(var i=0;i<arr.length;i++){
+					    arr[i][0]=arr[i][0].getFullUrl(url);
+					}
+				}
+		        //下一页地址
+		        var reg=/<a[^>]*?href=["|']([^"']*?)["|][^>]*?>([^<第]*?下一页[^<]*?)</;
+		        var nexturl=html.match(reg);
+		        if(nexturl){
+		           nexturl=nexturl[1].getFullUrl(url);
+		        }
+				return arr;//{arr:arr,url:nexturl};
+		    }
+		    fj.tip("开始获取html");
+		    return format(html);
 		},
 		getId: function() {
 			return Git.Comment.create("docfeng", "book-data", 1, "test").then(function(text) {

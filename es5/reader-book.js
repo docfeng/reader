@@ -210,8 +210,13 @@ List = (function(a) {
 		},
 		//目录滚动到第i个
 		scroll: function(i) {
-			var h = list_table.rows[i].offsetTop
-			list_table.parentNode.scrollTop = h
+			var obj=list_table.rows[i];
+			if(obj){
+				var h = obj.offsetTop
+				list_table.parentNode.scrollTop = h
+			}else{
+				fj.tip("List.scroll超出界限：i="+i);
+			}
 		},
 
 		click: function(obj) {
@@ -475,6 +480,9 @@ Search=(function(a){
 		click: function(obj){
 		    var obj=obj.parentNode;
 		    var i=obj.parentNode.rowIndex;
+			if(!i||!this.name||!this.arr){
+				alert("search.click参数错误：\ni=%s;\nname=%s;\narr=%s".fill([i,this.name,this.arr]));
+			}
 		    var name=this.name;
 		    var arr=this.arr[i];
 		    var url=arr[0];

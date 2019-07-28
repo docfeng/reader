@@ -283,9 +283,26 @@ Book = (function() {
 			return Promise.all([this.createShelfTable(), this.createListTable(), this.createPageTable()]);
 		},
 		setModel:function(url){
-			localModel=url;
-			store.setItem('localModel',url);
-			alert(localModel)
+			if(confirm(url)){
+				localModel=url;
+				store.setItem('localModel',url);
+				//alert(localModel)
+			}
+		},
+		getModel:function(){
+			prompt("localModel",localModel)
+		},
+		selectModel:function(){
+			var t=this;
+			fj.select("model",["",
+			"http://gear.docfeng.top/get2.php",
+			"http://gear2.docfeng.top/get2.php",
+			"http://192.168.123.128/get2.php",
+			"http://192.168.123.92:8080/get2.php",
+			])
+			.then(function(a){
+				t.setModel(a);
+			})
 		}
 	}
 
@@ -418,7 +435,7 @@ Book = (function() {
 		remote: function(url) {
 			var t = this;
 			return getHTML(url, "list").then(function(html) {
-				if (!html) return Promise.reject("error no html");
+				if (!html) return Promise.reject("Book.List.remote:error no html");
 				if(localModel){
 					return t.format(html, url);
 				}else{

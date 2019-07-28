@@ -4,15 +4,16 @@
   padding:0;
   margin:0;
 } */
-.main_contain .myhead,
-input {
+.main_contain {
+	font-size: 16px;;
+	color: #000000;
+}
+.main_contain .myhead input {
 	height: 24px;
 	background-color: "green";
 }
 
-.main_contain table,
-th,
-td {
+.main_contain table th,.main_contain table td {
 	border: 1px solid black;
 	//background-color:red;
 }
@@ -34,11 +35,11 @@ td {
 }
 
 .main_contain table h1,
-table h2,
-table h3,
-table h4,
-table h5,
-h6 {
+.main_contain table h2,
+.main_contain table h3,
+.main_contain table h4,
+.main_contain table h5,
+.main_contain table h6 {
 	margin: 0;
 	padding: 0;
 	font-weight: normal;
@@ -73,11 +74,11 @@ h6 {
 
 //小说书架
 #shelf_table h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+#shelf_table h2,
+#shelf_table h3,
+#shelf_table h4,
+#shelf_table h5,
+#shelf_table h6 {
 	margin: 0;
 	padding: 0;
 	font-weight: normal;
@@ -275,3 +276,4 @@ textarea.e {
 #novel_view.show{
   display: block;
 }*/
+

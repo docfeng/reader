@@ -146,6 +146,125 @@
 			}
 		</style>
 
+		<!-- 媒体查询 -->
+		<style type="text/css">
+			/**
+			所有 iPad Media Queries
+			**/
+			@media only screen
+			and (min-device-width : 768px)
+			and (max-device-width : 1024px) {
+			
+			}
+			/**
+			iPad 横屏
+			**/
+			@media only screen
+			and (min-device-width : 768px)
+			and (max-device-width : 1024px)
+			and (orientation : landscape) {
+				
+			}
+			/**
+			**  iPad 竖屏
+			**/
+			@media only screen
+			and (min-device-width : 768px)
+			and (max-device-width : 1024px)
+			and (orientation : portrait) {
+				
+			}
+			/* 手机 */
+			@media all and (max-width: 768px) {
+			  
+			}
+			@media (max-height: 700px) {
+			  
+			}
+			@media (max-height: 400px) {
+			  
+			}
+			
+			
+			/**
+			笔记本
+			**/
+			@media only screen
+			and (min-device-width : 1024px)
+			and (max-device-width : 1366px)
+			and (orientation : landscape) {
+				
+			}
+			/**
+			 * win8寸平板横屏
+			 */
+			@media only screen
+			and (min-device-width : 800px)
+			and (max-device-width : 1280px)
+			and (orientation : landscape) {
+				.circle-menu {
+					width: 60px;
+					height: auto;
+				}
+						
+				.circle-menu-control1 {
+					width: 58px;
+					height: 58px;
+				}
+						
+				.circle-menu-container {
+					width: 60px;
+					/* min-height: 180px;;
+					max-height: 300px; */
+				}
+				
+						
+				.circle-menu-container>div>div ,.circle-menu-container>div>span,.circle-menu-control1>div{
+					width: 58px;
+					height: 58px;
+					/* font-size: 1.2em; */
+				}
+			}
+			/**
+			 * win8寸平板竖屏
+			 */
+			@media only screen
+			and (min-device-width : 600px)
+			and (max-device-width : 1380px){
+				.circle-menu {
+					width: 60px;
+					height: 100%;
+				} 
+			}
+			
+			@media only screen
+			and (min-device-width : 800px)
+			and (max-device-width : 1280px)
+			and (orientation : portrait) {
+				/* .circle-menu {
+					width: 60px;
+					height: auto;
+				} */
+				
+				.circle-menu>div:last-child{
+					width: 58px;
+					height: 58px;
+				}
+				
+				.circle-menu>div:first-child{
+							width: 60px;
+							/* min-height: 180px;;
+							max-height: 300px; */
+				}
+				
+						
+				.circle-menu-container>div>div ,.circle-menu-container>div>span,.circle-menu-control1>div{
+					width: 58px;
+					height: 58px;
+					/* font-size: 1.2em; */
+				}
+			}
+		</style>
 		<style type='text/css'>
 			//小说
 			//table h3{font-size:10%;}
@@ -272,6 +391,7 @@
 				background-color: red;
 			}
 		</style>
+		<!-- circle-menu -->
 		<style type="text/css">
 			/* //清除滚动条 */
 			
@@ -358,6 +478,7 @@
 				text-align: center;
 			} */
 		</style>
+		<!-- head-menu -->
 		<style type="text/css">
 			.head-menu{
 				width: 100%;
@@ -401,6 +522,7 @@
 				font-size: 0.7em;
 			}
 		</style>
+		<!-- main_contain -->
 		<style type="text/css">
 			.main_contain{
 				position: fixed;
@@ -438,6 +560,43 @@
 			
 			//table-layout:fixed
 		</style>
+	  
+		<style type="text/css">
+			/**
+			 * win8寸平板
+			 */
+	  	@media only screen
+	  	and (min-device-width : 800px)
+	  	and (max-device-width : 1280px),
+			/* 手机 */
+			(max-device-width : 400px)
+			
+			/* and (orientation : landscape) */
+			{
+	  		.circle-menu {
+	  			width: 60px;
+	  			height:auto;
+					font-size: 45px;
+	  		} 
+				.circle-menu>div:last-child{
+					width: 58px;
+					height: 58px;
+				}
+				
+				.circle-menu>div:first-child{
+							width: 60px;
+							/* min-height: 180px;;
+							max-height: 300px; */
+				}
+				
+						
+				.circle-menu-container>div>div ,.circle-menu-container>div>span,.circle-menu-control1>div{
+					width: 58px;
+					height: 58px;
+					/* font-size: 1.2em; */
+				}
+	  	}
+	  </style>
 	</head>
 	<body ontouchstart class=" fstep-2 bg-2 page-lr rd-day ">
 		<progress id=p1 max=100 value="50" style="position: absolute;width: 100%;height: 4px;z-index: 500;"></progress>
@@ -591,7 +750,7 @@
 					<i class="icon icon-back">返回</i>
 				</a>
 				<a href="javascript:void()" class="fr backicon">
-					<i class="" id="novelName">name</i>
+					<i  style="font-size: 3em;" id="novelName">name</i>
 				</a>
 			</div>
 			<!--设置页面底部-->
@@ -719,7 +878,7 @@
 		<!--end of idx-cnt -->
 		<div id="msg-cnt" class="msg-cnt"><span></span></div>
 		<!-- 目录 -->
-		<div id="listDiv2" style="position:fixed;display:none;flex-direction: column;height:100%;width:100%;top: 0px;right: 0px;z-index: 100;" onclick="this.style.display='none';">
+		<div id="listDiv2" style="position:fixed;display:none;flex-direction: column;height:100%;width:100%;top: 0px;right: 0px;z-index: 100;font-size: 2.5em;color: #000000;" onclick="this.style.display='none';">
 			<div style="width: 50%;height:24px;">
 				<div class="msg_title" id="listName2" style="float: none;">标题</div>
 				<div class="msg_close">&#8855;</div>

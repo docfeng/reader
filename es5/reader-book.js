@@ -251,6 +251,7 @@ List = (function(a) {
 		update: function(url) {
 			fj.tip("开始更新");
 			var arr=this.arr
+			var name=this.name;
 			if(!url||!arr){
 				fj.tip("参数错误：\nurl:"+url+"\narr:"+ arr,2)
 				return false
@@ -262,7 +263,11 @@ List = (function(a) {
 				} else {
 					var arr = t.arr = _arr;
 					t.showarr(arr);
-					t.write(name,arr);
+					t.write(name,arr).then(function(re){
+						fj.tip("List写入成功")
+					}).catch(function(e){
+						fj.tip("List写入失败"+e)
+					})
 					
 					var title = arr[arr.length - 1][1];
 					var url = arr[arr.length - 1][0];
@@ -274,6 +279,7 @@ List = (function(a) {
 					json.updateURL = url;
 					json.updateIndex = arr.length - 1;
 					json.updateAt = formatDate(new Date());
+					
 					Shelf.write(json);
 				}
 			}).catch(function(e){
@@ -731,9 +737,12 @@ Shelf=(function(a){
 				var url = json.url;
 				var readIndex=json.readIndex;
 				//显示目录
-				List.show(name, url, []);
 				List.json=json;
 				List.name=name;
+				List.url=url;
+				
+				List.show(name, url, []);
+				
 				List.read(name).then(function(list_arr){
 					if (!list_arr) {
 						return List.remote(url).then(function(list_arr){
@@ -741,7 +750,6 @@ Shelf=(function(a){
 							return list_arr;
 						});
 					}else{
-						
 						return list_arr;
 					}
 				}).then(function(list_arr){

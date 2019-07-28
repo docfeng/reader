@@ -439,7 +439,7 @@ Book = (function() {
 				}
 			});
 		},
-		format: function(html, url) {
+		format1: function(html, url) {
 			var html=html.replace(/<img.*?>/g,"");
 			var ele = document.createElement("html");
 			ele.innerHTML = html;
@@ -471,6 +471,37 @@ Book = (function() {
 			} else {
 				return Promise.reject("err list.format: no re");
 			}
+		},
+		format:function(html,url){
+			var t=this;
+		    var html=html;
+		    var url=url;
+			if(!html||!url)return Promise.reject("err:list.format:参数错误\nurl="+url+"\nhtml"+html);
+		    var arr=[];
+		    var format=function(html){
+		        var reg_di=new RegExp("<a[^>]*?href[ ]?=[\"']([^\"'>]*?)[\"'][^>]*?>(第[^\-<]*?)<","g");
+		        var arr=html.matches(reg_di);
+		        for(var i=0;i<arr.length;i++){
+		            arr[i][0]=arr[i][0].getFullUrl(url);
+		        }
+		        //下一页地址
+		        var reg=/<a[^>]*?href=["|']([^"']*?)["|][^>]*?>([^<第]*?下一页[^<]*?)</;
+		        var nexturl=html.match(reg);
+		        if(nexturl){
+		           nexturl=nexturl[1].getFullUrl(url);
+		        }
+				if(arr.length>0){
+					return Promise.resolve({arr:arr,url:nexturl});
+				}else{
+					return Promise.reject("err:list.format-format:arr.length=0");
+				}
+		    }
+		    fj.tip("开始获取html");
+		    return format(html).then(function(json){
+		    	var arr=json.arr;
+				//alert("开始分析json:arr:%s\nnexturl:%s".fill(arr,url));
+				return arr;
+		    }); 
 		},
 		getId: function() {
 			return Git.Comment.create("docfeng", "book-data", 1, "test").then(function(text) {

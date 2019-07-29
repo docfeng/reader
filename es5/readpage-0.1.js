@@ -54,7 +54,7 @@ function nextPage(){
 }
 
 showMsg=geth(2).showMsg;
-showMsg("fffggf");
+//showMsg("fffggf");
 
 /*
 !function() {
@@ -690,7 +690,7 @@ show=function(str){
         	if(nextindex<Page.arr.length){
         		Page.multiIndex(nextindex);
         	}else{
-        		alert("已阅读到书本末尾")
+        		fj.tip("已阅读到书本末尾")
         	}
         	$("#rd-txt").html(txt);
         	$("#page-name").html(Page.arr[i][1]+":    "+Page.name);

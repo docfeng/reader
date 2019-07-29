@@ -286,17 +286,19 @@
 			
 			.circle-menu {
 				position: absolute;//fixed;
-				bottom: 10%;
+				bottom: 40px;
 				right: 40px;
-				width: 30px;
+				width: 50px;
 				height: auto;
 				z-index: 90;
+				color: #000000;
+				font-size: 45px;
 				//background:greenyellow;
 			}
-		
-			.circle-menu-control1 {
-				width: 28px;
-				height: 28px;
+			
+			.circle-menu>div:last-child {
+				width: 50px;
+				height: 50px;
 				//display:block;
 				background-color: white;
 				border: 1px solid #AAF;
@@ -306,38 +308,52 @@
 				filter: alpha(Opacity=80);
 				-moz-opacity: 0.5;
 				opacity: 0.5;
-				
+				//background-color: green;
 			}
-		
-			.circle-menu-container {
-				width: 30px;
-				min-height: 180px;;
-				max-height: 300px;
+			
+			
+			.circle-menu>div:first-child {
+				width: 50px;
+				height: 400px;
 				overflow-x: scroll;
-				//overflow-y:hidden;
-				background-color: green;
-			}
-		
-			/* .circle-menu-container>div {
-				display: flex;
-				flex-direction: row; //column;
-				height: 100%;
-				width: 300%;
-				background-color: white;
-			} */
-		
-			.circle-menu-container>div {
-				flex: 1 1;
-				//background:red;
+				overflow-y:hidden;
+				border: 1px;
 				display: flex;
 				flex-direction: column;
+				//flex-wrap: wrap;
+				flex-flow: column wrap;
+				//align-content: flex-start;
+				background-color: lightgray;
+
 			}
-		
-			.circle-menu-container>div>div ,.circle-menu-container>div>span,.circle-menu-control1>div{
-				flex: 1 1;
-				width: 28px;
-				height: 28px;
+			
+			.circle-menu .icon-Button{
+				//flex: 1 1;
+				display: flex;
+				flex-direction: column;
+				flex-wrap: nowrap;
+				align-content: flex-start;
+				color: #000000;
+				background-color: #00AAFF;
+				margin: 2px 0px 2px 0px;
+				width: 48px;
+				height: 44px;
 				background-color: white;
+				border: 1px solid #AAF;
+				border-radius: 10%;
+				-moz-border-radius: 10%;
+				-webkit-border-radius: 10%;
+				//font-size: 1.2em;
+				text-align: center;
+				vertical-align:middle
+			}
+			.circle-menu .icon-Button>span:first-child{
+				font-size: 0.7em;
+				height: 70%;
+				text-align: center;
+				vertical-align:middle
+				word-break: keep-all;
+				//background-color: #00AAFF;
 				border: 1px solid #AAF;
 				border-radius: 50%;
 				-moz-border-radius: 50%;
@@ -345,13 +361,14 @@
 				filter: alpha(Opacity=80);
 				-moz-opacity: 0.5;
 				opacity: 0.5;
-				font-size: 1.2em;
-				text-align: center;
-				vertical-align:middle
-				//line-height:0px;
 			}
-		
-			
+			.circle-menu .icon-Button>span:last-child{
+				height: 20%;
+				text-align: center;
+				//word-break: keep-all;
+				font-size: 5px;
+				//background-color: #00AAFF;
+			}
 			/* span{
 				display: inline-block;
 				width: 28px;
@@ -745,19 +762,60 @@
 		
 		<div class="circle-menu">
 			<div class="circle-menu-container">
-				<div class="circle-menu-body">
-					<span class="iconfont icon-chaxun" value="搜索" onclick="UI.showSearch()"></span>
-					<span class="iconfont icon-reload" title="刷新" onclick="document.location.reload();"></span>
-					<span class="iconfont icon-cloud-sync" title='check' onclick="Shelf.checkChange()"></span>
-					<span class="iconfont icon-cloud-upload" title='检查更新' onclick="Shelf.update()"></span>
-					<span class="iconfont icon-setting" title="设置" onclick="UI.showSetting()"></span>
-					<span class="iconfont icon-delete" title='删除' onclick="shelf_table.dataset.order='delete'"></span>
-					<span class="iconfont icon-fullscreen" title='全屏' onclick="fullScreen()"></span>
-					<span class="iconfont icon-fullscreen-exit" title='退出全屏' onclick="exitScreen()"></span>
-					<span class="iconfont icon-arrowleft" title='后退' onclick="window.history.go(-1);"></span>
-					<span class="iconfont icon-earth" title='打开' onclick="window.open('https://so.m.sm.cn/s?uc_param_str=dnntnwvepffrgibijbprsvdsme&from=wh10516&uc_sm=1&q='+List.name)"></span>
-					<div onclick="window.location.reload()">↺</div>
-						<div>⇶</div>
+					<div class="icon-Button" onclick="UI.showSearch()">
+						<span class="iconfont icon-chaxun"></span>
+						<span >搜索</span>
+					</div>
+					
+					<div class="icon-Button" onclick="document.location.reload();">
+						<span class="iconfont icon-reload"></span>
+						<span >刷新</span>
+					</div>
+
+					<div class="icon-Button" onclick="Shelf.checkChange()">
+						<span class="iconfont icon-cloud-sync"></span>
+						<span >check</span>
+					</div>
+
+					<div class="icon-Button" onclick="Shelf.update()">
+						<span class="iconfont icon-cloud-upload"></span>
+						<span >检查更新</span>
+					</div>
+					<div class="icon-Button" onclick="UI.showSetting()">
+						<span class="iconfont icon-setting"></span>
+						<span >设置</span>
+					</div>
+					
+					<div class="icon-Button" onclick="shelf_table.dataset.order='delete'">
+						<span class="iconfont icon-delete"></span>
+						<span >删除</span>
+					</div>
+					
+					<div class="icon-Button" onclick="fullScreen()">
+						<span class="iconfont icon-fullscreen"></span>
+						<span >全屏</span>
+					</div>
+					
+					<div class="icon-Button" onclick="exitScreen()">
+						<span class="iconfont icon-fullscreen-exit"></span>
+						<span >退出全屏</span>
+					</div>
+					
+					<div class="icon-Button" onclick="window.history.go(-1);">
+						<span class="iconfont icon-arrowleft"></span>
+						<span >后退</span>
+					</div>
+					
+					<div class="icon-Button" onclick="window.open('https://so.m.sm.cn/s?uc_param_str=dnntnwvepffrgibijbprsvdsme&from=wh10516&uc_sm=1&q='+List.name)">
+						<span class="iconfont icon-earth"></span>
+						<span >打开</span>
+					</div>
+					
+					<div class="icon-Button" onclick="UI.showSearch()">
+						<span class="iconfont icon-chaxun"></span>
+						<span >搜索</span>
+					</div>
+						<!-- <div>⇶</div>
 						<div>⌂</div>
 						<div>⌫</div>
 						<div>╳</div>
@@ -777,10 +835,9 @@
 						<div>❐</div>
 						<div>❒</div>
 						<div>⊗</div>
-						<div>🗑</div>
-				</div>
+						<div>🗑</div> -->
 			</div>
-			<div class="circle-menu-control1" onclick="var style=this.previousElementSibling.style;if(!style.display||style.display=='block'){style.display='none';}else{style.display='block';}">
+			<div class="circle-menu-control1" onclick="var style=this.previousElementSibling.style;if(!style.display||style.display=='flex'){style.display='none';}else{style.display='flex';}">
 				<div></div>
 			</div>
 		</div>

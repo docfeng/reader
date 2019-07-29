@@ -7,31 +7,23 @@
 
 /* and (orientation : landscape) */
 	{
-	.circle-menu {
-		width: 60px;
-		height: auto;
-		font-size: 45px;
-	}
 
-	.circle-menu>div:last-child {
-		width: 58px;
-		height: 58px;
-	}
+	
 
 	.circle-menu>div:first-child {
-		width: 60px;
-		/* min-height: 180px;;
-							max-height: 300px; */
+		height: 300px;
 	}
-
-
-	.circle-menu-container>div>div,
-	.circle-menu-container>div>span,
-	.circle-menu-control1>div {
-		width: 58px;
-		height: 58px;
-		/* font-size: 1.2em; */
-	}
+	
+	/* 
+	.circle-menu .icon-Button{
+		flex: 1 1;
+		border: 1px solid #AAF;
+		flex-direction: column;
+		flex-wrap: nowrap;
+		width: 50px;
+		height: 50px;
+		
+	} */
 }
 
 /**
@@ -66,40 +58,14 @@
 		 * win8寸平板横屏
 		 */
 @media only screen and (min-device-width : 800px) and (max-device-width : 1280px) and (orientation : landscape) {
-	.circle-menu {
-		width: 60px;
-		height: auto;
-	}
-
-	.circle-menu-control1 {
-		width: 58px;
-		height: 58px;
-	}
-
-	.circle-menu-container {
-		width: 60px;
-		/* min-height: 180px;;
-				max-height: 300px; */
-	}
-
-
-	.circle-menu-container>div>div,
-	.circle-menu-container>div>span,
-	.circle-menu-control1>div {
-		width: 58px;
-		height: 58px;
-		/* font-size: 1.2em; */
-	}
+	
 }
 
 /**
 		 * win8寸平板竖屏
 		 */
 @media only screen and (min-device-width : 600px) and (max-device-width : 1380px) {
-	.circle-menu {
-		width: 60px;
-		height: 100%;
-	}
+	
 }
 
 @media only screen and (min-device-width : 800px) and (max-device-width : 1280px) and (orientation : portrait) {
@@ -108,23 +74,27 @@
 				height: auto;
 			} */
 
-	.circle-menu>div:last-child {
-		width: 58px;
-		height: 58px;
-	}
+	
+}
 
+@media only screen and (min-device-height : 500px){
 	.circle-menu>div:first-child {
-		width: 60px;
-		/* min-height: 180px;;
-						max-height: 300px; */
+		height: 400px;
 	}
+}
+@media only screen and (min-device-height : 600px){
+	.circle-menu>div:first-child {
+		height: 500px;
+	}
+}
+@media only screen and (min-device-height : 700px){
+	.circle-menu>div:first-child {
+		height: 600px;
+	}
+}
 
-
-	.circle-menu-container>div>div,
-	.circle-menu-container>div>span,
-	.circle-menu-control1>div {
-		width: 58px;
-		height: 58px;
-		/* font-size: 1.2em; */
+@media only screen and (min-device-height : 800px){
+	.circle-menu>div:first-child {
+		height: 700px;
 	}
 }

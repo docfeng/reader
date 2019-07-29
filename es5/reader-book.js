@@ -815,6 +815,7 @@ Shelf=(function(a){
 						Shelf.write(json);
 						var str =Shelf.formatUI(json);
 						shelf_table.rows[i].innerHTML=str;
+						List.write(name,arr)
 						return i+"更新完成";
 				}else{
 					return i+"没有更新";

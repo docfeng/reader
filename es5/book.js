@@ -45,11 +45,14 @@ Book = (function() {
 	var getHTML = function(url, para) {
 		var URL = "";
 		var xml=false;
-		if(localModel){
-			if(para=="real"){
-				xml=true;
-			}
+		if(para=="real"){
+			xml=true;
+		}
+		if(window.browser&&window.browser.MyApp){
+			var url=url;
+		}else if(localModel){
 			URL=localModel;
+			url=URL+"?url="+url;
 		}else{
 			switch (para) {
 				case "search":
@@ -69,8 +72,9 @@ Book = (function() {
 					URL = "http://gear.docfeng.top/get2.php";
 					break;
 			}
+			url=URL+"?url="+url;
 		}
-		url=URL+"?url="+url;
+		
 		//prompt("getHTML url",url)
 		return http.get(url,{xml:xml}).then(function(html){
 			var html=html;

@@ -77,23 +77,23 @@
 	
 }
 
-@media only screen and (min-device-height : 500px){
+@media (min-height : 500px){
 	.circle-menu>div:first-child {
 		height: 400px;
 	}
 }
-@media only screen and (min-device-height : 600px){
+@media (min-height : 600px){
 	.circle-menu>div:first-child {
 		height: 500px;
 	}
 }
-@media only screen and (min-device-height : 700px){
+@media (min-height : 700px){
 	.circle-menu>div:first-child {
 		height: 600px;
 	}
 }
 
-@media only screen and (min-device-height : 800px){
+@media (min-height : 800px){
 	.circle-menu>div:first-child {
 		height: 700px;
 	}

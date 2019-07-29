@@ -45,7 +45,7 @@ DB = (function() {
 				resolve(request.result);
 			};
 			request.onerror = function(event) {
-				reject(false);
+				reject(event);
 			}
 		});
 	}

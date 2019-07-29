@@ -392,17 +392,25 @@ Book = (function() {
 				DB.DB.close();
 				return true;
 			}).catch(function(e) {
+				//alert(JSON.stringify(e))
+				console.log(e)
+				console.log(e.srcElement.error.message)
 				DB.DB.close();
-				return t.createTable().then(function() {
-					return DB.Data.put("book", "list", json).then(function(json) {
-						DB.DB.close();
-						return true;
-					}).catch(function(e) {
-						DB.DB.close();
-						alert("Book.List" + e)
-						return false
+				return DB.Table.has("book", "list").then(function(foo1){
+					
+					return false;
+				}).catch(function(e){
+					return t.createTable().then(function() {
+						return DB.Data.put("book", "list", json).then(function(json) {
+							DB.DB.close();
+							return true;
+						}).catch(function(e) {
+							DB.DB.close();
+							alert("Book.List" + e)
+							return false
+						});
 					});
-				});
+				})
 			});
 		},
 		writeAll: function(json) {
@@ -567,7 +575,7 @@ Book = (function() {
 			});
 		},
 		createTable: function() {
-			alert("开始创建表格");
+			alert("开始List创建表格");
 			var data = {
 				key: "name",
 				index: {

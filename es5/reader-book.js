@@ -10,8 +10,15 @@ List = (function(a) {
 			return _List.getAll();
 		},
 		read: function(name) {
+			var t=this;
 			return _List.read(name).then(function(json) {
-				if (json) {
+				//alert(json.val.length)
+				if (json&&json.val) {
+					if(json.val.length==300){
+						return t.read(name+""+1).then(function(re){
+							return json.val.concat(re)
+						});
+					}
 					return json.val;
 				} else {
 					return false
@@ -21,12 +28,25 @@ List = (function(a) {
 		readAll: function() {
 			return _List.readAll();
 		},
-		write: function(name, val) {
+		write: function(name, arr) {
+			var arr1;
+			var t=this;
+			if(arr.length>300){
+				arr1=arr.splice(300,arr.length-1);
+			}
+			//alert(arr.length);
+			//alert(JSON.stringify(arr1,null,4))
 			var json = {
 				"name": name,
-				"val": val
+				"val": arr
 			};
-			return _List.write(json);
+			return _List.write(json).then(function(re){
+				if(arr1){
+					return t.write(name+""+1,arr1);
+				}else{
+					return re
+				}
+			});
 		},
 		writeAll: function(arr) {
 			return _List.writeAll(arr);
@@ -803,11 +823,18 @@ Shelf=(function(a){
 			return List.remote(url).then(function(arr){
 				var arr=arr;
 				if(!arr){
-					return i+"List.remote 没有arr";
+					return i+name+"List.remote 没有arr";
 				}
 				fj.tip("完成第"+i+"个；name="+name);
 				if(json.updateIndex!=arr.length){
-						arr = arr.pop();
+						//alert(JSON.stringify(arr))
+						List.write(name,arr)
+						.then(function(re){
+							fj.tip("List写入成功:"+name)
+						}).catch(function(e){
+							fj.tip("List写入失败:"+name+e)
+						})
+						arr = arr[arr.length-1];
 						json.updateTitle = arr[1];
 						json.updateURL = arr[0];
 						json.updateAt = formatDate(new Date());
@@ -815,10 +842,10 @@ Shelf=(function(a){
 						Shelf.write(json);
 						var str =Shelf.formatUI(json);
 						shelf_table.rows[i].innerHTML=str;
-						List.write(name,arr)
-						return i+"更新完成";
+						
+						return i+name+"更新完成";
 				}else{
-					return i+"没有更新";
+					return i+name+"没有更新";
 				}
 			}).catch(function(e){
 				return i+"List.remote 错误\n\t"+e;

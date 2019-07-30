@@ -470,7 +470,7 @@
 						<div class="head-menu-head" onclick="var style=this.nextElementSibling.style;if(!style.display||style.display=='block'){style.display='none';}else{style.display='block';}">
 							
 						</div>
-						<div class="head-menu-body" style="display: none;">
+						<div class="head-menu-body" style="display: none;" onclick="this.style.display='none';">
 							<div>
 								<div class="icon-Button">
 									<span class="iconfont icon-chaxun" value="搜索" onclick="UI.showSearch()"></span>
@@ -513,7 +513,7 @@
 							new:<span id="listNew"></span>
 							count:<span id="listCount"></span>
 						</div>
-						<div class="head-menu-body" style="display: none;">
+						<div class="head-menu-body" style="display: none;" onclick="this.style.display='none';">
 							<div>
 								<div class="icon-Button">
 									<span class="iconfont icon-chaxun" value="换源" onclick="List.changeSource(listName.innerText);"></span>

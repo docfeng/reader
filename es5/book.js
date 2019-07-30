@@ -447,8 +447,12 @@ Book = (function() {
 		remote: function(url) {
 			var t = this;
 			return getHTML(url, "list").then(function(html) {
-				if (!html) return Promise.reject("Book.List.remote:error no html");
-				if(localModel){
+				if (!html){
+					return Promise.reject("Book.List.remote:error no html");
+				}else{
+					return t.format(html, url);
+				}
+				/* if(localModel){
 					return t.format(html, url);
 				}else{
 					var charset = html.match(/charset=([^"]+)"/);
@@ -465,7 +469,7 @@ Book = (function() {
 							//return List.format(html,url);
 							return Promise.reject("error charset:" + charset);
 					}
-				}
+				} */
 			});
 		},
 		format1: function(html, url) {
@@ -540,7 +544,7 @@ Book = (function() {
 		    var arr=[];
 		    var format=function(html){
 		        var reg_di=new RegExp("<a[^>]*?href[ ]?=[\"']([^\"'>]*?)[\"'][^>]*?>(第[^\-<]*?)<","g");
-		        var reg_dl=new RegExp("<dl>([\\s\\S]*?)<\/dl>","g");
+		        var reg_dl=new RegExp("<dl[^>]*?>([\\s\\S]*?)<\/dl>","g");
 				var arr=html.match(reg_dl);
 				if(arr){
 					arr=arr[0].matches(reg_di);
@@ -550,7 +554,7 @@ Book = (function() {
 				}
 				
 				if(!arr||arr.length==0){
-					alert(html)
+					alert("Book.List.format:html没有dl\n"+html)
 					arr=html.matches(reg_di);
 					for(var i=0;i<arr.length;i++){
 					    arr[i][0]=arr[i][0].getFullUrl(url);

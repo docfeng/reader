@@ -821,19 +821,14 @@ Shelf=(function(a){
 			var name = json.name;
 			//Shelf.get(name).then(function(json){
 			return List.remote(url).then(function(arr){
-				var arr=arr;
+				var _arr=arr;
 				if(!arr){
 					return i+name+"List.remote 没有arr";
 				}
 				fj.tip("完成第"+i+"个；name="+name);
 				if(json.updateIndex!=arr.length){
 						//alert(JSON.stringify(arr))
-						List.write(name,arr)
-						.then(function(re){
-							fj.tip("List写入成功:"+name)
-						}).catch(function(e){
-							fj.tip("List写入失败:"+name+e)
-						})
+						
 						arr = arr[arr.length-1];
 						json.updateTitle = arr[1];
 						json.updateURL = arr[0];
@@ -842,6 +837,13 @@ Shelf=(function(a){
 						Shelf.write(json);
 						var str =Shelf.formatUI(json);
 						shelf_table.rows[i].innerHTML=str;
+						
+						List.write(name,_arr)
+						.then(function(re){
+							fj.tip("List写入成功:"+name)
+						}).catch(function(e){
+							fj.tip("List写入失败:"+name+e)
+						})
 						
 						return i+name+"更新完成";
 				}else{

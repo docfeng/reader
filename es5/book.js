@@ -290,7 +290,7 @@ Book = (function() {
 			var t=this;
 			this.readModel().then(function(re){
 				if(re){
-					return Git.File.put("docfeng","book-data","config/corsUrl.txt",JSON.stringify(re))
+					return Git.File.put("docfeng","book-data","config/corsUrl.txt",re)
 				}else{
 					return false;
 				}

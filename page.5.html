@@ -742,8 +742,10 @@
 					<input type=button value="moveData" onclick="Shelf.moveData()" />
 					<input type=button value="delBookDB" onclick="DB.DB.delete('book').then(function(a){alert('删除book数据库\n成功')}).catch(function(){alert('删除book数据库\n失败')})" />
 					<input type=button value="Page.clear" onclick="Page.clear()" />
+					<input type=button value="put模式" onclick="Book.Shelf.putModel('');" />
+					<input type=button value="get模式" onclick="Book.Shelf.getModel('');" />
 					<input type=button value="默认模式" onclick="Book.Shelf.setModel('');" />
-					<input type=button value="get模式" onclick="Book.Shelf.getModel();" />
+					<input type=button value="alert模式" onclick="Book.Shelf.alertModel();" />
 					<input type=button value="最优模式" onclick="Book.Shelf.setModel('http://gear.docfeng.top/get2.php')" />
 					<input type=button value="最优模式2" onclick="Book.Shelf.setModel('http://192.168.123.128/get2.php')" />
 					<input type=button value="最优模式3" onclick="Book.Shelf.setModel('http://gear2.docfeng.top/get2.php')" />

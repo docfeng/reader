@@ -286,27 +286,84 @@ Book = (function() {
 			alert("开始创建表格");
 			return Promise.all([this.createShelfTable(), this.createListTable(), this.createPageTable()]);
 		},
+		putModel:function(){
+			var t=this;
+			this.readModel().then(function(re){
+				if(re){
+					return Git.File.put("docfeng","book-data","config/corsUrl.txt",JSON.stringify(re))
+				}else{
+					return false;
+				}
+			}).then(function(re){
+				alert("Book.Shelf.putModel"+re);
+			}).catch(function(e){
+				alert("err:Book.Shelf.putModel\n"+e)
+			})
+		},
+		getModel:function(){
+			var t=this;
+			return Git.File.get("docfeng","book-data","config/corsUrl.txt").then(function(re){
+				var re=re;
+				if(!re){
+					re=[
+						"http://gear.docfeng.top/get2.php",
+						"http://gear2.docfeng.top/get2.php",
+						"http://192.168.123.128/get2.php",
+						"http://192.168.123.92:8080/get2.php",
+					];
+					return re;
+				}else{
+					return JSON.parse(re);
+				}
+			}).then(function(re){
+				alert(re)
+				t.writeModel(re)
+			});
+		},
+		writeModel:function(re){
+			var re=JSON.stringify(re);
+			store.setItem('localModels',re);
+		},
+		readModel:function(){
+			return store.getItem('localModels');
+		},
+		
 		setModel:function(url){
+			var t=this;
 			if(confirm(url)){
 				localModel=url;
 				store.setItem('localModel',url);
+				this.readModel().then(function(re){
+					var re=JSON.parse(re);
+					var b=false
+					for (var i = 0; i < re.length; i++) {
+						if(re[i]==url)b=true;
+					}
+					if(!b){
+						re.push(url);
+						t.writeModel(re);
+					}
+				});
 				//alert(localModel)
 			}
 		},
-		getModel:function(){
+		alertModel:function(){
 			prompt("localModel",localModel)
 		},
 		selectModel:function(){
 			var t=this;
-			fj.select("model",["",
-			"http://gear.docfeng.top/get2.php",
-			"http://gear2.docfeng.top/get2.php",
-			"http://192.168.123.128/get2.php",
-			"http://192.168.123.92:8080/get2.php",
-			])
-			.then(function(a){
-				t.setModel(a);
-			})
+			this.readModel().then(function(re){
+				var re=JSON.parse(re);
+				fj.select("model",re)
+				.then(function(a){
+					if(a){
+						t.setModel(a);
+					}
+					
+				})
+			}).catch(function(e){
+				alert(e)
+			})		
 		}
 	}
 

@@ -34,59 +34,69 @@
  */
 
 Book = (function() {
-	var localModel="";
-	store.getItem("localModel").then(function(url){
-		if(url){
-			localModel=url;
+	/* 模式，決定跨域方式 */
+	var localModel = "";
+	store.getItem("localModel").then(function(url) {
+		if (url) {
+			localModel = url;
 		}
-	}).catch(function(e){
-		alert("err:localModel:\n"+e)
+	}).catch(function(e) {
+		alert("err:localModel:\n" + e)
 	});
+	/**
+	 * @param {String} url
+	 * @param {Object} para
+	 * @return {String}
+	 */
 	var getHTML = function(url, para) {
 		var URL = "";
-		var xml=false;
-		if(para=="real"){
-			xml=true;
+		var xml = false;
+		if (para == "real") {
+			xml = true;
 		}
-		if(window.browser&&window.browser.MyApp){
-			var url=url;
-		}else if(localModel){
-			URL=localModel;
-			url=URL+"?url="+url;
-		}else{
+		if (window.browser && window.browser.MyApp) {
+			var url = url;
+		} else if (localModel) {
+			URL = localModel;
+			url = URL + "?url=" + url;
+		} else {
 			switch (para) {
 				case "search":
 					URL = "https://bird.ioliu.cn/v1/";
 					break;
 				case "real":
-				    xml=true;
+					xml = true;
 					URL = "http://gear.docfeng.top/get2.php";
 					break;
 				case "list":
 					URL = "https://bird.ioliu.cn/v2/";
 					break;
 				case "page":
-					URL = "http://gear.docfeng.top/get2.php";//"https://bird.ioliu.cn/v2/";
+					URL = "http://gear.docfeng.top/get2.php"; //"https://bird.ioliu.cn/v2/";
 					break;
 				default:
 					URL = "http://gear.docfeng.top/get2.php";
 					break;
 			}
-			url=URL+"?url="+url;
+			url = URL + "?url=" + url;
 		}
-		
-		//prompt("getHTML url",url)
-		return http.get(url,{xml:xml}).then(function(html){
-			var html=html;
-			if(!localModel&&para=="search")html = eval(html);
-			if(!html){
-				return Promise.reject("err:getHTML:\nno html:+"+html+"\nurl:"+url+"\nURL:"+URL);
+		return http.get(url, {
+			xml: xml
+		}).then(function(html) {
+			var html = html;
+			if (!localModel && para == "search") html = eval(html);
+			if (!html) {
+				return Promise.reject("err:getHTML:\nno html:+" + html + "\nurl:" + url + "\nURL:" + URL);
 			}
 			return html
-		}).catch(function(e){
-			return Promise.reject("err:getHTML:\n"+e);
+		}).catch(function(e) {
+			return Promise.reject("err:getHTML:\n" + e);
 		});
 	}
+	/**
+	 * @param {Object} str
+	 * @return {Boolen}
+	 */
 	var isJSON = function(str) {
 		if (typeof str == 'string') {
 			try {
@@ -105,12 +115,9 @@ Book = (function() {
 	}
 	var Shelf = {
 		get: function(id) {
-
-		},
-		getAll: function() {
-			return Git.Comment.get("docfeng", "book-data", 1).then(function(text) {
+			return Git.Comment.get("docfeng", "book-data", id).then(function(text) {
 				var json = JSON.parse(text);
-				var re = [];
+				/* var re = [];
 				for (var i = 0; i < json.length; i++) {
 					var item = isJSON(json[0].body);
 					if (item) {
@@ -120,7 +127,49 @@ Book = (function() {
 						Git.Comment.del("docfeng", "book-data", json[0].id);
 					}
 				}
-				return re;
+				return re; */
+				return text
+			});
+		},
+		getAll: function() {
+			var t=this
+			return Git.Issue.get("docfeng", "book-data", 1).then(function(text) {
+				var json1 = JSON.parse(text);
+				json1 = JSON.parse(json1.body);
+				var time1=json1[0].readAt;
+				Shelf.readAll().then(function(json2){
+					var time2=json2[0].readAt
+					if(time1==time2){
+						alert("沒有改變")
+					}else{
+						var j=[]
+						for(var i1=0;i1<json1.length;i1++){
+							var b=false;
+							for(var i2=0;i2<json2.length;i2++){
+								if(json1[i1].name==json2[i2].name){
+									b=true;
+									if(json1[i1].readAt>json2[i2].readAt){
+										/* 网络更新时间>本地更新时间，用网络的版本 */
+										j.push(json1[i1]);
+									}/* else if(json1[i1].readAt<json2[i2].readAt){
+										// 网络更新时间<本地更新时间，用本地的版本
+										j.push(json2[i2])
+									} */
+								}
+							} 
+							/* 如果本地沒有查到name，用网络的版本 */
+							if(!b){
+								j.push(json1[i1]);
+							}
+						} 
+						Shelf.writeAll(j).then(function(e){
+							alert(e)
+						}).catch(function(e){
+							alert(e)
+						});
+						console.log(JSON.stringify(j,null,4))
+					}
+				});
 			});
 		},
 		put: function(json) {
@@ -134,11 +183,21 @@ Book = (function() {
 			});
 		},
 		putAll: function(arr) {
-			var id = arr.id;
-
+			this.readAll().then(function(arr){
+				var text=JSON.stringify(arr,null,4)
+				Git.Issue.put("docfeng", "book-data", 1, "shelf", text, ["shelf"]).then(function(json) {
+					alert(json)
+				});
+			});
+		},
+		same:function(){
+			var t=this;
+			this.getAll().then(function(){
+				t.putAll()
+			});
 		},
 		readAll: function() {
-			var t=this;
+			var t = this;
 			return DB.Data.getIndex("book", "shelf", "readAt", null).then(function(json) {
 				DB.DB.close();
 				var json = json.reverse();
@@ -165,6 +224,7 @@ Book = (function() {
 			}).catch(function(e) {
 				DB.DB.close();
 				return t.ini().then(function() {
+					
 					return DB.Data.getKey("book", "shelf", name).then(function(json) {
 						DB.DB.close();
 						return true;
@@ -286,60 +346,111 @@ Book = (function() {
 			alert("开始创建表格");
 			return Promise.all([this.createShelfTable(), this.createListTable(), this.createPageTable()]);
 		},
-		putModel:function(){
+		moveData:function() {
 			var t=this;
-			this.readModel().then(function(re){
-				if(re){
-					return Git.File.put("docfeng","book-data","config/corsUrl.txt",re)
-				}else{
+			var arr1,arr2;
+			var re=[];
+			return DB.Table.has("book","shelf").catch(function(e){
+				alert(e)
+				return t.ini();
+			}).then(function(){
+				return Git.File.get("docfeng","page", "novel/data/Shelf.json").then(function(text){
+					var p=[];
+					arr1 = JSON.parse(text);
+					return t.readAll();
+				}).then(function(arr){
+					arr2=arr;
+				}).then(function(){
+					var err=[]
+					for(var i=0;i<arr1.length;i++){
+						for(var i2=0;i2<arr2.length;i2++){
+							if(arr1[i]&&arr1[i].name){
+								if(arr2[i2]&&arr2[i2].name){
+									if(arr1[i].name==arr2[i2].name){
+										if(new Date(arr1[i].updateAt)>new Date(arr2[i2].updateAt)){
+											re.push(arr1[i]);
+										}else{
+											re.push(arr2[i2]);
+										}
+										arr1.splice(i,1);
+										arr2.splice(i2,1);
+										i--;i2--;
+									}
+								}else{
+									err.push(["i2",i2])
+								}
+							}else{
+								err.push(["i",i])
+							}
+						} 
+					} 
+					re=re.concat(arr1,arr2)
+					t.writeAll(re).then(function(e){
+						alert(e)
+					}).catch(function(e){
+						alert(e)
+					});;
+				});
+			}).then(function(){
+				alert(true)
+			}).catch(function(e){
+				alert(e)
+			});
+		},
+		putModel: function() {
+			var t = this;
+			this.readModel().then(function(re) {
+				if (re) {
+					return Git.File.put("docfeng", "book-data", "config/corsUrl.txt", re)
+				} else {
 					return false;
 				}
-			}).then(function(re){
-				alert("Book.Shelf.putModel"+re);
-			}).catch(function(e){
-				alert("err:Book.Shelf.putModel\n"+e)
+			}).then(function(re) {
+				alert("Book.Shelf.putModel" + re);
+			}).catch(function(e) {
+				alert("err:Book.Shelf.putModel\n" + e)
 			})
 		},
-		getModel:function(){
-			var t=this;
-			return Git.File.get("docfeng","book-data","config/corsUrl.txt").then(function(re){
-				var re=re;
-				if(!re){
-					re=[
+		getModel: function() {
+			var t = this;
+			return Git.File.get("docfeng", "book-data", "config/corsUrl.txt").then(function(re) {
+				var re = re;
+				if (!re) {
+					re = [
 						"http://gear.docfeng.top/get2.php",
 						"http://gear2.docfeng.top/get2.php",
 						"http://192.168.123.128/get2.php",
 						"http://192.168.123.92:8080/get2.php",
 					];
 					return re;
-				}else{
+				} else {
 					return JSON.parse(re);
 				}
-			}).then(function(re){
+			}).then(function(re) {
 				alert(re)
 				t.writeModel(re)
 			});
 		},
-		writeModel:function(re){
-			var re=JSON.stringify(re);
-			store.setItem('localModels',re);
+		writeModel: function(re) {
+			var re = JSON.stringify(re);
+			store.setItem('localModels', re);
 		},
-		readModel:function(){
+		readModel: function() {
 			return store.getItem('localModels');
 		},
-		
-		setModel:function(url){
-			var t=this;
-			if(confirm(url)){
-				localModel=url;
-				store.setItem('localModel',url);
-				this.readModel().then(function(re){
-					var re=JSON.parse(re);
-					var b=false
+
+		setModel: function(url) {
+			var t = this;
+			if (confirm(url)) {
+				localModel = url;
+				store.setItem('localModel', url);
+				this.readModel().then(function(re) {
+					var re = JSON.parse(re);
+					var b = false
 					for (var i = 0; i < re.length; i++) {
-						if(re[i]==url)b=true;
+						if (re[i] == url) b = true;
 					}
-					if(!b){
+					if (!b) {
 						re.push(url);
 						t.writeModel(re);
 					}
@@ -347,23 +458,23 @@ Book = (function() {
 				//alert(localModel)
 			}
 		},
-		alertModel:function(){
-			prompt("localModel",localModel)
+		alertModel: function() {
+			prompt("localModel", localModel)
 		},
-		selectModel:function(){
-			var t=this;
-			this.readModel().then(function(re){
-				var re=JSON.parse(re);
-				fj.select("model",re)
-				.then(function(a){
-					if(a){
-						t.setModel(a);
-					}
-					
-				})
-			}).catch(function(e){
+		selectModel: function() {
+			var t = this;
+			this.readModel().then(function(re) {
+				var re = JSON.parse(re);
+				fj.select("model", re)
+					.then(function(a) {
+						if (a) {
+							t.setModel(a);
+						}
+
+					})
+			}).catch(function(e) {
 				alert(e)
-			})		
+			})
 		}
 	}
 
@@ -453,10 +564,10 @@ Book = (function() {
 				console.log(e)
 				console.log(e.srcElement.error.message)
 				DB.DB.close();
-				return DB.Table.has("book", "list").then(function(foo1){
-					
+				return DB.Table.has("book", "list").then(function(foo1) {
+
 					return false;
-				}).catch(function(e){
+				}).catch(function(e) {
 					return t.createTable().then(function() {
 						return DB.Data.put("book", "list", json).then(function(json) {
 							DB.DB.close();
@@ -504,9 +615,9 @@ Book = (function() {
 		remote: function(url) {
 			var t = this;
 			return getHTML(url, "list").then(function(html) {
-				if (!html){
+				if (!html) {
 					return Promise.reject("Book.List.remote:error no html");
-				}else{
+				} else {
 					return t.format(html, url);
 				}
 				/* if(localModel){
@@ -530,7 +641,7 @@ Book = (function() {
 			});
 		},
 		format1: function(html, url) {
-			var html=html.replace(/<img.*?>/g,"");
+			var html = html.replace(/<img.*?>/g, "");
 			var ele = document.createElement("html");
 			ele.innerHTML = html;
 			var b = document.createElement("base");
@@ -562,71 +673,74 @@ Book = (function() {
 				return Promise.reject("err list.format: no re");
 			}
 		},
-		format2:function(html,url){
-			var t=this;
-		    var html=html;
-		    var url=url;
-			if(!html||!url)return Promise.reject("err:list.format:参数错误\nurl="+url+"\nhtml"+html);
-		    var arr=[];
-		    var format=function(html){
-		        var reg_di=new RegExp("<a[^>]*?href[ ]?=[\"']([^\"'>]*?)[\"'][^>]*?>(第[^\-<]*?)<","g");
-		        var arr=html.matches(reg_di);
-		        for(var i=0;i<arr.length;i++){
-		            arr[i][0]=arr[i][0].getFullUrl(url);
-		        }
-		        //下一页地址
-		        var reg=/<a[^>]*?href=["|']([^"']*?)["|][^>]*?>([^<第]*?下一页[^<]*?)</;
-		        var nexturl=html.match(reg);
-		        if(nexturl){
-		           nexturl=nexturl[1].getFullUrl(url);
-		        }
-				if(arr.length>0){
-					return Promise.resolve({arr:arr,url:nexturl});
-				}else{
+		format2: function(html, url) {
+			var t = this;
+			var html = html;
+			var url = url;
+			if (!html || !url) return Promise.reject("err:list.format:参数错误\nurl=" + url + "\nhtml" + html);
+			var arr = [];
+			var format = function(html) {
+				var reg_di = new RegExp("<a[^>]*?href[ ]?=[\"']([^\"'>]*?)[\"'][^>]*?>(第[^\-<]*?)<", "g");
+				var arr = html.matches(reg_di);
+				for (var i = 0; i < arr.length; i++) {
+					arr[i][0] = arr[i][0].getFullUrl(url);
+				}
+				//下一页地址
+				var reg = /<a[^>]*?href=["|']([^"']*?)["|][^>]*?>([^<第]*?下一页[^<]*?)</;
+				var nexturl = html.match(reg);
+				if (nexturl) {
+					nexturl = nexturl[1].getFullUrl(url);
+				}
+				if (arr.length > 0) {
+					return Promise.resolve({
+						arr: arr,
+						url: nexturl
+					});
+				} else {
 					return Promise.reject("err:list.format-format:arr.length=0");
 				}
-		    }
-		    fj.tip("开始获取html");
-		    return format(html).then(function(json){
-		    	var arr=json.arr;
+			}
+			fj.tip("开始获取html");
+			return format(html).then(function(json) {
+				var arr = json.arr;
 				//alert("开始分析json:arr:%s\nnexturl:%s".fill(arr,url));
 				return arr;
-		    }); 
+			});
 		},
-		format:function(html,url){
-			var t=this;
-		    var html=html;
-		    var url=url;
-			if(!html||!url)return Promise.reject("err:list.format:参数错误\nurl="+url+"\nhtml"+html);
-		    var arr=[];
-		    var format=function(html){
-		        var reg_di=new RegExp("<a[^>]*?href[ ]?=[\"']([^\"'>]*?)[\"'][^>]*?>(第[^\-<]*?)<","g");
-		        var reg_dl=new RegExp("<dl[^>]*?>([\\s\\S]*?)<\/dl>","g");
-				var arr=html.match(reg_dl);
-				if(arr){
-					arr=arr[0].matches(reg_di);
-					for(var i=0;i<arr.length;i++){
-					    arr[i][0]=arr[i][0].getFullUrl(url);
+		format: function(html, url) {
+			var t = this;
+			var html = html;
+			var url = url;
+			if (!html || !url) return Promise.reject("err:list.format:参数错误\nurl=" + url + "\nhtml" + html);
+			var arr = [];
+			var format = function(html) {
+				var reg_di = new RegExp("<a[^>]*?href[ ]?=[\"']([^\"'>]*?)[\"'][^>]*?>(第[^\-<]*?)<", "g");
+				var reg_dl = new RegExp("<dl[^>]*?>([\\s\\S]*?)<\/dl>", "g");
+				var arr = html.match(reg_dl);
+				if (arr) {
+					arr = arr[0].matches(reg_di);
+					for (var i = 0; i < arr.length; i++) {
+						arr[i][0] = arr[i][0].getFullUrl(url);
 					}
 				}
-				
-				if(!arr||arr.length==0){
-					alert("Book.List.format:html没有dl\n"+html)
-					arr=html.matches(reg_di);
-					for(var i=0;i<arr.length;i++){
-					    arr[i][0]=arr[i][0].getFullUrl(url);
+
+				if (!arr || arr.length == 0) {
+					alert("Book.List.format:html没有dl\n" + html)
+					arr = html.matches(reg_di);
+					for (var i = 0; i < arr.length; i++) {
+						arr[i][0] = arr[i][0].getFullUrl(url);
 					}
 				}
-		        //下一页地址
-		        var reg=/<a[^>]*?href=["|']([^"']*?)["|][^>]*?>([^<第]*?下一页[^<]*?)</;
-		        var nexturl=html.match(reg);
-		        if(nexturl){
-		           nexturl=nexturl[1].getFullUrl(url);
-		        }
-				return arr;//{arr:arr,url:nexturl};
-		    }
-		    fj.tip("开始获取html");
-		    return format(html);
+				//下一页地址
+				var reg = /<a[^>]*?href=["|']([^"']*?)["|][^>]*?>([^<第]*?下一页[^<]*?)</;
+				var nexturl = html.match(reg);
+				if (nexturl) {
+					nexturl = nexturl[1].getFullUrl(url);
+				}
+				return arr; //{arr:arr,url:nexturl};
+			}
+			fj.tip("开始获取html");
+			return format(html);
 		},
 		getId: function() {
 			return Git.Comment.create("docfeng", "book-data", 1, "test").then(function(text) {
@@ -650,23 +764,23 @@ Book = (function() {
 	}
 
 	var Page = {
-		multi: function(name,url) {
+		multi: function(name, url) {
 			var t = this;
 			//alert(url)
-			return t.read(name,url).then(function(txt) {
-				if(txt){
+			return t.read(name, url).then(function(txt) {
+				if (txt) {
 					return txt.txt;
-				}else{
+				} else {
 					return Promise.reject("no");;
 				}
 			}).catch(function() {
 				return t.remote(url).then(function(txt) {
-					if(txt){
+					if (txt) {
 						return txt;
-					}else{
-						return Promise.reject("Page.mult:\n txt:"+txt);;
+					} else {
+						return Promise.reject("Page.mult:\n txt:" + txt);;
 					}
-					
+
 				});
 			});
 		},
@@ -675,20 +789,20 @@ Book = (function() {
 			return getHTML(url, "page").then(function(html) {
 				if (html) {
 					return t.format(html, url).then(function(txt) {
-						if(!txt){
-							return Promise.reject("Page.format:没有获取到txt\n"+txt);
-						}else{
+						if (!txt) {
+							return Promise.reject("Page.format:没有获取到txt\n" + txt);
+						} else {
 							return txt;
 						}
 					}).catch(function(e) {
-						return Promise.reject("Page.format:\nerr:"+e);
+						return Promise.reject("Page.format:\nerr:" + e);
 					});
 				} else {
-					return Promise.reject("Page.remote:没有获取到HTML\n"+html);
+					return Promise.reject("Page.remote:没有获取到HTML\n" + html);
 				}
 			});
 		},
-		read: function(name,url) {
+		read: function(name, url) {
 			var name = name + url;
 			var t = this;
 			return DB.Data.getKey("book", "page", name).then(function(json) {
@@ -777,7 +891,7 @@ Book = (function() {
 				}
 			}
 			txt = txt ? txt[1] : "";
-			if(!txt)return Promise.reject("没有txt;\nurl="+url+"\nhtml=\n"+html);
+			if (!txt) return Promise.reject("没有txt;\nurl=" + url + "\nhtml=\n" + html);
 			return Promise.resolve(txt);
 			/* //匹配下一章地址
 			var reg = /<a[^>]*?href="([^"]*?)"[^>]*?>下[^<]*?</;
@@ -803,30 +917,30 @@ Book = (function() {
 		multi: function(name) {
 			var t = this;
 			return t.read(name).then(function(json) {
-				if(json&&json.arr){
+				if (json && json.arr) {
 					return json.arr;
-				}else{
-					return Promise.reject("book.search.read:no json:"+json);;
+				} else {
+					return Promise.reject("book.search.read:no json:" + json);;
 				}
 			}).catch(function() {
 				return t.remote(name).then(function(arr) {
-					if(arr){
+					if (arr) {
 						return arr;
-					}else{
-						return Promise.reject("book.search.remote:no arr"+arr);;
+					} else {
+						return Promise.reject("book.search.remote:no arr" + arr);;
 					}
 				});
 			});
 		},
 		remote: function(name) {
-			var t=this;
+			var t = this;
 			var url = "https://www.baidu.com/s?q1=" + name + "&rn=10";
 			return getHTML(url, "search").then(function(html) {
 				fj.tip("已获取到数据，开始格式化")
 				//alert(html)
 				return t.format(html);
-			}).catch(function(e){
-				return Promise.reject("err:book.search.remote:\n"+e);
+			}).catch(function(e) {
+				return Promise.reject("err:book.search.remote:\n" + e);
 			})
 		},
 		read: function(name) {
@@ -856,7 +970,7 @@ Book = (function() {
 			var t = this;
 			var json = {
 				name: name,
-				arr : arr
+				arr: arr
 			}
 			return DB.Data.put("book", "search", json).then(function(json) {
 				DB.DB.close();
@@ -876,16 +990,16 @@ Book = (function() {
 			});
 		},
 		formatUI: function(arr) {
-			var txt="";
+			var txt = "";
 			return Promise.resolve(txt);
 		},
 		format: function(html) {
-			if(!html){
-				return Promise.reject("book.search.format:no html:\n"+html);
+			if (!html) {
+				return Promise.reject("book.search.format:no html:\n" + html);
 			}
 			fj.tip("开始格式化")
-			var t=this;
-			var html=html.replace(/<img.*?>/g,"");
+			var t = this;
+			var html = html.replace(/<img.*?>/g, "");
 			var h = document.createElement("html");
 			h.innerHTML = html;
 			var d = h.getElementsByTagName("div");
@@ -896,33 +1010,33 @@ Book = (function() {
 					re.push([a.href, a.innerHTML])
 				}
 			}
-			if(re.length==0){
+			if (re.length == 0) {
 				fj.tip("格式化成功")
-				return Promise.reject("book.search.format:no arr:\n"+JSON.stringify(re,null,4));
+				return Promise.reject("book.search.format:no arr:\n" + JSON.stringify(re, null, 4));
 			}
 			fj.tip("格式化失败")
 			return Promise.resolve(re);;
 		},
-		formatAll:function(arr){
-			var p=[];
-			var t=this;
+		formatAll: function(arr) {
+			var p = [];
+			var t = this;
 			for (var i = 0; i < arr.length; i++) {
-					var url=arr[i][0];
-					p.push(this.checkCharset(url));
+				var url = arr[i][0];
+				p.push(this.checkCharset(url));
 			}
 			return Promise.all(p).then(function(a) {
 				var r = [];
-				var p=[];
-				for (var i =0;i< a.length; i++) {
-					if(a[i]){
+				var p = [];
+				for (var i = 0; i < a.length; i++) {
+					if (a[i]) {
 						r.push(re[i]);
-						p.push(t.getRealPath(arr[i][0],arr[i][1]))
+						p.push(t.getRealPath(arr[i][0], arr[i][1]))
 					}
 				}
 				return Promise.all(p);
 			}).catch(function(a) {
-				alert("err:book.search.formatAll:\n"+a)
-				return Promise.reject("err:book.search.formatAll:\n"+a);
+				alert("err:book.search.formatAll:\n" + a)
+				return Promise.reject("err:book.search.formatAll:\n" + a);
 			});
 		},
 		checkCharset: function(url) {
@@ -933,22 +1047,22 @@ Book = (function() {
 					return false;
 				}
 			}).catch(function(a) {
-				alert("err:book.search.checkCharset:\n"+a)
-				return Promise.reject("err:book.search.checkCharset:\n"+a);
+				alert("err:book.search.checkCharset:\n" + a)
+				return Promise.reject("err:book.search.checkCharset:\n" + a);
 			});
 		},
-		getRealPath: function(url,title) {
-			var t=this;
+		getRealPath: function(url, title) {
+			var t = this;
 			return getHTML(url, "real").then(function(json) {
 				var url = json.xml.getResponseHeader("url");
-				if(title){
-					return [url,title];
-				}else{
-					var arr=List.format(json.html,url);
-					return [url,arr];
+				if (title) {
+					return [url, title];
+				} else {
+					var arr = List.format(json.html, url);
+					return [url, arr];
 				}
 			}).catch(function(a) {
-				return Promise.resolve("book.search.getRealPath:\n"+a);;
+				return Promise.resolve("book.search.getRealPath:\n" + a);;
 			});
 		},
 		createTable: function() {
@@ -956,12 +1070,12 @@ Book = (function() {
 				key: "name",
 				index: {
 					name: true,
-					arr:false
+					arr: false
 				}
 			};
 			return DB.Table.create("book", "search", data);
 		}
-		
+
 	}
 	var download = {
 

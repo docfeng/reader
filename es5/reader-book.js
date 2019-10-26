@@ -12,14 +12,9 @@ List = (function(a) {
 		read: function(name) {
 			var t=this;
 			return _List.read(name).then(function(json) {
-				//alert(json.val.length)
 				if (json&&json.val) {
-					if(json.val.length==300){
-						return t.read(name+""+1).then(function(re){
-							return json.val.concat(re)
-						});
-					}
-					return json.val;
+					var re=JSON.parse(json.val);
+					return re;
 				} else {
 					return false
 				}
@@ -29,23 +24,12 @@ List = (function(a) {
 			return _List.readAll();
 		},
 		write: function(name, arr) {
-			var arr1;
-			var t=this;
-			if(arr.length>300){
-				arr1=arr.splice(300,arr.length-1);
-			}
-			//alert(arr.length);
-			//alert(JSON.stringify(arr1,null,4))
 			var json = {
 				"name": name,
-				"val": arr
+				"val": JSON.stringify(arr)
 			};
 			return _List.write(json).then(function(re){
-				if(arr1){
-					return t.write(name+""+1,arr1);
-				}else{
-					return re
-				}
+				return re
 			});
 		},
 		writeAll: function(arr) {
@@ -59,7 +43,6 @@ List = (function(a) {
 		},
 		remote: function(url) {
 			return _List.remote(url).then(function(arr) {
-				//List.arr = arr;
 				return arr;
 			});
 		},
@@ -538,6 +521,9 @@ Shelf=(function(a){
 	var _Shelf=Book.Shelf;
 	var Arr,Json;
 	var Shelf = {
+		same:function(){
+			return _Shelf.same();
+		},
 		get:function(name){
 			return _Shelf.get(name);
 		},
@@ -738,21 +724,22 @@ Shelf=(function(a){
 				alert(e)
 			});
 		},
-		upload: async function() {
-			var json = await this.getAllIndexData("readAt");
-			json = json.reverse();
-			json = JSON.stringify(json, null, 4);
-	
-			await git.getFile("page", "novel/data/Shelf.json");
-			var re = await git.createFile({
-				owner: "docfeng",
-				repos: "page",
-				name: "novel/data/Shelf.json",
-				txt: json
-			});
-			alert(re);
+		upload:function() {
+			this.getAllIndexData("readAt").then(function(json){
+				var json = json.reverse();
+				json = JSON.stringify(json, null, 4);
+				git.getFile("page", "novel/data/Shelf.json").then(function(foo1){
+					git.createFile({
+						owner: "docfeng",
+						repos: "page",
+						name: "novel/data/Shelf.json",
+						txt: json
+					}).then(function(re){
+						alert(re);
+					});
+				});				
+			});			
 		},
-		
 		click:function(obj, order) {
 			var order = order ||"click"
 			var obj = obj.parentNode;
@@ -792,7 +779,6 @@ Shelf=(function(a){
 				this.delete(i);
 			}
 		},
-		
 		updateTop10:function() {
 			var arr = this.arr;
 			if(!arr){

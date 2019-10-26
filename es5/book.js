@@ -137,7 +137,7 @@ Book = (function() {
 				var json1 = JSON.parse(text);
 				json1 = JSON.parse(json1.body);
 				var time1=json1[0].readAt;
-				Shelf.readAll().then(function(json2){
+				return t.readAll().then(function(json2){
 					var time2=json2[0].readAt
 					if(time1==time2){
 						alert("沒有改變")
@@ -151,10 +151,7 @@ Book = (function() {
 									if(json1[i1].readAt>json2[i2].readAt){
 										/* 网络更新时间>本地更新时间，用网络的版本 */
 										j.push(json1[i1]);
-									}/* else if(json1[i1].readAt<json2[i2].readAt){
-										// 网络更新时间<本地更新时间，用本地的版本
-										j.push(json2[i2])
-									} */
+									}
 								}
 							} 
 							/* 如果本地沒有查到name，用网络的版本 */
@@ -162,12 +159,8 @@ Book = (function() {
 								j.push(json1[i1]);
 							}
 						} 
-						Shelf.writeAll(j).then(function(e){
-							alert(e)
-						}).catch(function(e){
-							alert(e)
-						});
-						console.log(JSON.stringify(j,null,4))
+						console.log(JSON.stringify(j,null,4));
+						return t.writeAll(j);
 					}
 				});
 			});
@@ -183,11 +176,9 @@ Book = (function() {
 			});
 		},
 		putAll: function(arr) {
-			this.readAll().then(function(arr){
+			return this.readAll().then(function(arr){
 				var text=JSON.stringify(arr,null,4)
-				Git.Issue.put("docfeng", "book-data", 1, "shelf", text, ["shelf"]).then(function(json) {
-					alert(json)
-				});
+				return Git.Issue.put("docfeng", "book-data", 1, "shelf", text, ["shelf"]);
 			});
 		},
 		same:function(){

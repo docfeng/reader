@@ -52,7 +52,16 @@ function nextPage(){
   }
   
 }
-
+window.onkeydown=function(e){
+	switch(e.keyCode){
+		case 40://下
+			window.next();
+			break;
+		case 38://上
+			window.uppage();
+			break;
+	}
+}
 showMsg=geth(2).showMsg;
 //showMsg("fffggf");
 
@@ -686,10 +695,11 @@ show=function(str){
         	txt=Page.formatUI(txt);
         	//alert(txt)
         	Page.index1=i;
-        	var nextindex=i+1;
+        	/* var nextindex=i+1;
         	if(nextindex<Page.arr.length){
         		Page.multiIndex(nextindex);
-        	}else{
+        	} */
+			if(i+1==Page.arr.length){
         		fj.tip("已阅读到书本末尾")
         	}
         	$("#rd-txt").html(txt);
@@ -717,16 +727,16 @@ show=function(str){
       pageIndex--;
       window.section(pageIndex,200);
     }
-    window.section=async function(i,t){
+    window.section=function(i,t){
       et.removeClass("fn-on cfg-on");
         pageIndex=i;
         if(0 >= pageIndex){
         //如果页面<=0,上一章;
           //pageIndex = 1;
           //upChapter();
-          await window.page(Page.index1-1);
-          window.section(pageCount,0)
-          
+          window.page(Page.index1-1).then(function(foo1){
+          	window.section(pageCount,0)
+          });
         }else if(pageIndex > pageCount){
         //如果页码>页数,下一章;
           pageIndex = pageCount;
@@ -867,7 +877,7 @@ show=function(str){
     //t.exports = st
     
     //初始化
-    window.addEventListener("load",async function(){
+    window.addEventListener("load",function(){
 		  //点击显示目录
 		  document.getElementById("idx-zd").onclick = function() {
 		        Page.showList();

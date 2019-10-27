@@ -117,74 +117,137 @@ Book = (function() {
 		get: function(id) {
 			return Git.Comment.get("docfeng", "book-data", id).then(function(text) {
 				var json = JSON.parse(text);
-				/* var re = [];
-				for (var i = 0; i < json.length; i++) {
-					var item = isJSON(json[0].body);
-					if (item) {
-						item.updated_at = json[0].updated_at;
-						re.push(item)
-					} else {
-						Git.Comment.del("docfeng", "book-data", json[0].id);
-					}
-				}
-				return re; */
+				prompt(json.id)
+				alert(json.body)
 				return text
 			});
 		},
 		getAll: function() {
-			var t=this
+			var t = this
 			return Git.Issue.get("docfeng", "book-data", 1).then(function(text) {
 				var json1 = JSON.parse(text);
 				json1 = JSON.parse(json1.body);
-				var time1=json1[0].readAt;
-				return t.readAll().then(function(json2){
-					var time2=json2[0].readAt
-					if(time1==time2){
+				var time1 = json1[0].readAt;
+				return t.readAll().then(function(json2) {
+					var time2 = json2[0].readAt
+					if (time1 == time2) {
 						alert("沒有改變")
-					}else{
-						var j=[]
-						for(var i1=0;i1<json1.length;i1++){
-							var b=false;
-							for(var i2=0;i2<json2.length;i2++){
-								if(json1[i1].name==json2[i2].name){
-									b=true;
-									if(json1[i1].readAt>json2[i2].readAt){
+					} else {
+						var j = []
+						for (var i1 = 0; i1 < json1.length; i1++) {
+							var b = false;
+							for (var i2 = 0; i2 < json2.length; i2++) {
+								if (json1[i1].name == json2[i2].name) {
+									b = true;
+									if (json1[i1].readAt > json2[i2].readAt) {
 										/* 网络更新时间>本地更新时间，用网络的版本 */
 										j.push(json1[i1]);
 									}
 								}
-							} 
+							}
 							/* 如果本地沒有查到name，用网络的版本 */
-							if(!b){
+							if (!b) {
 								j.push(json1[i1]);
 							}
-						} 
-						console.log(JSON.stringify(j,null,4));
+						}
+						console.log(JSON.stringify(j, null, 4));
 						return t.writeAll(j);
 					}
 				});
 			});
 		},
 		put: function(json) {
-			var id = json.id;
-			if (!id) {
-				return this.add(json);
+			if (!json.id) {
+				var text = JSON.stringify(json, null, 4)
+				return Git.Comment.create("docfeng", "book-data", 1, text).then(function(text1) {
+					var json1 = JSON.parse(text1)
+					json.id = json1.id;
+					Shelf.write(json);
+					return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
+				});
+			} else {
+				return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
 			}
-			var txt = JSON.stringify(json);
-			return Git.Comment.put("docfeng", "book-data", id, txt).then(function(text) {
-				return true;
-			});
 		},
 		putAll: function(arr) {
-			return this.readAll().then(function(arr){
-				var text=JSON.stringify(arr,null,4)
+			return this.readAll().then(function(arr) {
+				var text = JSON.stringify(arr, null, 4)
 				return Git.Issue.put("docfeng", "book-data", 1, "shelf", text, ["shelf"]);
 			});
 		},
-		same:function(){
-			var t=this;
-			this.getAll().then(function(){
+		same: function() {
+			var t = this;
+			this.getAll().then(function() {
 				t.putAll()
+			});
+		},
+		samePart: function() {
+			//未完成
+			var d = new Date("2019-07-23T17:23:10");
+			Git.Comment.getSince("docfeng", "book-data", 1, d).then(function(re) {
+				var json = JSON.parse(re);
+				for (var i = 0; i < json.length; i++) {
+					alert(new Date(json[i].updated_at))
+				}
+			}).catch(function(e) {
+				alert(e)
+			});
+		},
+		sameAll: function() {
+			var t=this;
+			return Git.Comment.gets("docfeng", "book-data", 1).then(function(text) {
+				var json1 = JSON.parse(text);
+				return t.readAll().then(function(json2) {
+					var j = [];
+					for (var i1 = 0; i1 < json1.length; i1++) {
+						var json3 = JSON.parse(json1[i1].body);
+						var b = false;
+						for (var i2 = 0; i2 < json2.length; i2++) {
+							if (json3.name == json2[i2].name) {
+								b = true;
+								if ((json3.readAt > json2[i2].readAt) || !json2[i2].id) {
+									/* 网络更新时间>本地更新时间，或者本地没有id，
+									用网络的版本（替换） */
+									j.push(json3);
+									json2[i2] = json3;
+								}
+							}
+						}
+						/* 如果本地沒有查到name，用网络的版本（添加） */
+						if (!b) {
+							j.push(json3);
+						}
+					}
+
+					//写入改变项
+					if (j.length > 0) {
+						t.writeAll(j);
+					}
+					//console.log(JSON.stringify(j,null,4));
+					//console.log(JSON.stringify(json2,null,4));
+					var p = [];
+					var addGit = function(json) {
+						var text = JSON.stringify(json, null, 4)
+						return Git.Comment.create("docfeng", "book-data", 1, text).then(function(text1) {
+							var json1 = JSON.parse(text1);
+							json.id = json1.id;
+							t.write(json);
+							return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4)).then(function(
+								text) {
+								return json.name
+							});
+						});
+					}
+					for (var i2 = 0; i2 < json2.length; i2++) {
+						if (!json2[i2].id) {
+							p.push(addGit(json2[i2]));
+						}
+					}
+					/* Promise.all(p).then(function(re){
+						alert(JSON.stringify(re,null,4))
+					}); */
+					return Promise.all(p);
+				});
 			});
 		},
 		readAll: function() {
@@ -215,7 +278,7 @@ Book = (function() {
 			}).catch(function(e) {
 				DB.DB.close();
 				return t.ini().then(function() {
-					
+
 					return DB.Data.getKey("book", "shelf", name).then(function(json) {
 						DB.DB.close();
 						return true;
@@ -337,54 +400,55 @@ Book = (function() {
 			alert("开始创建表格");
 			return Promise.all([this.createShelfTable(), this.createListTable(), this.createPageTable()]);
 		},
-		moveData:function() {
-			var t=this;
-			var arr1,arr2;
-			var re=[];
-			return DB.Table.has("book","shelf").catch(function(e){
+		moveData: function() {
+			var t = this;
+			var arr1, arr2;
+			var re = [];
+			return DB.Table.has("book", "shelf").catch(function(e) {
 				alert(e)
 				return t.ini();
-			}).then(function(){
-				return Git.File.get("docfeng","page", "novel/data/Shelf.json").then(function(text){
-					var p=[];
+			}).then(function() {
+				return Git.File.get("docfeng", "page", "novel/data/Shelf.json").then(function(text) {
+					var p = [];
 					arr1 = JSON.parse(text);
 					return t.readAll();
-				}).then(function(arr){
-					arr2=arr;
-				}).then(function(){
-					var err=[]
-					for(var i=0;i<arr1.length;i++){
-						for(var i2=0;i2<arr2.length;i2++){
-							if(arr1[i]&&arr1[i].name){
-								if(arr2[i2]&&arr2[i2].name){
-									if(arr1[i].name==arr2[i2].name){
-										if(new Date(arr1[i].updateAt)>new Date(arr2[i2].updateAt)){
+				}).then(function(arr) {
+					arr2 = arr;
+				}).then(function() {
+					var err = []
+					for (var i = 0; i < arr1.length; i++) {
+						for (var i2 = 0; i2 < arr2.length; i2++) {
+							if (arr1[i] && arr1[i].name) {
+								if (arr2[i2] && arr2[i2].name) {
+									if (arr1[i].name == arr2[i2].name) {
+										if (new Date(arr1[i].updateAt) > new Date(arr2[i2].updateAt)) {
 											re.push(arr1[i]);
-										}else{
+										} else {
 											re.push(arr2[i2]);
 										}
-										arr1.splice(i,1);
-										arr2.splice(i2,1);
-										i--;i2--;
+										arr1.splice(i, 1);
+										arr2.splice(i2, 1);
+										i--;
+										i2--;
 									}
-								}else{
-									err.push(["i2",i2])
+								} else {
+									err.push(["i2", i2])
 								}
-							}else{
-								err.push(["i",i])
+							} else {
+								err.push(["i", i])
 							}
-						} 
-					} 
-					re=re.concat(arr1,arr2)
-					t.writeAll(re).then(function(e){
+						}
+					}
+					re = re.concat(arr1, arr2)
+					t.writeAll(re).then(function(e) {
 						alert(e)
-					}).catch(function(e){
+					}).catch(function(e) {
 						alert(e)
 					});;
 				});
-			}).then(function(){
+			}).then(function() {
 				alert(true)
-			}).catch(function(e){
+			}).catch(function(e) {
 				alert(e)
 			});
 		},
@@ -1046,6 +1110,7 @@ Book = (function() {
 			var t = this;
 			return getHTML(url, "real").then(function(json) {
 				var url = json.xml.getResponseHeader("url");
+				url = url || json.xml.responseURL;
 				if (title) {
 					return [url, title];
 				} else {

@@ -1,4 +1,3 @@
-
 List = (function(a) {
 	var _List = Book.List;
 	var Arr, Json;
@@ -10,10 +9,10 @@ List = (function(a) {
 			return _List.getAll();
 		},
 		read: function(name) {
-			var t=this;
+			var t = this;
 			return _List.read(name).then(function(json) {
-				if (json&&json.val) {
-					var re=JSON.parse(json.val);
+				if (json && json.val) {
+					var re = JSON.parse(json.val);
 					return re;
 				} else {
 					return false
@@ -28,7 +27,7 @@ List = (function(a) {
 				"name": name,
 				"val": JSON.stringify(arr)
 			};
-			return _List.write(json).then(function(re){
+			return _List.write(json).then(function(re) {
 				return re
 			});
 		},
@@ -46,7 +45,7 @@ List = (function(a) {
 				return arr;
 			});
 		},
-		add: async function(name, url, arr) {
+		add: function(name, url, arr) {
 			var t = this;
 			var json = this.json;
 			var json1 = {};
@@ -73,16 +72,16 @@ List = (function(a) {
 			} else {
 				json1 = json.splice(num, 1)[0]; //json[num];
 				json1.url = url;
-				json1.updateIndex = arr.length - 1,
-					json1.updateTitle = arr[arr.length - 1][1],
-					json1.updateAt = formatDate(new Date()),
-					json1.updateURL = arr[arr.length - 1][0];
+				json1.updateIndex = arr.length - 1;
+				json1.updateTitle = arr[arr.length - 1][1];
+				json1.updateAt = formatDate(new Date());
+				json1.updateURL = arr[arr.length - 1][0];
 				//this.show({index:num})
 			}
 			json.unshift(json1);
 			this.show()
 			//alert(json1)
-			var re = await this.setKeyData(json1);
+			this.setKeyData(json1);
 		},
 		delete: function(i) {
 			var name = this.json[i].name;
@@ -194,7 +193,7 @@ List = (function(a) {
 			listUrl.innerText = url;
 		},
 		showarr: function(arr) {
-			if(!arr){
+			if (!arr) {
 				alert("list.showarr 没有arr");
 				return false
 			}
@@ -213,12 +212,12 @@ List = (function(a) {
 		},
 		//目录滚动到第i个
 		scroll: function(i) {
-			var obj=list_table.rows[i];
-			if(obj){
+			var obj = list_table.rows[i];
+			if (obj) {
 				var h = obj.offsetTop
 				list_table.parentNode.scrollTop = h
-			}else{
-				fj.tip("List.scroll超出界限：i="+i);
+			} else {
+				fj.tip("List.scroll超出界限：i=" + i);
 			}
 		},
 
@@ -228,70 +227,63 @@ List = (function(a) {
 			this.showPageIndex(i);
 			//fullScreen(document.querySelector("#pageDiv"))
 		},
-		showPageIndex:function(i){
+		showPageIndex: function(i) {
 			var name = this.name;
 			var arr = this.arr[i];
 			var title = arr[1];
 			var url = arr[0];
-			Shelf.read(name).then(function(json){
-				json.readTitle = title;
-				json.readURL = url;
-				json.readIndex = i;
-				json.readAt = formatDate(new Date());
-				Shelf.write(json);
-			});
 			
 			Page.name = name;
-			Page.json=this.json;
+			Page.json = this.json;
 			Page.arr = this.arr;
 			Page.resize()
-			Page.multiIndex(i).then(function(re) {
+			window.page(i)
+			/* Page.multiIndex(i).then(function(re) {
 				//alert(re)
 				//Page.show(re)
-				Page.resize()
-				window.page(i)
+				
 			}).catch(function(e) {
 				alert("err:Page.multiIndex" + e)
-			});
+			}); */
 			UI.hidePage();
 		},
-		
+
 		update: function(url) {
 			fj.tip("开始更新");
-			var arr=this.arr
-			var name=this.name;
-			if(!url||!arr){
-				fj.tip("参数错误：\nurl:"+url+"\narr:"+ arr,2)
+			var arr = this.arr
+			var name = this.name;
+			if (!url || !arr) {
+				fj.tip("参数错误：\nurl:" + url + "\narr:" + arr, 2)
 				return false
 			}
-			var t=this;
-			this.remote(url).then(function(_arr){
+			var t = this;
+			this.remote(url).then(function(_arr) {
 				if (_arr.length == t.arr.length) {
-					fj.tip("目前没有新更新",1.5);
+					fj.tip("目前没有新更新", 1.5);
 				} else {
 					var arr = t.arr = _arr;
 					t.showarr(arr);
-					t.write(name,arr).then(function(re){
+					t.write(name, arr).then(function(re) {
 						fj.tip("List写入成功")
-					}).catch(function(e){
-						fj.tip("List写入失败"+e)
+					}).catch(function(e) {
+						fj.tip("List写入失败" + e)
 					})
-					
+
 					var title = arr[arr.length - 1][1];
 					var url = arr[arr.length - 1][0];
 					var newpage = title;
-					fj.tip("已更新" + title,2);
+					fj.tip("已更新" + title, 2);
 					listNew.innerText = title;
-					var json=t.json;
+					var json = t.json;
 					json.updateTitle = title;
 					json.updateURL = url;
 					json.updateIndex = arr.length - 1;
 					json.updateAt = formatDate(new Date());
-					
 					Shelf.write(json);
+					Shelf.put(json);
 				}
-			}).catch(function(e){
-				alert("更新出错"+e)
+			}).catch(function(e) {
+				alert("更新出错" + e)
 			})
 		},
 		changeSource: async function(name) {
@@ -309,11 +301,10 @@ List = (function(a) {
 	}
 	return List;
 })();
-
-
 Page = (function(a) {
 	var _Page = Book.Page;
 	var Arr, Json;
+	var preArr=[];
 	var Page = {
 		multi: function(name, url) {
 			return _Page.multi(name, url);
@@ -330,14 +321,73 @@ Page = (function(a) {
 			}
 			var title = arr[i][1];
 			var url = arr[i][0];
+			//保存记录
+			if(!this.json){
+				var t=this;
+				Shelf.read(name).then(function(json) {
+					json.readTitle = title;
+					json.readURL = url;
+					json.readIndex = i;
+					json.readAt = formatDate(new Date());
+					Shelf.write(json);
+					t.json=json;
+				});
+			}else{
+				var json=this.json;
+				json.readTitle = title;
+				json.readURL = url;
+				json.readIndex = i;
+				json.readAt = formatDate(new Date());
+				Shelf.write(json);
+				/* alert(json.id)
+				console.log(json) */
+				if(json.id){
+					alert()
+					Shelf.put(json);
+				}
+			}
+			//预读
+			for(var i2=i+1;i2<i+5;i2++){
+				if(i2<arr.length&&!preArr[i2]){
+					preArr[i2]=true;
+					this.preread(i2).then(function(foo1){
+						preArr[i2]=true;
+					}).catch(function(e){
+						preArr[i2]=false;
+					});
+				}
+			}
 			return _Page.multi(name, url).then(function(txt) {
-				
 				Page.write(name, title, url, txt).then(function(re) {
 					//alert(re)
 				}).catch(function(e) {
 					alert("err:Page.write:\n" + e)
 				});
 				return txt;
+			})
+		},
+		preread: function(i) {
+			var name = this.name;
+			var arr = this.arr;
+			if(!name||!arr||!i){
+				alert("Page.multiIndex参数错误：\nname:"+name+"\narr:"+arr+"\ni:"+i)
+				return Promise.reject("Page.multiIndex参数错误：\nname:"+name+"\narr:"+arr+"\ni:"+i);
+			}
+			if(i>arr.length-1||i<0){
+				return Promise.reject("Page.multiIndex参数i超出范围：\nname:"+name+"\ni:"+i);
+			}
+			var title = arr[i][1];
+			var url = arr[i][0];
+			return _Page.multi(name, url).then(function(txt) {
+				if (txt) {
+					Page.write(name, title, url, txt).then(function(re) {
+						//alert(re)
+					}).catch(function(e) {
+						alert("err:Page.write:\n" + e)
+					});
+					return true;
+				}
+				return Promise.reject(false);;
 			})
 		},
 		remote: function(url) {
@@ -523,6 +573,11 @@ Shelf=(function(a){
 	var Shelf = {
 		same:function(){
 			return _Shelf.same();
+		},
+		sameAll:function(){
+			return _Shelf.sameAll().then(function(){
+				Shelf.showAll();
+			});
 		},
 		get:function(name){
 			return _Shelf.get(name);

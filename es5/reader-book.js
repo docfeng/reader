@@ -342,7 +342,7 @@ Page = (function(a) {
 				/* alert(json.id)
 				console.log(json) */
 				if(json.id){
-					alert()
+					//alert()
 					Shelf.put(json);
 				}
 			}

@@ -338,12 +338,11 @@ Page = (function(a) {
 				json.readURL = url;
 				json.readIndex = i;
 				json.readAt = formatDate(new Date());
-				Shelf.write(json);
-				/* alert(json.id)
-				console.log(json) */
 				if(json.id){
-					//alert()
+					Shelf.write(json);
 					Shelf.put(json);
+				}else{
+					Shelf.add(json);
 				}
 			}
 			//预读

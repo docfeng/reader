@@ -339,11 +339,35 @@ Book = (function() {
 				return id;
 			});
 		},
-		add: function(arr) {
-			return this.getId().then(function(id) {
-				arr.id = id;
-				return this.put(arr);
-			});
+		add: function(json) {
+			var t=this;
+			if (!json.id) {
+				var b=false;
+				Git.Comment.gets("docfeng", "book-data", 1).then(function(text) {
+					var json1 = JSON.parse(text);
+					for (var i1 = 0; i1 < json1.length; i1++) {
+						var json3 = JSON.parse(json1[i1].body);
+						if (json3.name==json.name) {
+							b=true;
+							json.id=json1[i1].id;
+							t.put(json);
+							t.write(json);
+						}
+						
+					}
+				});
+				if (!b) {
+					return Git.Comment.create("docfeng", "book-data", 1, JSON.stringify(json, null, 4)).then(function(text1) {
+						var json1 = JSON.parse(text1)
+						json.id = json1.id;
+						Shelf.write(json);
+						return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
+					});
+				}
+				
+			} else {
+				return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
+			}
 		},
 		delete: function(key) {
 			return DB.Data.delete("book", "shelf", key).then(function(json) {

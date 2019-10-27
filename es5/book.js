@@ -203,6 +203,7 @@ Book = (function() {
 						var json3 = JSON.parse(json1[i1].body);
 						if(!json3.id){
 							json3.id=json1[i1];
+							t.put(json3)
 						}
 						var b = false;
 						for (var i2 = 0; i2 < json2.length; i2++) {

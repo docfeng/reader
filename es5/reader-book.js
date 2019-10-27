@@ -657,6 +657,17 @@ Shelf=(function(a){
 				});
 			}
 		},
+		clear: function() {
+			DB.Table.delete("book", "shelf").then(function(json) {
+				alert(json)
+				alert(JSON.stringify(json))
+				DB.DB.close();
+				return true;
+			}).catch(function(e) {
+				alert(e)
+				DB.DB.close();
+			});
+		},
 		formatUI:function(json) {
 			var span1="";
 			var span2="";

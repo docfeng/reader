@@ -57,7 +57,7 @@ Git = (function() {
 					Authorization: author
 				}
 			}
-			alert(JSON.stringify(json))
+			//alert(JSON.stringify(json))
 			return http.ajax(json);
 		});
 	}
@@ -359,12 +359,10 @@ Git = (function() {
 				var status = re.xml.status;
 				switch (status) {
 					case 204:
-						alert("删除成功");
-						return true;
+						return Promise.resolve("删除成功");;
 						break;
 					default:
-						alert("删除失败");
-						return Promise.reject(false);
+						return Promise.reject("删除失败");
 				}
 			});;
 		},

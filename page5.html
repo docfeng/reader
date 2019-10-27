@@ -752,6 +752,7 @@
 				<input type=button value="打开" onclick="chrome.openFile(form_1.novel_name.value+'.epub')" />
 				<input type=button value="moveData" onclick="Shelf.moveData()" />
 				<input type=button value="sameAll" onclick="Shelf.sameAll()" />
+				<input type=button value="Shelf.clear" onclick="Shelf.clear()" />
 				<input type=button value="同步" onclick="Shelf.same()" />
 				<input type=button value="delBookDB" onclick="DB.DB.delete('book').then(function(a){alert('删除book数据库\n成功')}).catch(function(){alert('删除book数据库\n失败')})" />
 				<input type=button value="Page.clear" onclick="Page.clear()" />

@@ -201,6 +201,9 @@ Book = (function() {
 					var j = [];
 					for (var i1 = 0; i1 < json1.length; i1++) {
 						var json3 = JSON.parse(json1[i1].body);
+						if(!json3.id){
+							json3.id=json1[i1];
+						}
 						var b = false;
 						for (var i2 = 0; i2 < json2.length; i2++) {
 							if (json3.name == json2[i2].name) {

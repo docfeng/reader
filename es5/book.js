@@ -199,10 +199,13 @@ Book = (function() {
 				var json1 = JSON.parse(text);
 				return t.readAll().then(function(json2) {
 					var j = [];
+					//console.log(json1.length)
 					for (var i1 = 0; i1 < json1.length; i1++) {
 						var json3 = JSON.parse(json1[i1].body);
+						//console.log(json3.name+json3.id)
 						if(!json3.id){
-							json3.id=json1[i1];
+							json3.id=json1[i1].id;
+							//console.log(json3.name+json3.id)
 							t.put(json3)
 						}
 						var b = false;

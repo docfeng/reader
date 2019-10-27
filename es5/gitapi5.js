@@ -343,7 +343,7 @@ Git = (function() {
 	var Comment = {
 		gets: function(user, repos, issue) {
 			if (!user || !repos || !issue) return false;
-			var url = "https://api.github.com/repos/%s/%s/issues/%s/comments".fill([user, repos, issue]);
+			var url = "https://api.github.com/repos/%s/%s/issues/%s/comments?per_page=100".fill([user, repos, issue]);
 			return ajax(user, "get", url);
 		},
 		get: function(user, repos, number) {

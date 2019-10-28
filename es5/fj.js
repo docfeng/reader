@@ -102,7 +102,7 @@ fj = (function() {
 
 	var $ = {}
 	$.createBox = createBox;
-	$.createWin = async function(name, html, fun) {
+	$.createWin = function(name, html, fun) {
 		var code =
 			`
           <div class="setting_box" onclick="window.event.stopPropagation();">
@@ -167,7 +167,7 @@ fj = (function() {
 		}
 		this.createBox(code, iniFun);
 	}
-	$.select = async function(name, data, index) {
+	$.select = function(name, data, index) {
 		var obj = createWin()
 		var section = obj.section;
 		var win = obj.win;
@@ -234,7 +234,7 @@ fj = (function() {
 	 * @param {String} title
 	 * @param {Array} arr
 	 */
-	$.input = async function(title,arr) {
+	$.input = function(title,arr) {
 		var re = {};
 		var obj = createWin()
 		var section = obj.section;
@@ -273,11 +273,12 @@ fj = (function() {
 				let s = document.createElement("input");
 				s.type = "button";
 				s.value = "选择";
-				s.onclick = async function(e) {
-					var r = await $.select(name, dataList, 0);
+				s.onclick = function(e) {
+					$.select(name, dataList, 0).then(function(r){
+						text.value = r;
+						re[name] = r;
+					})
 					//alert(r)
-					text.value = r;
-					re[name] = r;
 				}
 				d.appendChild(s);
 			}

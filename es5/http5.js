@@ -120,8 +120,9 @@ http={
         });
     }
 }
-/*var get=async function(){
-var re=await http.cors("http://www.baidu.com");
-alert(re)
+/*var get=function(){
+http.cors("http://www.baidu.com").then(function(re){
+	alert(re)
+});
 }
 get()*/ 

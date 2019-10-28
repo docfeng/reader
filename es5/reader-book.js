@@ -168,19 +168,23 @@ List = (function(a) {
 				alert(e)
 			});
 		},
-		upload: async function() {
-			var json = await this.getAllIndexData("readAt");
-			json = json.reverse();
-			json = JSON.stringify(json, null, 4);
-
-			await git.getFile("page", "novel/data/Shelf.json");
-			var re = await git.createFile({
-				owner: "docfeng",
-				repos: "page",
-				name: "novel/data/Shelf.json",
-				txt: json
-			});
-			alert(re);
+		upload: function() {
+			this.getAllIndexData("readAt").then(function(json){
+				json = json.reverse();
+				json = JSON.stringify(json, null, 4);
+				
+				git.getFile("page", "novel/data/Shelf.json").then(function(foo1){
+					git.createFile({
+						owner: "docfeng",
+						repos: "page",
+						name: "novel/data/Shelf.json",
+						txt: json
+					}).then(function(re){
+						alert(re);
+					});
+					
+				});
+			});			
 		},
 		//显示目录
 		show: function(name, url, arr) {
@@ -286,7 +290,7 @@ List = (function(a) {
 				alert("更新出错" + e)
 			})
 		},
-		changeSource: async function(name) {
+		changeSource: function(name) {
 			UI.showSearch();
 			f6_name.value = name;
 			Search.search(name);

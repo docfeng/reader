@@ -29,10 +29,10 @@
  * 
  * getcursor
  * update_cursor
- *       alert(await db1.update_cursor({name:777},function(cursor){
+ *       db1.update_cursor({name:777},function(cursor){
           if(cursor.value.val==9990){return {name:777,value:888};}
           return false;
-        }));
+        }).then(function(re){alert(re)});
  * 
  * delete_cursor
  * 

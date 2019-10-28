@@ -259,15 +259,16 @@ var browser = (function () {
 evt = {
 	num: 0,
 	fun:{},
-	/* async */handleEvent(e) {
+	/* async */
+	handleEvent(e) {
 		var type = e.eventType;
 		var fun = this.fun[type];
+		var t=this;
 		if (fun) {
-			fun().then(function(re){
-				if (re) {
-					delete this.fun[type];
-				}
-			});
+			var re=fun();
+			if (re) {
+				delete t.fun[type];
+			}
 		};
 		if(type!="onback"){
 			window.history.replaceState(null, null, '');

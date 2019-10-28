@@ -689,7 +689,7 @@ show=function(str){
         pageIndex=1;
         if(i<0)i=0;
 		//alert(i)
-        Page.multiIndex(i).then(function(txt){
+        return Page.multiIndex(i).then(function(txt){
 			//alert(txt);
 			if(!txt)return Promise.reject("err:window.page:\nno txt"+txt);
         	txt=Page.formatUI(txt);

@@ -531,7 +531,11 @@ Book = (function() {
 				localModel = url;
 				store.setItem('localModel', url);
 				this.readModel().then(function(re) {
-					var re = JSON.parse(re);
+					if(!re){
+						var re=[];
+					}else{
+						var re = JSON.parse(re);
+					}
 					var b = false
 					for (var i = 0; i < re.length; i++) {
 						if (re[i] == url) b = true;
@@ -624,7 +628,6 @@ Book = (function() {
 			return DB.Data.getIndex("book", "shelf", "readAt", null).then(function(json) {
 				DB.DB.close();
 				var json = json.reverse();
-				return json;
 				return json;
 			}).catch(function(e) {
 				DB.DB.close();

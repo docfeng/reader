@@ -288,7 +288,7 @@ DB = (function() {
 				} else {
 					var request = store.getAll(); //getAllKeys
 				}
-				return new Promise((resolve) => {
+				return new Promise(function(resolve){
 					var re = [];
 					request.onsuccess = function() {
 						var cursor = request.result;
@@ -318,7 +318,7 @@ DB = (function() {
 				} else {
 					var request = store.getAll(); //getAllKeys
 				}
-				return new Promise((resolve) => {
+				return new Promise(function(resolve){
 					var i = 0;
 					request.onsuccess = function() {
 						var cursor = request.result;
@@ -349,7 +349,7 @@ DB = (function() {
 				} else {
 					var request = store.getAll(); //getAllKeys
 				}
-				return new Promise((resolve) => {
+				return new Promise(function(resolve){
 					var i = 0;
 					request.onsuccess = function() {
 						var cursor = request.result;

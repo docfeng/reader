@@ -149,11 +149,23 @@ shiftDiv = function(div) {
 	}
 }
 
-
+/* window.applicationCache.addEventListener('updateready', function(e) {
+    if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+     window.applicationCache .swapCache();
+      if (confirm('A new version of this site is available. Load it?')) {
+        window.location.reload();
+      }
+    } else {
+      // Manifest didn't changed. Nothing new to server.
+    }
+  }, false); */
 
 UI = {
 	show: function(id) {
 		document.querySelector(id).style.display = "flex";
+		if(window.getComputedStyle(document.querySelector(id),null).display=="none"){
+			document.querySelector(id).style.display='block';
+		}
 		evt.addEvent(function() {
 			document.querySelector(id).style.display = "none";
 		});

@@ -317,8 +317,8 @@ Page = (function(a) {
 			var name = this.name;
 			var arr = this.arr;
 			if(!name||!arr||!i){
-				alert("Page.multiIndex参数错误：\nname:"+name+"\narr:"+arr+"\ni:"+i)
-				return Promise.reject("Page.multiIndex参数错误：\nname:"+name+"\narr:"+arr+"\ni:"+i);
+				alert("Page.multiIndex参数错误：\nname:"+name+"\ni:"+i+"\narr:"+arr)
+				return Promise.reject("Page.multiIndex参数错误：\nname:"+name+"\ni:"+i+"\narr:"+arr);
 			}
 			if(i>arr.length-1||i<0){
 				return Promise.reject("Page.multiIndex参数i超出范围：\nname:"+name+"\ni:"+i);

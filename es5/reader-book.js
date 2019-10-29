@@ -236,7 +236,11 @@ List = (function(a) {
 			var arr = this.arr[i];
 			var title = arr[1];
 			var url = arr[0];
-			
+			if(("string"!=typeof name)||!arr||("string"!=typeof url)||("string"!=typeof title)){
+				var str="List.click参数错误：\nname:"+name+"\ni:"+url+"\nreadIndex:"+title+"\narr:"+arr
+				alert(str)
+				return Promise.reject(str);
+			}
 			Page.name = name;
 			Page.json = this.json;
 			Page.arr = this.arr;
@@ -316,7 +320,7 @@ Page = (function(a) {
 		multiIndex: function(i) {
 			var name = this.name;
 			var arr = this.arr;
-			if(!name||!arr||!i){
+			if(!name||!arr||(i!=0&&!i)){
 				alert("Page.multiIndex参数错误：\nname:"+name+"\ni:"+i+"\narr:"+arr)
 				return Promise.reject("Page.multiIndex参数错误：\nname:"+name+"\ni:"+i+"\narr:"+arr);
 			}
@@ -346,7 +350,7 @@ Page = (function(a) {
 					Shelf.write(json);
 					Shelf.put(json);
 				}else{
-					Shelf.add(json);
+					Shelf.addGit(json);
 				}
 			}
 			//预读
@@ -536,7 +540,7 @@ Search=(function(a){
 		click: function(obj){
 		    var obj=obj.parentNode;
 		    var i=obj.parentNode.rowIndex;
-			if(!i||!this.name||!this.arr){
+			if((i!=0&&!i)||!this.name||!this.arr){
 				alert("search.click参数错误：\ni=%s;\nname=%s;\narr=%s".fill([i,this.name,this.arr]));
 			}
 		    var name=this.name;
@@ -617,6 +621,11 @@ Shelf=(function(a){
 			var t = this;
 			var json = this.arr;
 			var json1 = {};
+			
+			if(!name||!url||!arr||arr.length==0){
+				alert("Shelf.add参数错误：\nname:"+name+"\ni:"+url+"\narr:"+arr)
+				return Promise.reject("Shelf.add参数错误：\nname:"+name+"\ni:"+url+"\narr:"+arr);
+			}
 			var num = -1;
 			for (var i = 0; i < json.length; i++) {
 				if (json[i].name == name) {
@@ -649,6 +658,9 @@ Shelf=(function(a){
 			json.unshift(json1);
 			this.showAll()
 			return this.write(json1);
+		},
+		addGit:function(json){
+			return _Shelf.add(json) ;
 		},
 		delete: function(i) {
 			var name = this.arr[i].name;
@@ -820,6 +832,11 @@ Shelf=(function(a){
 				var name = json.name;
 				var url = json.url;
 				var readIndex=json.readIndex;
+				if(("string"!=typeof name)&&("string"!=typeof url)&&("number"!=typeof readIndex)){
+					var str="List.click参数错误：\nname:"+name+"\ni:"+url+"\nreadIndex:"+readIndex
+					alert(str)
+					return Promise.reject(str);
+				}
 				//显示目录
 				List.json=json;
 				List.name=name;

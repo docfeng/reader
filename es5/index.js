@@ -23,10 +23,10 @@ window.onload = function() {
 
 window.onresize = function() {}
 //window.addeventlistener("resize",function(){alert()},false);
-document.oncontextmenu = function() {
+/* document.oncontextmenu = function() {
 	event.returnValue = false;
 	UI.show("#contextmenu");
-}
+} */
 
 addDownFlush = function(obj, fun) {
 	var refreshText = obj.querySelector(".refreshText");

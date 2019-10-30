@@ -31,7 +31,8 @@
 		<link href="https://s.zhulang.com/images/zl-logo114.png" rel="apple-touch-icon-precomposed">
 		<link rel="stylesheet" type="text/css" href="css5/fj.css" />
 		<link rel="stylesheet" href="css5/msg5.css" type="text/css">
-		<link rel="stylesheet" href="https://s.zhulang.com/wap/pub/v2/style/read-3873a62e78.css" type="text/css">
+		<!-- <link rel="stylesheet" href="https://s.zhulang.com/wap/pub/v2/style/read-3873a62e78.css" type="text/css"> -->
+		<link rel="stylesheet" href="css5/reader.css" type="text/css">
 		<link rel="stylesheet" href="css5/main5.css" type="text/css">
 		<link rel="stylesheet" href="css/test.css" type="text/css">
 		<link rel="stylesheet" type="text/css" href="fonticon/iconfont.css" />
@@ -425,6 +426,13 @@
 				//word-break: keep-all;
 				font-size: 0.7em;
 			}
+			
+			i.iconfont{
+				display: block;
+				font-size: 3.5em;
+				opacity: 0.5;
+			}
+
 		</style>
 		<!-- main_contain -->
 		<style type="text/css">
@@ -597,7 +605,7 @@
 			<!--设置页面头部-->
 			<div class="fn-top" id="fn-top">
 				<a href="javascript:UI.showMain();alert(0)" class="fl backicon">
-					<i class="icon icon-back">返回</i>
+					<i class="iconfont icon-left"></i>
 				</a>
 				<a href="javascript:void()" class="fr backicon">
 					<i style="font-size: 3em;" id="novelName">name</i>
@@ -608,26 +616,32 @@
 				<ul>
 					<li class="night">
 						<div>
-							<i class="icon icon-moon"></i>
+							<i class="iconfont icon-iconset0454"></i>
 							<span>关灯</span>
-						</div>
-					</li>
-					<li class="night1" onclick="window.location.reload()">
-						<div>
-							<i class="icon icon-moon"></i>
-							<span>重载</span>
 						</div>
 					</li>
 					<li class="day">
 						<div>
-							<i class="icon icon-sun"></i>
+							<i class="iconfont icon-iconset0451"></i>
 							<span>开灯</span>
+						</div>
+					</li>
+					<li class="night1" onclick="window.location.reload()">
+						<div>
+							<i class="iconfont icon-reload"></i>
+							<span>重载</span>
 						</div>
 					</li>
 					<li class="li-cfg">
 						<div>
-							<i class="icon icon-cfg"></i>
+							<i class="iconfont icon-icon_shezhi"></i>
 							<span>设置</span>
+						</div>
+					</li>
+					<li class="li-cfg2">
+						<div>
+							<i class="iconfont icon-icon_shezhi"></i>
+							<span>设置2</span>
 						</div>
 					</li>
 				</ul>
@@ -635,6 +649,20 @@
 			<!--设置界面面板1-->
 			<div class="cfg-pnl" id="cfg-pnl">
 				<ul>
+					<!-- 上一章||下一章 -->
+					<li class="cfg-font" id="cfg-control">
+						<label>控制</label>
+						<div>
+							<menu>
+								<menuitem class="fs-add" onclick="window.uppage()">上一章</menuitem>
+								<menuitem class="fs-rdu" onclick="window.next()">下一章</menuitem>
+								<menuitem class="fs-add" onclick="window.uppage()">上一章</menuitem>
+								<menuitem class="fs-rdu" onclick="window.next()">下一章</menuitem>
+								<menuitem class="fs-add" onclick="window.uppage()">上一章</menuitem>
+								<menuitem class="fs-rdu" onclick="window.next()">下一章</menuitem>
+							</menu>
+						</div>
+					</li>
 					<!-- 上一章||下一章 -->
 					<li class="cfg-font" id="cfg-control">
 						<label>控制</label>
@@ -719,7 +747,7 @@
 		<div class="idx-bg"></div>
 		<!-- 左侧点击面板 -->
 		<div class="idx-cnt" id="idx-cnt">
-			<div class="idx-hdl" id="idx-hdl">
+			<div class="idx-hdl iconfont icon-indent" id="idx-hdl">
 
 			</div>
 			<!--目录点击按钮-->
@@ -760,6 +788,8 @@
 				<input type=button value="get模式" onclick="Book.Shelf.getModel('');" />
 				<input type=button value="默认模式" onclick="Book.Shelf.setModel('');" />
 				<input type=button value="alert模式" onclick="Book.Shelf.alertModel();" />
+				
+				<input type=button value="chromeCors模式" onclick="Book.Shelf.setModel('cors')" />
 				<input type=button value="最优模式" onclick="Book.Shelf.setModel('http://gear.docfeng.top/get2.php')" />
 				<input type=button value="最优模式2" onclick="Book.Shelf.setModel('http://192.168.123.128/get2.php')" />
 				<input type=button value="最优模式3" onclick="Book.Shelf.setModel('http://gear2.docfeng.top/get2.php')" />
@@ -776,7 +806,7 @@
 
 			<!-- </div> -->
 		</div>
-		<!-- 菜单 -->
+		<!-- circle菜单 -->
 		<div class="circle-menu">
 			<div class="circle-menu-container">
 				<div class="icon-Button" onclick="UI.showSearch()">

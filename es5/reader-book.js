@@ -358,9 +358,9 @@ Page = (function(a) {
 				if(i2<arr.length&&!preArr[i2]){
 					preArr[i2]=true;
 					this.preread(i2).then(function(foo1){
-						preArr[i2]=true;
+
 					}).catch(function(e){
-						preArr[i2]=false;
+
 					});
 				}
 			}

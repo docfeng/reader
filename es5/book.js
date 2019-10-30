@@ -58,7 +58,9 @@ Book = (function() {
 			var url = url;
 		} else if (localModel) {
 			URL = localModel;
-			url = URL + "?url=" + url;
+			if("cors"!=localModel){
+				url = URL + "?url=" + url;
+			}
 		} else {
 			switch (para) {
 				case "search":

@@ -58,7 +58,7 @@ Book = (function() {
 			var url = url;
 		} else if (localModel) {
 			URL = localModel;
-			if("cors"!=localModel){
+			if ("cors" != localModel) {
 				url = URL + "?url=" + url;
 			}
 		} else {
@@ -196,7 +196,7 @@ Book = (function() {
 			});
 		},
 		sameAll: function() {
-			var t=this;
+			var t = this;
 			return Git.Comment.gets("docfeng", "book-data", 1).then(function(text) {
 				var json1 = JSON.parse(text);
 				return t.readAll().then(function(json2) {
@@ -205,8 +205,8 @@ Book = (function() {
 					for (var i1 = 0; i1 < json1.length; i1++) {
 						var json3 = JSON.parse(json1[i1].body);
 						//console.log(json3.name+json3.id)
-						if(!json3.id){
-							json3.id=json1[i1].id;
+						if (!json3.id) {
+							json3.id = json1[i1].id;
 							//console.log(json3.name+json3.id)
 							t.put(json3)
 						}
@@ -342,20 +342,20 @@ Book = (function() {
 			});
 		},
 		add: function(json) {
-			var t=this;
+			var t = this;
 			if (!json.id) {
-				var b=false;
+				var b = false;
 				Git.Comment.gets("docfeng", "book-data", 1).then(function(text) {
 					var json1 = JSON.parse(text);
 					for (var i1 = 0; i1 < json1.length; i1++) {
 						var json3 = JSON.parse(json1[i1].body);
-						if (json3.name==json.name) {
-							b=true;
-							json.id=json1[i1].id;
+						if (json3.name == json.name) {
+							b = true;
+							json.id = json1[i1].id;
 							t.put(json);
 							t.write(json);
 						}
-						
+
 					}
 				});
 				if (!b) {
@@ -366,7 +366,7 @@ Book = (function() {
 						return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
 					});
 				}
-				
+
 			} else {
 				return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
 			}
@@ -533,9 +533,9 @@ Book = (function() {
 				localModel = url;
 				store.setItem('localModel', url);
 				this.readModel().then(function(re) {
-					if(!re){
-						var re=[];
-					}else{
+					if (!re) {
+						var re = [];
+					} else {
 						var re = JSON.parse(re);
 					}
 					var b = false
@@ -1150,7 +1150,7 @@ Book = (function() {
 				if (title) {
 					return [url, title];
 				} else {
-					var arr = List.format(json.html, url);
+					var arr = List.format1(json.html, url);
 					return [url, arr];
 				}
 			}).catch(function(a) {

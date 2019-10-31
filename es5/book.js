@@ -709,7 +709,7 @@ Book = (function() {
 				if (!html) {
 					return Promise.reject("Book.List.remote:error no html");
 				} else {
-					return t.format(html, url);
+					return t.format1(html, url);
 				}
 				/* if(localModel){
 					return t.format(html, url);

@@ -32,7 +32,10 @@
  * 
  * Load,
  */
-
+APP={
+	data:{},
+	info:{}
+}
 Book = (function() {
 	/* 模式，決定跨域方式 */
 	var localModel = "";
@@ -259,17 +262,25 @@ Book = (function() {
 				});
 			});
 		},
+		sameSince: function() {
+			var t = this;
+			alert(APP.data.ShelfArr[0])
+			
+		},
+		
 		readAll: function() {
 			var t = this;
 			return DB.Data.getIndex("book", "shelf", "readAt", null).then(function(json) {
 				DB.DB.close();
 				var json = json.reverse();
+				APP.data.ShelfArr=json;
 				return json;
 			}).catch(function(e) {
 				DB.DB.close();
 				return t.ini().then(function() {
 					return DB.Data.getIndex("book", "shelf", "readAt", null).then(function(json) {
 						DB.DB.close();
+						APP.data.ShelfArr=json;
 						return json;
 					}).catch(function(e) {
 						DB.DB.close();

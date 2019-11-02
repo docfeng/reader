@@ -1,6 +1,12 @@
 window.onload = function() {
 	if (browser.MyApp) chrome.computer();
-	Shelf.showAll();
+	Shelf.showAll().then(function(){
+		Shelf.sameSince().then(function(re){
+			if(re.length>0){
+				Shelf.showAll();
+			}
+		});;
+	});
 	
 	addDownFlush(shelf_div, function(x) {
 		//var re=parseInt(window.innerWidth/x);

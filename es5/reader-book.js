@@ -586,6 +586,82 @@ Shelf=(function(a){
 				Shelf.showAll();
 			});
 		},
+		sameSince:function(){
+			var t = this;
+			var time=APP.data.ShelfArr[0].readAt;
+			console.log(time)
+			console.log(APP.data.ShelfArr[0].name)
+			
+			time=new Date(time);
+			var s=time.getTime();
+			s+=1000*10;
+			time.setTime(s)
+			console.log(time)
+			return Git.Comment.getSince("docfeng", "book-data", 1,time).then(function(text) {
+				var json1 = JSON.parse(text);
+				var json2=APP.data.ShelfArr;
+				var j = [];
+				
+						for (var i1 = 0; i1 < json1.length; i1++) {
+							var json3 = JSON.parse(json1[i1].body);
+							//console.log(json3.name+json3.id)
+							if (!json3.id) {
+								json3.id = json1[i1].id;
+								//console.log(json3.name+json3.id)
+								t.put(json3)
+							}
+							var b = false;
+							for (var i2 = 0; i2 < json2.length; i2++) {
+								if (json3.name == json2[i2].name) {
+									b = true;
+									if ((json3.readAt > json2[i2].readAt) || !json2[i2].id) {
+										/* 网络更新时间>本地更新时间，或者本地没有id，
+										用网络的版本（替换） */
+										j.push(json3);
+										json2[i2] = json3;
+									}
+								}
+							}
+							/* 如果本地沒有查到name，用网络的版本（添加） */
+							if (!b) {
+								j.push(json3);
+							}
+						}
+				
+						//写入改变项
+						if (j.length > 0) {
+							t.writeAll(j);
+						}
+						//console.log(JSON.stringify(j,null,4));
+						//console.log(JSON.stringify(json2,null,4));
+						var p = [];
+						var addGit = function(json) {
+							var text = JSON.stringify(json, null, 4)
+							return Git.Comment.create("docfeng", "book-data", 1, text).then(function(text1) {
+								var json1 = JSON.parse(text1);
+								json.id = json1.id;
+								t.write(json);
+								return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4)).then(function(
+									text) {
+									return json.name
+								});
+							});
+						}
+						for (var i2 = 0; i2 < json2.length; i2++) {
+							if (!json2[i2].id) {
+								p.push(addGit(json2[i2]));
+							}
+						}
+						return Promise.all(p);
+				
+				/* var _arr=JSON.parse(text);
+				var arr=[];
+				for(var i=0;i<_arr.length;i++){
+					arr.push(JSON.parse(_arr[i].body))
+				} 
+				console.log(arr) */
+			});
+		},
 		get:function(name){
 			return _Shelf.get(name);
 		},
@@ -712,7 +788,7 @@ Shelf=(function(a){
 			return _Shelf.ini();
 		},
 		show:function(i) {
-			this.readAll().then(function(arr){
+			return this.readAll().then(function(arr){
 				var json=arr[i];
 				arr.splice(i,1);
 				arr.unshift(json);
@@ -726,7 +802,7 @@ Shelf=(function(a){
 			});
 		},
 		showAll:function() {
-			this.readAll().then(function(arr){
+			return this.readAll().then(function(arr){
 				Shelf.arr=arr;
 				var str="";
 				for (var i=0;i<arr.length;i++) {

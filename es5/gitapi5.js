@@ -25,6 +25,8 @@ var formatDate = function(d) {
 	var yyyy = date.getFullYear();
 	var mm = date.getMonth() + 1;
 	var dd = date.getDate();
+	mm = mm < 10 ? "0" + mm : mm;
+	dd = dd < 10 ? "0" + dd : dd;
 	var hours = date.getHours();
 	var minute = date.getMinutes();
 	var second = date.getSeconds();
@@ -83,7 +85,6 @@ Git = (function() {
 							}else{
 								return Promise.reject("err:uesr.ini() no cash");
 							}
-							
 						}
 					})
 				} else {
@@ -502,9 +503,9 @@ Git = (function() {
 		User: User,
 		Repos: Repos,
 		Dir: Dir,
-		Issue,
-		Comment,
-		File,
+		Issue:Issue,
+		Comment:Comment,
+		File:File,
 		load: load
 	}
 	return gitapi;

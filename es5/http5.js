@@ -20,8 +20,8 @@ http={
         }
         return xmlHttp;
     },
-    get:function(url,json={}){
-        var json=json;
+    get:function(url,json){
+        var json=json||{};
         var t=this;
         json.url=url;
         json.method="get";
@@ -32,8 +32,8 @@ http={
             })
         });
     },
-    cors:function(url,json={cors:true}){
-        var json=json;
+    cors:function(url,json){
+        var json=json||{cors:true};
         json.url=url;
         json.method="get";
         var t=this;
@@ -44,8 +44,8 @@ http={
             })
         });
     },
-    getJSON:function(url,json={}){
-        var json=json;
+    getJSON:function(url,json){
+        var json=json||{};
         json.url=url;
         json.method="get";
         var t=this;
@@ -56,8 +56,8 @@ http={
             })
         });
     },
-    post:function(url,str,json={}){
-        var json=json;
+    post:function(url,str,json){
+        var json=json||{};
         json.str=str;
         json.url=url;
         json.method="post";

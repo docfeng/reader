@@ -283,6 +283,7 @@ List = (function(a) {
 					fj.tip("已更新" + title, 2);
 					listNew.innerText = title;
 					var json = t.json;
+					json.url=url;
 					json.updateTitle = title;
 					json.updateURL = url;
 					json.updateIndex = arr.length - 1;
@@ -305,6 +306,13 @@ List = (function(a) {
 			var url = url || this.url;
 			Shelf.add(name, url, arr);
 		},
+		addUrl: function() {
+			var url = prompt();
+			if(url){
+				this.url=url;
+				this.update(url);
+			}
+		}
 
 	}
 	return List;

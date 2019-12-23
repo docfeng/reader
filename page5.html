@@ -13,7 +13,8 @@
 		<meta content="telephone=no,email=no" name="format-detection">
 		<meta name="keywords" content="阅读器" />
 		<meta name="description" content="阅读器。" />
-
+		<script src="es5/es6-promise.min.js"></script>
+		
 		<script src="es5/base5.js"></script>
 		<script src="es5/fj.js" type="text/javascript" charset="utf-8"></script>
 		<script src="script/flexible.0.3.4.js"></script>
@@ -543,7 +544,7 @@
 								<span>更新</span>
 							</div>
 							<div class="icon-Button">
-								<span class="iconfont icon-plus" title='添加' onclick="List.addBook()"></span>
+								<span class="iconfont icon-plus" title='添加' onclick="List.addUrl()"></span>
 								<span>添加</span>
 							</div>
 							<div class="icon-Button">
@@ -833,9 +834,9 @@
 					<span>设置</span>
 				</div>
 
-				<div class="icon-Button" onclick="shelf_table.dataset.order='delete'">
-					<span class="iconfont icon-delete"></span>
-					<span>删除</span>
+				<div class="icon-Button" onclick="window.open('https://so.m.sm.cn/s?uc_param_str=dnntnwvepffrgibijbprsvdsme&from=wh10516&uc_sm=1&q='+List.name)">
+					<span class="iconfont icon-earth"></span>
+					<span>打开</span>
 				</div>
 
 				<div class="icon-Button" onclick="fullScreen()">
@@ -853,14 +854,14 @@
 					<span>后退</span>
 				</div>
 
-				<div class="icon-Button" onclick="window.open('https://so.m.sm.cn/s?uc_param_str=dnntnwvepffrgibijbprsvdsme&from=wh10516&uc_sm=1&q='+List.name)">
-					<span class="iconfont icon-earth"></span>
-					<span>打开</span>
-				</div>
-
 				<div class="icon-Button" onclick="UI.showSearch()">
 					<span class="iconfont icon-chaxun"></span>
 					<span>搜索</span>
+				</div>
+
+				<div class="icon-Button" onclick="shelf_table.dataset.order='delete'">
+					<span class="iconfont icon-delete"></span>
+					<span>删除</span>
 				</div>
 				<!-- <div>⇶</div>
 						<div>⌂</div>

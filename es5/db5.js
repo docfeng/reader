@@ -109,7 +109,7 @@ DB = (function() {
 				return re;
 			});
 		},
-		delete: function(name) {
+		delete1: function(name) {
 			var request = indexedDB.deleteDatabase(name);
 			return new Promise(function(resolve, reject) {
 				//删除数据失败
@@ -325,7 +325,7 @@ DB = (function() {
 						if (cursor) {
 							var data = fun(cursor);
 							if (data) {
-								const request = cursor.update(data);
+								var  request = cursor.update(data);
 								i++;
 							}
 							cursor.continue();
@@ -354,7 +354,7 @@ DB = (function() {
 					request.onsuccess = function() {
 						var cursor = request.result;
 						if (cursor) {
-							const request = cursor.delete();
+							var request = cursor.delete();
 							request.onsuccess = function() {
 								// i++;
 							};

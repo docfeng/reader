@@ -62,19 +62,19 @@ Book = (function() {
 		} else if (localModel) {
 			URL = localModel;
 			if ("cors" != localModel) {
-				url = URL + "?url=" + url;
+				url = URL + "?url=" + encodeURIComponent(url);
 			}
 		} else {
 			switch (para) {
 				case "search":
-					URL = "https://bird.ioliu.cn/v1/";
+					URL = "http://gear.docfeng.top/get2.php";//"https://bird.ioliu.cn/v1/";
 					break;
 				case "real":
 					xml = true;
 					URL = "http://gear.docfeng.top/get2.php";
 					break;
 				case "list":
-					URL = "https://bird.ioliu.cn/v2/";
+					URL = "http://gear.docfeng.top/get2.php";//"https://bird.ioliu.cn/v2/";
 					break;
 				case "page":
 					URL = "http://gear.docfeng.top/get2.php"; //"https://bird.ioliu.cn/v2/";
@@ -83,7 +83,8 @@ Book = (function() {
 					URL = "http://gear.docfeng.top/get2.php";
 					break;
 			}
-			url = URL + "?url=" + url;
+			url = URL + "?url=" + encodeURIComponent(url);
+			alert()
 		}
 		return http.get(url, {
 			xml: xml
@@ -510,7 +511,7 @@ Book = (function() {
 				alert("err:Book.Shelf.putModel\n" + e)
 			})
 		},
-		getModel: function() {
+		getModels: function() {
 			var t = this;
 			return Git.File.get("docfeng", "book-data", "config/corsUrl.txt").then(function(re) {
 				var re = re;
@@ -561,8 +562,9 @@ Book = (function() {
 				//alert(localModel)
 			}
 		},
-		alertModel: function() {
-			prompt("localModel", localModel)
+		getModel: function() {
+			//prompt("localModel", localModel);
+			return localModel;
 		},
 		selectModel: function() {
 			var t = this;
@@ -959,7 +961,7 @@ Book = (function() {
 		formatUI: function(txt) {
 			var txt = "<p>" + txt.replace(/\n/g, '</p>\n<p>') + "</p>"
 			//document.querySelector("#txt").innerHTML = txt;
-			return Promise.resolve(txt);
+			return txt;
 		},
 		createTable: function() {
 			var data = {
@@ -1036,7 +1038,8 @@ Book = (function() {
 		},
 		remote: function(name) {
 			var t = this;
-			var url = "https://www.baidu.com/s?q1=" + name + "&rn=10";
+			//var url = "https://www.baidu.com/s?q1=" + name + "&rn=10";
+			var url="https://www.baidu.com/s?ie=UTF-8&wd="+name;
 			return getHTML(url, "search").then(function(html) {
 				fj.tip("已获取到数据，开始格式化")
 				//alert(html)

@@ -182,7 +182,7 @@ var formatUTCDate = function(d) {
 }
 
 //定义静态变量
-static=new Proxy({},{
+/* static=new Proxy({},{
   get:function(oTarget, sKey){
     var re=arguments.callee.caller[sKey];
     return re;
@@ -190,9 +190,10 @@ static=new Proxy({},{
   set:function(oTarget, sKey, vValue){
     arguments.callee.caller[sKey]=vValue;
   } 
-});
+}); */
 //动态加载js
-includejs=function(src,bool=true){
+includejs=function(src,bool){
+	var bool=bool||true;
   if(bool){
     var oHead = document.getElementsByTagName('HEAD').item(0);
             var oScript= document.createElement("script");
@@ -260,7 +261,7 @@ evt = {
 	num: 0,
 	fun:{},
 	/* async */
-	handleEvent(e) {
+	handleEvent:function(e) {
 		var type = e.eventType;
 		var fun = this.fun[type];
 		var t=this;
@@ -277,16 +278,16 @@ evt = {
 		window.history.pushState('forward', null, '');
 		
 	},
-	remove() {
+	remove:function() {
 		window.removeEventListener("back", this, false);
 	},
-	set(state, fun) {
+	set:function(state, fun) {
 		window.history.replaceState(state, null, '');
 		window.history.pushState('forward', null, '');
 		//this.state.push(state);
 		this.fun[state] = fun;
 	},
-	addEvent(fun) {
+	addEvent:function(fun) {
 		var state = "event" + this.num;
 		this.num++;
 		window.history.replaceState(state, null, '');
@@ -295,13 +296,13 @@ evt = {
 		this.fun[state] = fun;
 		return state
 	},
-	removeEvent(state) {
+	removeEvent:function(state) {
 		if (this.fun[state]) {
 			delete this.fun[state];
 			//window.history.go(-1)
 		}
 	},
-	fireEvent(state) {
+	fireEvent:function(state) {
 		var event = document.createEvent('HTMLEvents');
 		event.initEvent("back", true, true);
 		event.eventType = state;
@@ -330,14 +331,14 @@ if (window.history && window.history.pushState&&window.top==window) {
 	}
 }
 
-fullScreen = function(obj) {
+/* fullScreen = function(obj) {
 	var el = obj || document.documentElement;
 	var rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullscreen;
 	if (typeof rfs != "undefined" && rfs) {
 		rfs.call(el);
 	};
 	return;
-}
+} */
 //退出全屏
 exitScreen = function() {
 	if (document.exitFullscreen) {

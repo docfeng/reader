@@ -756,8 +756,7 @@
 		</div>
 		<div id="msg-cnt" class="msg-cnt"><span></span></div>
 		<!-- 目录2 -->
-		<div id="listDiv2" style="position:fixed;display:none;flex-direction: column;height:100%;width:100%;top: 0px;right: 0px;z-index: 100;font-size: 2.5em;color: #000000;"
-		 onclick="this.style.display='none';">
+		<div id="listDiv2" style="position:fixed;display:none;flex-direction: column;height:100%;width:100%;top: 0px;right: 0px;z-index: 100;font-size: 2.5em;color: #000000;" onclick="this.style.display='none';">
 			<div style="width: 50%;height:24px;">
 				<div class="msg_title" id="listName2" style="float: none;">标题</div>
 				<div class="msg_close">&#8855;</div>
@@ -768,38 +767,62 @@
 			</div>
 		</div>
 		<!-- 设置页 -->
-		<div class="model" id="contextmenu">
+		<div class="model" id="contextmenu" style="font-size: 30px;">
 			<!-- <div style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;"> -->
 			<div>
 				<span class="iconfont icon-reload" onclick="document.location.reload();"></span>
+				<input type="button" value="eval33" onclick="var b=setbox.style.display;setbox.style.display=b=='none'?'block':'none';evalbox.style.display=b=='none'?'none':'block';" />
+			</div>
+			<div id="setbox">
+				<form  action="javascript:void()"  onsubmit="act(this)" style="height: 500px;overflow-y: scroll;">
+					 <input type="text" name="t1" value="rff" /><br/>
+					 <fieldset>
+					     <legend>操作</legend>
+					     <input type="button" value='epub' onclick='fso.writeZip(form_1.novel_name.value+".epub",form_1.novel_name.value)' />
+					     <input type=button value="打开" onclick="chrome.openFile(form_1.novel_name.value+'.epub')" />
+					     <input type=button value="moveData" onclick="Shelf.moveData()" />
+					     <input type=button value="sameAll" onclick="Shelf.sameAll()" />
+					     <input type=button value="Shelf.clear" onclick="Shelf.clear()" />
+					     <input type=button value="同步" onclick="Shelf.same()" />
+					     <input type=button value="delBookDB" onclick="DB.DB.delete('book').then(function(a){alert('删除book数据库\n成功')}).catch(function(){alert('删除book数据库\n失败')})" />
+					     <input type=button value="Page.clear" onclick="Page.clear()" />
+					     <input type=button value="put模式" onclick="Book.Shelf.putModel('');" />
+					     <input type=button value="select模式" onclick="Book.Shelf.selectModel()" />
+						 <input type=button value="自定义模式" onclick="var url=prompt();Book.Shelf.setModel(url)" />
+					     <input type=button value="清除缓存文件" onclick="window.applicationCache.update();" />
+					 </fieldset>
+					 <fieldset id="cors">
+					     <legend>cors</legend>
+					     <input type="button" onclick="showModel(this.parentNode)" value="showModel" />
+						 <input type="button" onclick="addModel(this.parentNode)" value="addModel" /><br />
+						 自定义模式:<input type="text"   name="cors" />
+					 </fieldset>
+					 
+					 <fieldset>
+					     <legend>cors</legend>
+					     <input type="radio" name="cors" value="" />none<br/>
+					     <input type="radio" name="cors" value="http://gear.docfeng.top/get2.php" />gear.docfeng.top<br />
+					     
+					 </fieldset>
+					 <fieldset>
+					     <legend>2</legend>
+					     <label><input type="checkbox" name="t3" value="男" />男</label>
+					     <label><input type="checkbox" name="t3" value="女" />女</label>
+					 </fieldset>
+					 <input type="submit" value="保存"/>
+					 <input type="button" onclick="act(this.parentNode)" value="act" />
+					 <input type="button" onclick="alert(this.parentNode.t1)" value="test" />
+					 
+				</form>
+			</div>
+			<div id="evalbox" style="display: none;">
 				<span class="iconfont icon-shuji">ee</span>
 				<input type="button" value="eval33" onclick="eval(evaltxt.value);" />
 				<input type="button" value="read" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){form_2.txt1.value+=txt;});}" />
 				<input type="button" value="加载script" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){eval(txt);alert(txt);});}" />
 				<input type="button" value='reload' onclick="document.location.reload();" />
-				<input type="button" value='epub' onclick='fso.writeZip(form_1.novel_name.value+".epub",form_1.novel_name.value)' />
-				<input type=button value="打开" onclick="chrome.openFile(form_1.novel_name.value+'.epub')" />
-				<input type=button value="moveData" onclick="Shelf.moveData()" />
-				<input type=button value="sameAll" onclick="Shelf.sameAll()" />
-				<input type=button value="Shelf.clear" onclick="Shelf.clear()" />
-				<input type=button value="同步" onclick="Shelf.same()" />
-				<input type=button value="delBookDB" onclick="DB.DB.delete('book').then(function(a){alert('删除book数据库\n成功')}).catch(function(){alert('删除book数据库\n失败')})" />
-				<input type=button value="Page.clear" onclick="Page.clear()" />
-				<input type=button value="put模式" onclick="Book.Shelf.putModel('');" />
-				<input type=button value="get模式" onclick="Book.Shelf.getModel('');" />
-				<input type=button value="默认模式" onclick="Book.Shelf.setModel('');" />
-				<input type=button value="alert模式" onclick="Book.Shelf.alertModel();" />
-				
-				<input type=button value="chromeCors模式" onclick="Book.Shelf.setModel('cors')" />
-				<input type=button value="最优模式" onclick="Book.Shelf.setModel('http://gear.docfeng.top/get2.php')" />
-				<input type=button value="最优模式2" onclick="Book.Shelf.setModel('http://192.168.123.128/get2.php')" />
-				<input type=button value="最优模式3" onclick="Book.Shelf.setModel('http://gear2.docfeng.top/get2.php')" />
-				<input type=button value="最优模式4" onclick="Book.Shelf.setModel('http://192.168.123.92:8080/get2.php')" /><input type=button
-				 value="自定义模式" onclick="var url=prompt();Book.Shelf.setModel(url)" />
-				<input type=button value="select模式" onclick="Book.Shelf.selectModel()" /><input type=button value="自定义模式" onclick="var url=prompt();Book.Shelf.setModel(url)" />
-				<input type=button value="清除缓存文件" onclick="window.applicationCache.update();" />
 				<br />
-				<input type="text" id="script1" style="height:10px" />
+				<input type="text" id="script1" style="height:30px" />
 			</div>
 			<div style="flex-grow:5;">
 				<textarea id="evaltxt" style="width: 100%;height: 100%;"></textarea>
@@ -891,5 +914,94 @@
 		</div>
 		<script type="text/javascript" src="script/geth.js"></script>
 		<script type="text/javascript" src="es5/readpage-0.1.js"></script>
+		<script type="text/javascript">
+			var act=function(a){
+			    var json={};
+			    var obj=a.elements;
+			    for(var i=0;i<obj.length;i++){
+			        switch(obj[i].type){
+			            case "text":
+			                if(obj[i].value){
+			                    json[obj[i].name]=obj[i].value;
+			                }
+			                break;
+			            case "radio":
+			                if(obj[i].checked){
+			                    json[obj[i].name]=obj[i].value;
+			                }
+			                break;
+			            case "checkbox":
+			                if(!json[obj[i].name]){
+			                    json[obj[i].name]=[];
+			                }
+			                if(obj[i].checked){
+			                    json[obj[i].name].push(obj[i].value);
+			                }
+			                break;
+			            
+			            
+			            
+			        }
+			        
+			    }
+			    //alert(JSON.stringify(json,null,4))
+				return json;
+			}
+			var addModel=function(a){
+				var json=act(a);
+				var url=json.cors;
+				alert(url)
+				Book.Shelf.setModel(url);
+			}
+			var showModel=function(obj){
+			    var html=""//"<legend>cors</legend>";
+			    //var ele=document.createDocumentFragment(html);
+			    var arr=["cors",
+					'http://gear.docfeng.top/get2.php',
+					'http://192.168.123.128/get2.php',
+					'http://gear2.docfeng.top/get2.php',
+					'http://192.168.123.92:8080/get2.php'
+					];
+			    for(var i=0;i<arr.length;i++){
+			        html+='<label><input type="radio" name="cors" value="'+arr[i] +'" />'+arr[i]+'</label>\n';
+			    }
+			    //obj.appendChild(ele);
+			    
+			    //cors.innerHTML=html;
+			    cors.insertAdjacentHTML("beforeEnd",html);
+				var model=Book.Shelf.getModel('');
+				var obj=cors.elements;
+				for(var i=0;i<obj.length;i++){
+				     if(obj[i].value&&obj[i].value== model){
+				         obj[i].checked=true;
+				     } 
+				}
+			    //cors.appendChild(ele);
+			}
+			var insert=function(obj){
+			    var html=""//"<legend>cors</legend>";
+			    //var ele=document.createDocumentFragment(html);
+			    var arr=["cors",
+					"http://www.mangg.com/id70209/",
+					'http://gear.docfeng.top/get2.php',
+					'http://192.168.123.128/get2.php',
+					'http://gear2.docfeng.top/get2.php',
+					'http://192.168.123.92:8080/get2.php'
+					];
+			    for(var i=0;i<arr.length;i++){
+			        html+='<label><input type="radio" name="cors" value="'+arr[i] +'" />'+arr[i]+'</label>\n';
+			    }
+			    //obj.appendChild(ele);
+			    
+			    //cors.innerHTML=html;
+			    cors.insertAdjacentHTML("beforeEnd",html);
+			    //cors.appendChild(ele);
+			}
+		</script>
+		<style>
+form label{
+    display: block;
+}
+</style>
 	</body>
 </html>

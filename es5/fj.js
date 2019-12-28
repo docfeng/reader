@@ -11,7 +11,7 @@ fj = (function() {
 		win.classList.add("alert_box");
 		win.style.display = "block";
 		document.body.appendChild(win);
-		let s = evt.addEvent(function(a) {
+		var s = evt.addEvent(function(a) {
 			document.body.removeChild(win);
 			win = null;
 			cancelFun && cancelFun();
@@ -47,7 +47,7 @@ fj = (function() {
 			event.stopPropagation();
 		}, false);
 
-		let s = evt.addEvent(function(a) {
+		var s = evt.addEvent(function(a) {
 			document.body.removeChild(win);
 			obj.cancel();
 			obj = null;
@@ -104,18 +104,18 @@ fj = (function() {
 	$.createBox = createBox;
 	$.createWin = function(name, html, fun) {
 		var code =
-			`
-          <div class="setting_box" onclick="window.event.stopPropagation();">
-              <div class="setting_header_box">${name}</div>
-              <div class="setting_body_box">
-                  ${html}
-              </div>
-              <div class="setting_footer_box">
-                  <input type="button" value="确定" id="certain" />
-                  <input type="button" value="取消" id="cancel" />
-              <div>
-          </div>
-              `;
+			'\
+          <div class="setting_box" onclick="window.event.stopPropagation();">\
+              <div class="setting_header_box">${name}</div>\
+              <div class="setting_body_box">\
+                  ${html}\
+              </div>\
+              <div class="setting_footer_box">\
+                  <input type="button" value="确定" id="certain" />\
+                  <input type="button" value="取消" id="cancel" />\
+              <div>\
+          </div>\
+              ';
 		var iniFun = function(obj, s) {
 			obj.onclick = obj.querySelector("#cancel").onclick = function() {
 				evt.removeEvent(s);
@@ -145,7 +145,7 @@ fj = (function() {
 		//iframe.classList.add("setting_box");
 		iframe.style = "width:100%;height:100%;background:white;"
 		iframe.src = url;
-		let s = evt.addEvent(function(a) {
+		var s = evt.addEvent(function(a) {
 			win.removeChild(iframe);
 			//exitScreen()
 			document.body.removeChild(win);
@@ -160,7 +160,7 @@ fj = (function() {
 		fullScreen(win);
 	}
 	$.iframe = function(url) {
-		var code = `<iframe style="width:100%;height:100%;background:white;" url="${url}"></iframe>`
+		var code = '<iframe style="width:100%;height:100%;background:white;" url="'+url+'"></iframe>';
 		var iniFun = function(obj) {
 			obj.querySelector("iframe").contentWindow.location.href = url;
 			fullScreen(obj);
@@ -209,9 +209,9 @@ fj = (function() {
 			var html = ""
 			for (var i = 0; i < data.length; i++) {
 				var a = data[i];
-				html += `<div>${a}</div>`;
+				html += '<div>'+a+'</div>';
 			}
-			var code = `<div class="select_box" id="select1">${html}</div>`;
+			var code = '<div class="select_box" id="select1">'+html+'</div>';
 			var fun = {};
 			fun.cancel = function() {
 				resolve(false);
@@ -242,11 +242,11 @@ fj = (function() {
 		header.innerHTML=title||"";
 		var win = obj.win;
 		for (var i = 0; i < arr.length; i++) {
-			let a = arr[i];
-			let name = a[0];
-			let data = a[1];
-			let value = "";
-			let dataList = ""; //a[2];
+			var a = arr[i];
+			var name = a[0];
+			var data = a[1];
+			var value = "";
+			var dataList = ""; //a[2];
 			if (data) {
 				if (data instanceof Array) {
 					if (a[2] && typeof a[2] == "number") {
@@ -262,7 +262,7 @@ fj = (function() {
 			var d = document.createElement("div")
 			d.innerHTML = name;
 			re[name] = value || "";
-			let text = document.createElement("input");
+			var text = document.createElement("input");
 			text.type = "text";
 			text.value = value || "";
 			text.oninput = function(e) {
@@ -270,7 +270,7 @@ fj = (function() {
 			}
 			d.appendChild(text);
 			if (dataList) {
-				let s = document.createElement("input");
+				var s = document.createElement("input");
 				s.type = "button";
 				s.value = "选择";
 				s.onclick = function(e) {

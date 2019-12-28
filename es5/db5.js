@@ -109,7 +109,7 @@ DB = (function() {
 				return re;
 			});
 		},
-		delete1: function(name) {
+		delete: function(name) {
 			var request = indexedDB.deleteDatabase(name);
 			return new Promise(function(resolve, reject) {
 				//删除数据失败

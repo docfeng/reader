@@ -203,8 +203,8 @@ Book = (function() {
 			var t = this;
 			return Git.Comment.gets("docfeng", "book-data", 1).then(function(text) {
 				var json1 = JSON.parse(text);
+				var j = [];
 				return t.readAll().then(function(json2) {
-					var j = [];
 					//console.log(json1.length)
 					for (var i1 = 0; i1 < json1.length; i1++) {
 						var json3 = JSON.parse(json1[i1].body);
@@ -260,6 +260,8 @@ Book = (function() {
 						alert(JSON.stringify(re,null,4))
 					}); */
 					return Promise.all(p);
+				}).then(function(){
+					return j;
 				});
 			});
 		},
@@ -1191,7 +1193,14 @@ Book = (function() {
 		"List": List,
 		"Page": Page,
 		"Search": Search,
-		"download": download
+		"download": download,
+		"deleteDB":function(){
+			DB.DB.delete('book').then(function(a){
+				alert('删除book数据库\n成功');
+			}).catch(function(){
+				alert('删除book数据库\n失败');
+			})
+		}
 	};
 })();
 

@@ -773,27 +773,28 @@
 			<!-- <div style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;"> -->
 			<div>
 				<span class="iconfont icon-reload" onclick="document.location.reload();"></span>
-				<input type="button" value="eval33" onclick="var b=setbox.style.display;setbox.style.display=b=='none'?'block':'none';evalbox.style.display=b=='none'?'none':'block';" />
+				<input type="button" value="shift" onclick="var b=setbox.style.display;setbox.style.display=b=='none'?'block':'none';evalbox.style.display=b=='none'?'none':'block';" />
 			</div>
 			<div id="setbox">
 				<form  action="javascript:void()"  onsubmit="act(this)" style="height: 500px;overflow-y: scroll;">
 					 <input type="text" name="t1" value="rff" /><br/>
 					 <fieldset>
-					     <legend>操作</legend>
-					     <input type="button" value='epub' onclick='fso.writeZip(form_1.novel_name.value+".epub",form_1.novel_name.value)' />
-					     <input type=button value="打开" onclick="chrome.openFile(form_1.novel_name.value+'.epub')" />
-					     <input type=button value="moveData" onclick="Shelf.moveData()" />
-					     <input type=button value="sameAll" onclick="Shelf.sameAll()" />
-					     <input type=button value="Shelf.clear" onclick="Shelf.clear()" />
-					     <input type=button value="同步" onclick="Shelf.same()" />
-					     <input type=button value="delBookDB" onclick="DB.DB.delete('book').then(function(a){alert('删除book数据库\n成功')}).catch(function(){alert('删除book数据库\n失败')})" />
-					     <input type=button value="Page.clear" onclick="Page.clear()" />
-					     <input type=button value="put模式" onclick="Book.Shelf.putModel('');" />
-					     <input type=button value="select模式" onclick="Book.Shelf.selectModel()" />
-						 <input type=button value="自定义模式" onclick="var url=prompt();Book.Shelf.setModel(url)" />
-					     <input type=button value="清除缓存文件" onclick="window.applicationCache.update();" />
-					 </fieldset>
-					 <fieldset id="cors">
+					    <legend>操作</legend>
+					    <input type="button" value='epub' onclick='fso.writeZip(form_1.novel_name.value+".epub",form_1.novel_name.value)' />
+					    <input type=button value="打开" onclick="chrome.openFile(form_1.novel_name.value+'.epub')" />
+					</fieldset>
+					<fieldset>
+						<legend>数据操作</legend>
+						<input type=button value="moveData" onclick="Shelf.moveData()" />
+						<input type=button value="sameAll" onclick="Shelf.sameAll()" />
+						<input type=button value="同步" onclick="Shelf.same()" />
+					    <input type=button value="Shelf.clear" onclick="Shelf.clear()" />
+					    <input type=button value="Book.deleteDB" onclick="Book.deleteDB();" />
+					    <input type=button value="Page.clear" onclick="Page.clear()" />
+					    <input type=button value="put模式" onclick="Book.Shelf.putModel('');" />
+					    <input type=button value="清除缓存文件" onclick="window.applicationCache.update();" />
+					</fieldset>
+					<fieldset id="cors">
 					     <legend>cors</legend>
 					     <input type="button" onclick="showModel(this.parentNode)" value="showModel" />
 						 <input type="button" onclick="addModel(this.parentNode)" value="addModel" /><br />

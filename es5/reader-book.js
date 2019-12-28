@@ -621,11 +621,18 @@ Shelf=(function(a){
 		},
 		sameAll:function(){
 			return _Shelf.sameAll().then(function(){
-				Shelf.showAll();
+				return _Shelf.readAll().then(function(arr){
+					Shelf.arr=arr;
+					Shelf.showAll();
+					return arr;
+				});
 			});
 		},
 		sameSince:function(){
 			var t = this;
+			if(!APP.data.ShelfArr[0]){
+				return this.sameAll();
+			}
 			var time=APP.data.ShelfArr[0].readAt;
 			console.log(time)
 			console.log(APP.data.ShelfArr[0].name)

@@ -573,7 +573,9 @@
 			<!-- 搜索-->
 			<div class="model" id="searchDiv">
 				<div>
-					<input type="text" id="f6_name" onchange="">
+					name:<input type="text" id="f6_name" onchange="" />
+					url:<input type="text" id="search_url" />
+					<input type="button" value="添加" onclick="Search.add(f6_name.value,search_url.value);" />
 					<input type="button" value="搜索" onclick="Search.search(f6_name.value);" />
 					<input type="button" value="重载" onclick="Search.update(f6_name.value);" />
 				</div>

@@ -575,6 +575,36 @@ Search=(function(a){
 			});
 			
 		    //f6_table.rows[i].innerHTML=`<tr><td><h4>${json[i][0]}</h4><h3>${json[i][1]}</h3></td></tr>`;
+		},
+		add: function(name,url){
+		    var name=name||this.name;
+			if(!name||!url){
+				alert("search.add参数错误：\nname=%s;\nurl=%s".fill([name,url]));
+				return 0;
+			}
+		    
+
+			fj.tip("开始获取目录数据")
+			//显示目录页
+			_Search.getRealPath(url).then(function(re){
+				fj.tip("已获取目录数据，开始显示",1)
+				var url=re[0];
+				var arr=re[1];
+				List.show(name,url,arr);
+				Shelf.add(name,url,arr).then(function(re){
+					fj.tip("添加书本成功",2)
+				}).catch(function(e){
+					fj.tip("添加书本失败",2)
+				})
+				//UI.showList()
+				List.write(name,arr);
+				alert("name="+name+"\nurl="+url+"\narr:"+JSON.stringify(arr,null,4))
+				window.history.go(-1);	
+			}).catch(function(e){
+				alert("search.click:err:\n"+e)
+			});
+			
+		    //f6_table.rows[i].innerHTML=`<tr><td><h4>${json[i][0]}</h4><h3>${json[i][1]}</h3></td></tr>`;
 		}
 	}
 	return Search;

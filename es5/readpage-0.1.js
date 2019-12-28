@@ -377,10 +377,10 @@ show = function(str) {
 			//页数等于第1页;
 			pageIndex = 1;
 			if (i < 0) i = 0;
-			if (i + 1 == Page.arr.length) {
+			if (i + 1 == Book.listarr.length) {
 				fj.tip("已阅读到书本末尾")
 			}
-			if (i + 1 > Page.arr.length) {
+			if (i + 1 > Book.listarr.length) {
 				fj.tip("已阅读到书本末尾")
 				return Promise.reject("已阅读到书本末尾");
 			}
@@ -389,8 +389,8 @@ show = function(str) {
 				txt = Page.formatUI(txt);
 				Page.index1 = i;
 				$("#rd-txt").html(txt);
-				$("#page-name").html(Page.arr[i][1] + ":    " + Page.name);
-				$("#novelName").html(Page.name);
+				$("#page-name").html(Book.listarr[i][1] + ":    " + Book.name);
+				$("#novelName").html(Book.name);
 				Z = (pageIndex / pageCount).toFixed(2); //保留小数点2位
 				scroll(pageIndex, 0);
 				void cacl();

@@ -128,9 +128,9 @@ addDownFlush = function(obj, fun) {
 	};
 		obj.addEventListener("touchstart", u, !1)
 		obj.addEventListener("mousedown", u, !1)
-	document.onselectstart=function(e){
+	/* document.onselectstart=function(e){
 		return false;
-	};
+	}; */
 	var isTop = function() {
 		var t = obj.scrollTop || document.documentElement.scrollTop || document.body.scrollTop;
 		//alert("t:"+t)

@@ -252,13 +252,13 @@ Git = (function() {
 				var status = re.xml.status;
 				switch (status) {
 					case 200:
-						alert("写入成功");
+						//alert("写入成功");
 						break;
 					case 201:
-						alert("创建成功");
+						//alert("创建成功");
 						break;
 					case 422:
-						alert("false");
+						//alert("false");
 						break;
 				}
 				var json = JSON.parse(re.html);

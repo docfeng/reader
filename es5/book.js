@@ -1,4 +1,4 @@
-/**
+var a=function(){/**
  * es5
  * v 1.0
  * gitapi5.js
@@ -32,6 +32,7 @@
  * 
  * Load,
  */
+}
 APP={
 	data:{},
 	info:{}
@@ -65,24 +66,7 @@ Book = (function() {
 				url = URL + "?url=" + encodeURIComponent(url);
 			}
 		} else {
-			switch (para) {
-				case "search":
-					URL = "http://gear.docfeng.top/get2.php";//"https://bird.ioliu.cn/v1/";
-					break;
-				case "real":
-					xml = true;
-					URL = "http://gear.docfeng.top/get2.php";
-					break;
-				case "list":
-					URL = "http://gear.docfeng.top/get2.php";//"https://bird.ioliu.cn/v2/";
-					break;
-				case "page":
-					URL = "http://gear.docfeng.top/get2.php"; //"https://bird.ioliu.cn/v2/";
-					break;
-				default:
-					URL = "http://gear.docfeng.top/get2.php";
-					break;
-			}
+			URL = "http://gear.docfeng.top/get2.php";//"https://bird.ioliu.cn/v1/";
 			url = URL + "?url=" + encodeURIComponent(url);
 			alert()
 		}
@@ -128,40 +112,7 @@ Book = (function() {
 				return text
 			});
 		},
-		getAll: function() {
-			var t = this
-			return Git.Issue.get("docfeng", "book-data", 1).then(function(text) {
-				var json1 = JSON.parse(text);
-				json1 = JSON.parse(json1.body);
-				var time1 = json1[0].readAt;
-				return t.readAll().then(function(json2) {
-					var time2 = json2[0].readAt
-					if (time1 == time2) {
-						alert("沒有改變")
-					} else {
-						var j = []
-						for (var i1 = 0; i1 < json1.length; i1++) {
-							var b = false;
-							for (var i2 = 0; i2 < json2.length; i2++) {
-								if (json1[i1].name == json2[i2].name) {
-									b = true;
-									if (json1[i1].readAt > json2[i2].readAt) {
-										/* 网络更新时间>本地更新时间，用网络的版本 */
-										j.push(json1[i1]);
-									}
-								}
-							}
-							/* 如果本地沒有查到name，用网络的版本 */
-							if (!b) {
-								j.push(json1[i1]);
-							}
-						}
-						console.log(JSON.stringify(j, null, 4));
-						return t.writeAll(j);
-					}
-				});
-			});
-		},
+		
 		put: function(json) {
 			if (!json.id) {
 				var text = JSON.stringify(json, null, 4)
@@ -175,18 +126,7 @@ Book = (function() {
 				return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
 			}
 		},
-		putAll: function(arr) {
-			return this.readAll().then(function(arr) {
-				var text = JSON.stringify(arr, null, 4)
-				return Git.Issue.put("docfeng", "book-data", 1, "shelf", text, ["shelf"]);
-			});
-		},
-		same: function() {
-			var t = this;
-			this.getAll().then(function() {
-				t.putAll()
-			});
-		},
+		
 		samePart: function() {
 			//未完成
 			var d = new Date("2019-07-23T17:23:10");
@@ -202,33 +142,34 @@ Book = (function() {
 		sameAll: function() {
 			var t = this;
 			return Git.Comment.gets("docfeng", "book-data", 1).then(function(text) {
-				var json1 = JSON.parse(text);
-				var j = [];
-				return t.readAll().then(function(json2) {
-					//console.log(json1.length)
-					for (var i1 = 0; i1 < json1.length; i1++) {
-						var json3 = JSON.parse(json1[i1].body);
-						//console.log(json3.name+json3.id)
-						if (!json3.id) {
-							json3.id = json1[i1].id;
-							//console.log(json3.name+json3.id)
-							t.put(json3)
+				var arr1 = JSON.parse(text);
+				var re = [];
+				return t.readAll().then(function(arr2) {
+					//console.log(arr1.length)
+					var j = [];
+					for (var i1 = 0; i1 < arr1.length; i1++) {
+						var json1 = JSON.parse(arr1[i1].body);
+						//console.log(json1.name+json1.id)
+						if (!json1.id) {
+							json1.id = arr1[i1].id;
+							//console.log(json1.name+json1.id)
+							t.put(json1)
 						}
 						var b = false;
-						for (var i2 = 0; i2 < json2.length; i2++) {
-							if (json3.name == json2[i2].name) {
+						for (var i2 = 0; i2 < arr2.length; i2++) {
+							if (json1.name == arr2[i2].name) {
 								b = true;
-								if ((json3.readAt > json2[i2].readAt) || !json2[i2].id) {
+								if ((json1.readAt > arr2[i2].readAt) || !arr2[i2].id) {
 									/* 网络更新时间>本地更新时间，或者本地没有id，
 									用网络的版本（替换） */
-									j.push(json3);
-									json2[i2] = json3;
+									j.push(json1);
+									arr2[i2] = json1;
 								}
 							}
 						}
 						/* 如果本地沒有查到name，用网络的版本（添加） */
 						if (!b) {
-							j.push(json3);
+							j.push(json1);
 						}
 					}
 
@@ -237,37 +178,37 @@ Book = (function() {
 						t.writeAll(j);
 					}
 					//console.log(JSON.stringify(j,null,4));
-					//console.log(JSON.stringify(json2,null,4));
+					//console.log(JSON.stringify(arr2,null,4));
 					var p = [];
 					var addGit = function(json) {
 						var text = JSON.stringify(json, null, 4)
 						return Git.Comment.create("docfeng", "book-data", 1, text).then(function(text1) {
-							var json1 = JSON.parse(text1);
-							json.id = json1.id;
+							var arr1 = JSON.parse(text1);
+							json.id = arr1.id;
 							t.write(json);
-							return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4)).then(function(
-								text) {
+							return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4)).then(function(text) {
 								return json.name
 							});
 						});
 					}
-					for (var i2 = 0; i2 < json2.length; i2++) {
-						if (!json2[i2].id) {
-							p.push(addGit(json2[i2]));
+					for (var i2 = 0; i2 < arr2.length; i2++) {
+						if (!arr2[i2].id) {
+							p.push(addGit(arr2[i2]));
 						}
 					}
+					Book.arr=re=arr2;
 					/* Promise.all(p).then(function(re){
 						alert(JSON.stringify(re,null,4))
 					}); */
 					return Promise.all(p);
 				}).then(function(){
-					return j;
+					return re;
 				});
 			});
 		},
 		sameSince: function() {
 			var t = this;
-			alert(APP.data.ShelfArr[0])
+			alert(Book.arr[0])
 			
 		},
 		
@@ -276,14 +217,14 @@ Book = (function() {
 			return DB.Data.getIndex("book", "shelf", "readAt", null).then(function(json) {
 				DB.DB.close();
 				var json = json.reverse();
-				APP.data.ShelfArr=json;
+				Book.arr=json;
 				return json;
 			}).catch(function(e) {
 				DB.DB.close();
 				return t.ini().then(function() {
 					return DB.Data.getIndex("book", "shelf", "readAt", null).then(function(json) {
 						DB.DB.close();
-						APP.data.ShelfArr=json;
+						Book.arr=json;
 						return json;
 					}).catch(function(e) {
 						DB.DB.close();
@@ -586,37 +527,15 @@ Book = (function() {
 	}
 
 	var List = {
-		get: function(id) {
-
+		get: function(name) {
+			var name="book/"+Book.name+"/list/list.json"
+			return Git.File.get("docfeng","book-data",name);
 		},
-		getAll: function() {
-			return Git.Comment.get("docfeng", "book-data", 1).then(function(text) {
-				var json = JSON.parse(text);
-				var re = [];
-				for (var i = 0; i < json.length; i++) {
-					var item = isJSON(json[0].body);
-					if (item) {
-						item.updated_at = json[0].updated_at;
-						re.push(item)
-					} else {
-						Git.Comment.del("docfeng", "book-data", json[0].id);
-					}
-				}
-				return re;
-			});
-		},
-		put: function(json) {
-			var id = json.id;
-			if (!id) {
-				return this.add(json);
-			}
-			var txt = JSON.stringify(json);
-			return Git.Comment.put("docfeng", "book-data", id, txt).then(function(text) {
-				return true;
-			});
-		},
-		puAll: function(arr) {
-
+		put: function(name,arr) {
+			var name="book/"+Book.name+"/list/list.json";
+			var arr=arr||Book.listarr;
+			var txt=JSON.stringify(arr);
+			return Git.File.set("docfeng","book-data",name,txt);
 		},
 		read: function(name) {
 			var t = this;
@@ -748,7 +667,23 @@ Book = (function() {
 		},
 		format1: function(html, url) {
 			var html = html.replace(/<img.*?>/g, "");
-			var ele = document.createElement("html");
+            var str=html.match(/<dl>[\s\S]*?<\/dl>/);
+			console.log(str)
+			str=str[0];
+            str=str.match(/<a[^>]*?href([^"]*?)=([^"]*?)"([^"]*?)"[^>]*?>(.*?)<\/a>/g);
+            var re=[];
+            for(i=0;i<str.length;i++){
+				var s=str[i].match(/<a[^>]*?href[^"]*?=[^"]*?"([^"]*?)"[^>]*?>(.*?)<\/a>/);
+				s.splice(0,1)
+				s[0]=s[0].getFullUrl(url);
+				var m=s[1].match(/<[^>]*?>([^<]*?)</);
+				if(m){
+					s[1]=m[1];
+				}
+                re.push(s)
+            }
+            console.log(re)
+			/* var ele = document.createElement("html");
 			ele.innerHTML = html;
 			var b = document.createElement("base");
 			b.href = url.getBaseUrl();
@@ -770,9 +705,14 @@ Book = (function() {
 			}
 			var re = [];
 			for (var i1 = 0; i1 < a.length; i1++) {
-				re.push([a[i1].href, a[i1].innerHTML])
+				var title=a[i1].innerHTML
+				var m=title.match(/<[^>]*?>([^<]*?)</);
+				if(m){
+					title-m[0];
+				}
+				re.push([a[i1].href, title])
 			}
-			document.head.removeChild(b);
+			document.head.removeChild(b); */
 			if (re.length > 0) {
 				return re;
 			} else {
@@ -870,6 +810,37 @@ Book = (function() {
 	}
 
 	var Page = {
+		getList:function(name){
+			var path="book/"+name+"/page";
+			var t=this;
+			return Git.Dir.getFileList("docfeng","book-data",path).then(function(re){
+				t.json=re.file;
+			})
+			//Git.File.put("docfeng","book-data",name,txt)
+		},
+		put:function(name,title,txt){
+			var path="book/"+name+"/page/"+title+".txt";
+			var json=this.json;
+			if(json){
+				var b=false;
+				for(var i=0;i<json.length;i++){
+					if(path==json[i]){
+						b=true;
+					}
+				}
+				console.log(b,path,title)
+				if(!b){
+					json.push(path)
+					Git.File.put("docfeng","book-data",path,txt).then(function(a){
+						console.log(a)
+					})
+				}
+			}
+		},
+		get:function(name,title){
+			var name="book/"+name+"/page/"+title+".txt";
+			return Git.File.get("docfeng","book-data",name);
+		},
 		multi: function(name, url) {
 			var t = this;
 			//alert(url)
@@ -934,6 +905,8 @@ Book = (function() {
 		},
 		write: function(name, title, url, txt) {
 			var t = this;
+			t.put(name,title,txt);
+			console.log(name,title)
 			var full_name = name + url;
 			var json = {
 				full_name: full_name,
@@ -1188,7 +1161,7 @@ Book = (function() {
 	var download = {
 
 	}
-	return {
+	var Book= {
 		"Shelf": Shelf,
 		"List": List,
 		"Page": Page,
@@ -1202,6 +1175,7 @@ Book = (function() {
 			})
 		}
 	};
+	return Book;
 })();
 
 String.prototype.fill = function(arr) {
@@ -1211,8 +1185,54 @@ String.prototype.fill = function(arr) {
 	}
 	return str;
 }
-
-
+var a=function(){
+/* getAll: function() {
+			var t = this
+			return Git.Issue.get("docfeng", "book-data", 1).then(function(text) {
+				var json1 = JSON.parse(text);
+				json1 = JSON.parse(json1.body);
+				var time1 = json1[0].readAt;
+				return t.readAll().then(function(json2) {
+					var time2 = json2[0].readAt
+					if (time1 == time2) {
+						alert("沒有改變")
+					} else {
+						var j = []
+						for (var i1 = 0; i1 < json1.length; i1++) {
+							var b = false;
+							for (var i2 = 0; i2 < json2.length; i2++) {
+								if (json1[i1].name == json2[i2].name) {
+									b = true;
+									if (json1[i1].readAt > json2[i2].readAt) {
+										// 网络更新时间>本地更新时间，用网络的版本
+										j.push(json1[i1]);
+									}
+								}
+							}
+							// 如果本地沒有查到name，用网络的版本
+							if (!b) {
+								j.push(json1[i1]);
+							}
+						}
+						console.log(JSON.stringify(j, null, 4));
+						return t.writeAll(j);
+					}
+				});
+			});
+		}, */
+		/* putAll: function(arr) {
+			return this.readAll().then(function(arr) {
+				var text = JSON.stringify(arr, null, 4)
+				return Git.Issue.put("docfeng", "book-data", 1, "shelf", text, ["shelf"]);
+			});
+		}, */
+		/* same: function() {
+			var t = this;
+			this.getAll().then(function() {
+				t.putAll()
+			});
+		}, */
+}
 var tttt = function() {
 	Book.Search.get("唐残").then(function(arr) {
 		var re = arr[1];

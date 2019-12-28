@@ -645,29 +645,12 @@ Book = (function() {
 				} else {
 					return t.format1(html, url);
 				}
-				/* if(localModel){
-					return t.format(html, url);
-				}else{
-					var charset = html.match(/charset=([^"]+)"/);
-					charset = charset && charset[1].toLowerCase();
-					switch (charset) {
-						case "gbk":
-						case "gb2312":
-							return Promise.reject("error charset:" + charset)
-							break;
-						case "utf-8":
-							return t.format(html, url);
-							break;
-						default:
-							//return List.format(html,url);
-							return Promise.reject("error charset:" + charset);
-					}
-				} */
 			});
 		},
 		format1: function(html, url) {
 			var html = html.replace(/<img.*?>/g, "");
-            var str=html.match(/<dl>[\s\S]*?<\/dl>/);
+			console.log(str)
+            var str=html.match(/<dl[^>]*?>[\s\S]*?<\/dl>/);
 			console.log(str)
 			str=str[0];
             str=str.match(/<a[^>]*?href([^"]*?)=([^"]*?)"([^"]*?)"[^>]*?>(.*?)<\/a>/g);
@@ -959,6 +942,7 @@ Book = (function() {
 			html = html.replace(/(<p>)/g, '');
 			html = html.replace(/(<\/p>)/g, '\n');
 			html = html.replace(/&nbsp;/g, ' ');
+			html = html.replace(/&lt;r \/&gt;/g, ' ');
 			//匹配正文
 			var atxt = html.match(/>([^<]{300,})</g);
 			atxt = atxt ? atxt : "";

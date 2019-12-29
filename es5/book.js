@@ -115,12 +115,13 @@ Book = (function() {
 		
 		put: function(json) {
 			if (!json.id) {
-				var text = JSON.stringify(json, null, 4)
-				return Git.Comment.create("docfeng", "book-data", 1, text).then(function(text1) {
+				var text = JSON.stringify(json, null, 4);
+				var sort=json.sort||1;
+				return Git.Comment.create("docfeng", "book-data", sort, text).then(function(text1) {
 					var json1 = JSON.parse(text1)
 					json.id = json1.id;
 					Shelf.write(json);
-					return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
+					//return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
 				});
 			} else {
 				return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
@@ -139,47 +140,15 @@ Book = (function() {
 				alert(e)
 			});
 		},
-		sameAll: function() {
+		sameAll: function(sort) {
+			var sort=sort||1;
 			var t = this;
-			return Git.Comment.gets("docfeng", "book-data", 1).then(function(text) {
+			return Git.Comment.gets("docfeng", "book-data", sort).then(function(text) {
 				var arr1 = JSON.parse(text);
-				var re = [];
 				return t.readAll().then(function(arr2) {
-					//console.log(arr1.length)
-					var j = [];
-					for (var i1 = 0; i1 < arr1.length; i1++) {
-						var json1 = JSON.parse(arr1[i1].body);
-						//console.log(json1.name+json1.id)
-						if (!json1.id) {
-							json1.id = arr1[i1].id;
-							//console.log(json1.name+json1.id)
-							t.put(json1)
-						}
-						var b = false;
-						for (var i2 = 0; i2 < arr2.length; i2++) {
-							if (json1.name == arr2[i2].name) {
-								b = true;
-								if ((json1.readAt > arr2[i2].readAt) || !arr2[i2].id) {
-									/* 网络更新时间>本地更新时间，或者本地没有id，
-									用网络的版本（替换） */
-									j.push(json1);
-									arr2[i2] = json1;
-								}
-							}
-						}
-						/* 如果本地沒有查到name，用网络的版本（添加） */
-						if (!b) {
-							j.push(json1);
-						}
-					}
-
-					//写入改变项
-					if (j.length > 0) {
-						t.writeAll(j);
-					}
-					//console.log(JSON.stringify(j,null,4));
-					//console.log(JSON.stringify(arr2,null,4));
-					var p = [];
+					return t.compare(arr1,arr2);
+				});
+					/* var p = [];
 					var addGit = function(json) {
 						var text = JSON.stringify(json, null, 4)
 						return Git.Comment.create("docfeng", "book-data", 1, text).then(function(text1) {
@@ -196,20 +165,66 @@ Book = (function() {
 							p.push(addGit(arr2[i2]));
 						}
 					}
-					Book.arr=re=arr2;
-					/* Promise.all(p).then(function(re){
-						alert(JSON.stringify(re,null,4))
-					}); */
-					return Promise.all(p);
-				}).then(function(){
-					return re;
-				});
+					Book.arr=re;
+					return Promise.all(p); */
 			});
 		},
-		sameSince: function() {
+		compare:function(arr1,arr2){
+			var j = [];
+			for (var i1 = 0; i1 < arr1.length; i1++) {
+				var json1 = JSON.parse(arr1[i1].body);
+				if (!json1.id) {
+					json1.id = arr1[i1].id;
+					this.put(json1)
+				}
+				var b = false;
+				for (var i2 = 0; i2 < arr2.length; i2++) {
+					var json2= arr2[i2];
+					if (json1.name == json2.name) {
+						b = true;
+						if ((json1.readAt > json2.readAt) || !json2.id) {
+							// 网络更新时间>本地更新时间，或者本地没有id，用网络的版本（替换）
+							j.push(json1);
+							arr2[i2] = json1;
+						}
+					}
+				}
+				// 如果本地沒有查到name，用网络的版本（添加）
+				if (!b) {
+					j.push(json1);
+				}
+			}
+			//写入改变项
+			if (j.length > 0) {
+				return this.writeAll(j).then(function(foo1){
+					return Shelf.readAll().then(function(arr){
+						Book.arr=arr;
+						return arr;
+					});
+				});
+			}else{
+				return Promise.resolve(true);
+			}
+		},
+		sameSince:function(){
 			var t = this;
-			alert(Book.arr[0])
+			if(!Book.arr[0]){
+				return this.sameAll();
+			}
+			var time=Book.arr[0].readAt;
+			console.log(time)
+			console.log(Book.arr[0].name)
 			
+			time=new Date(time);
+			var s=time.getTime();
+			s+=1000*10;
+			time.setTime(s)
+			console.log(time)
+			return Git.Comment.getSince("docfeng", "book-data", 1,time).then(function(text) {
+				var arr1 = JSON.parse(text);
+				var arr2=Book.arr;
+				return t.compare(arr1,arr2);
+			});
 		},
 		
 		readAll: function() {
@@ -326,14 +341,28 @@ Book = (function() {
 				return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
 			}
 		},
-		delete: function(key) {
-			return DB.Data.delete("book", "shelf", key).then(function(json) {
-				DB.DB.close();
-				return json;
-			}).catch(function(e) {
-				DB.DB.close();
-				return Promise.reject(e);
-			});
+		delete: function(json) {
+			var id=json.id;
+			if(id){
+				Git.Comment.del("docfeng", "book-data", id).then(function(re) {
+					console.log("shelf:del",re)
+				});
+			}
+			var key=json.name;
+			if(key){
+				return DB.Data.delete("book", "shelf", key).then(function(json) {
+					DB.DB.close();
+					return json;
+				}).catch(function(e) {
+					DB.DB.close();
+					return Promise.reject(e);
+				});
+			}
+		},
+		move:function(json){
+			Shelf.delete(json);
+			delete json.id;
+			Shelf.put(json)
 		},
 		createShelfTable: function() {
 			var data = {
@@ -385,7 +414,7 @@ Book = (function() {
 			return DB.Table.create("book", "page", data);
 		},
 		ini: function() {
-			alert("开始创建表格");
+			fj.tip("开始创建表格");
 			return Promise.all([this.createShelfTable(), this.createListTable(), this.createPageTable()]);
 		},
 		moveData: function() {
@@ -587,7 +616,6 @@ Book = (function() {
 			}).catch(function(e) {
 				//alert(JSON.stringify(e))
 				console.log(e)
-				console.log(e.srcElement.error.message)
 				DB.DB.close();
 				return DB.Table.has("book", "list").then(function(foo1) {
 

@@ -485,94 +485,6 @@ Shelf=(function(a){
 	var _Shelf=Book.Shelf;
 	var Arr,Json;
 	var Shelf = {
-		sameAll:function(){
-			return _Shelf.sameAll().then(function(){
-				return _Shelf.readAll().then(function(arr){
-					Book.arr=arr;
-					Shelf.showAll();
-					return arr;
-				});
-			});
-		},
-		sameSince:function(){
-			var t = this;
-			if(!Book.arr[0]){
-				return this.sameAll();
-			}
-			var time=Book.arr[0].readAt;
-			console.log(time)
-			console.log(Book.arr[0].name)
-			
-			time=new Date(time);
-			var s=time.getTime();
-			s+=1000*10;
-			time.setTime(s)
-			console.log(time)
-			return Git.Comment.getSince("docfeng", "book-data", 1,time).then(function(text) {
-				var json1 = JSON.parse(text);
-				var json2=Book.arr;
-				var j = [];
-				
-						for (var i1 = 0; i1 < json1.length; i1++) {
-							var json3 = JSON.parse(json1[i1].body);
-							//console.log(json3.name+json3.id)
-							if (!json3.id) {
-								json3.id = json1[i1].id;
-								//console.log(json3.name+json3.id)
-								t.put(json3)
-							}
-							var b = false;
-							for (var i2 = 0; i2 < json2.length; i2++) {
-								if (json3.name == json2[i2].name) {
-									b = true;
-									if ((json3.readAt > json2[i2].readAt) || !json2[i2].id) {
-										/* 网络更新时间>本地更新时间，或者本地没有id，
-										用网络的版本（替换） */
-										j.push(json3);
-										json2[i2] = json3;
-									}
-								}
-							}
-							/* 如果本地沒有查到name，用网络的版本（添加） */
-							if (!b) {
-								j.push(json3);
-							}
-						}
-				
-						//写入改变项
-						if (j.length > 0) {
-							t.writeAll(j);
-						}
-						//console.log(JSON.stringify(j,null,4));
-						//console.log(JSON.stringify(json2,null,4));
-						var p = [];
-						var addGit = function(json) {
-							var text = JSON.stringify(json, null, 4)
-							return Git.Comment.create("docfeng", "book-data", 1, text).then(function(text1) {
-								var json1 = JSON.parse(text1);
-								json.id = json1.id;
-								t.write(json);
-								return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4)).then(function(
-									text) {
-									return json.name
-								});
-							});
-						}
-						for (var i2 = 0; i2 < json2.length; i2++) {
-							if (!json2[i2].id) {
-								p.push(addGit(json2[i2]));
-							}
-						}
-						return Promise.all(p);
-				
-				/* var _arr=JSON.parse(text);
-				var arr=[];
-				for(var i=0;i<_arr.length;i++){
-					arr.push(JSON.parse(_arr[i].body))
-				} 
-				console.log(arr) */
-			});
-		},
 		readAll:function() {
 			if(Book.arr){
 				return Promise.resolve(Book.arr);
@@ -585,21 +497,21 @@ Shelf=(function(a){
 		},
 		add: function(name, url, arr) {
 			var t = this;
-			var json = Book.arr;
-			var json1 = {};
+			var arr = Book.arr;
+			var json = {};
 			
 			if(!name||!url||!arr||arr.length==0){
 				alert("Shelf.add参数错误：\nname:"+name+"\ni:"+url+"\narr:"+arr)
 				return Promise.reject("Shelf.add参数错误：\nname:"+name+"\ni:"+url+"\narr:"+arr);
 			}
 			var num = -1;
-			for (var i = 0; i < json.length; i++) {
-				if (json[i].name == name) {
+			for (var i = 0; i < arr.length; i++) {
+				if (arr[i].name == name) {
 					num = i;
 				}
 			}
 			if (num == -1) {
-				json1 = {
+				json = {
 					name: name,
 					url: url,
 					creatAt: formatDate(new Date()),
@@ -613,25 +525,27 @@ Shelf=(function(a){
 					updateURL: arr[arr.length - 1][0]
 				}
 			} else {
-				json1 = json.splice(num, 1)[0]; //json[num];
-				json1.url = url;
-				json1.updateIndex = arr.length - 1,
-					json1.updateTitle = arr[arr.length - 1][1],
-					json1.updateAt = formatDate(new Date()),
-					json1.updateURL = arr[arr.length - 1][0];
+				json = arr.splice(num, 1)[0]; //arr[num];
+				
+				json.url = url;
+				json.updateIndex = arr.length - 1,
+				json.updateTitle = arr[arr.length - 1][1],
+				json.updateAt = formatDate(new Date()),
+				json.updateURL = arr[arr.length - 1][0];
 				//this.show({index:num})
 			}
-			json.unshift(json1);
+			arr.unshift(json);
 			this.showAll()
-			return this.write(json1);
+			return this.write(json);
 		},
 		addGit:function(json){
 			return _Shelf.add(json) ;
 		},
 		delete: function(i) {
-			var name = Book.arr[i].name;
+			var json = Book.arr[i];
+			var name=json.name;
 			if (confirm("是否删除:" + i + name)) {
-				_Shelf.delete(name).then(function(){
+				_Shelf.delete(json).then(function(){
 					Book.arr.splice(i,1);
 					var obj=shelf_table.rows[i];
 					obj.parentNode.removeChild(obj)
@@ -658,7 +572,7 @@ Shelf=(function(a){
 			if(json.readIndex<json.updateIndex){
 				span1="<span class='alert'>未读:</span>";
 			}
-			var d ="<h1>%s</h1>\
+			var d ="<h1><input type='checkbox' />%s<span style='float:right'>...</span></h1>\
 			    <h2>已读:%s</h2>\
 			    <h3>%s</h3>\
 			    <h4>%s%s%s</h4>\
@@ -671,7 +585,7 @@ Shelf=(function(a){
 				json.updateTitle,
 				json.updateAt,
 				json.url]);
-			var str = "<tr><td>" + d + "</td></tr>";
+			var str="<tr><td>" + d + "</td></tr>";
 			return str;	
 		},
 		show:function(i) {
@@ -784,10 +698,69 @@ Shelf=(function(a){
 				});				
 			});			
 		},
+		select:function(obj){
+		        //var check=obj.querySelector("input");
+		        //check.checked=check.checked?false:true;
+		        var dir_box=document.querySelector("#shelf_table").querySelectorAll("input");
+		        var len=0;
+		        var dir=[];
+		        for(var i=0;i<dir_box.length;i++){
+		            dir_box[i].checked==true&&(len++,dir.push([Book.arr[i],i]));
+		        }
+		        console.log(dir)
+		       // file_control.style.display=len>0?"block":"none";
+		        //normal_control.style.display=len>0?"none":"block";
+		},
 		click:function(obj, order) {
 			var order = order ||"click"
-			var obj = obj.parentNode;
-			var i = obj.parentNode.rowIndex;
+			var obj = obj;
+			var t=this;
+			switch(obj.tagName.toLowerCase()){
+			    case "input":
+			        obj=obj.parentNode.parentNode;
+			        break;
+			    case "span":
+				    //this.select()
+					var index=obj.parentNode.parentNode.parentNode.rowIndex;
+					console.log("index",index);
+					var json=Book.arr[index];
+					fj.select(json.name,["删除","移动"]).then(function(re){
+						switch(re){
+							case "删除":
+							    t.delete(index);
+							    break;
+							case "移动":
+							    fj.select(json.name,["在读","其他","已读"]).then(function(re){
+									console.log(re)
+							    	switch(re){
+							    		case "在读":
+											json.sort=1;
+							    		    t.move(json);
+							    		    break;
+										case "其他":
+											json.sort=2;
+										    t.move(json);
+										    break;
+							    		case "已读":
+							    		    json.sort=3;
+							    		    t.move(json);
+							    		    break;
+							    	}
+							    });
+							    break;
+						}
+					})
+			        break;
+			    case "td":
+			        obj=obj.parentNode;
+			        break;
+			    default:
+			        obj=obj.parentNode.parentNode;;
+			}
+			var i = obj.rowIndex;
+			if(!i&&i!=0){
+				return 0;
+			}
 			if (order == "click") {
 				UI.showList()
 				Shelf.show(i);

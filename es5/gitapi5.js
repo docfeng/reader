@@ -74,17 +74,7 @@ Git = (function() {
 							users = JSON.parse(_users);
 							return users;
 						} else {
-							if(confirm("login?")){
-								var arr=User.login();
-								var name=arr[0];
-								var author=arr[1];
-								var users={};
-								users[name]=author;
-								store.setItem("users", JSON.stringify(users));
-								return users;
-							}else{
-								return Promise.reject("err:uesr.ini() no cash");
-							}
+							return User.login();
 						}
 					})
 				} else {
@@ -115,10 +105,33 @@ Git = (function() {
 			});
 		},
 		login: function(name, psw) {
-			var name = name || prompt("用户名", "docfeng");
-			var psw = psw || prompt("密码:" + name);
-			var author = "Basic " + btoa(name + ":" + psw);
-			return [name,author];
+			return store.getItem("users").then(function(_users) {
+				var user;
+				if (_users) {
+					users = JSON.parse(_users);
+				} else {
+					users={};
+				}
+				if(confirm("login?")){
+					var name = name || prompt("用户名", "docfeng");
+					var author = author || prompt("author:" + name);
+					if(!author){
+						var psw = psw || prompt("密码:" + name);
+						author = "Basic " + btoa(name + ":" + psw);
+					}else{
+						author = "token " + author;
+					}
+					users[name]=author;
+					if(confirm("保存?")){
+					  store.setItem("users", JSON.stringify(users));
+					  return users;
+					}else{
+						return Promise.reject("err:uesr.ini() no cash");
+					}
+				}else{
+					return Promise.reject("err:uesr.ini() no cash");
+				}
+			});
 		},
 		logout: function(name) {
 			delete users[name];

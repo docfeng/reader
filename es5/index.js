@@ -2,9 +2,7 @@ window.onload = function() {
 	if (browser.MyApp) chrome.computer();
 	Shelf.showAll().then(function(){
 		Shelf.sameSince().then(function(re){
-			if(re.length>0){
-				Shelf.showAll();
-			}
+			Shelf.showAll();
 		});;
 	});
 	

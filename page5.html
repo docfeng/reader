@@ -781,7 +781,9 @@
 					 <fieldset>
 					    <legend>操作</legend>
 					    <input type="button" value='epub' onclick='fso.writeZip(form_1.novel_name.value+".epub",form_1.novel_name.value)' />
-					    <input type=button value="打开" onclick="chrome.openFile(form_1.novel_name.value+'.epub')" />
+					    <input type="button" value="打开" onclick="chrome.openFile(form_1.novel_name.value+'.epub')" />
+						<input type="button" value="登入" onclick="Git.User.login()" />
+						<input type="button" value="退出" onclick="Git.User.logout()" />
 					</fieldset>
 					<fieldset>
 						<legend>数据操作</legend>
@@ -791,6 +793,7 @@
 					    <input type=button value="Book.deleteDB" onclick="Book.deleteDB();" />
 					    <input type=button value="Page.clear" onclick="Page.clear()" />
 					    <input type=button value="put模式" onclick="Book.Shelf.putModel('');" />
+						<input type=button value="shelf.delete" onclick="Shelf.delete()" />
 					    <input type=button value="清除缓存文件" onclick="window.applicationCache.update();" />
 					</fieldset>
 					<fieldset id="cors">

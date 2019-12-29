@@ -106,16 +106,16 @@ fj = (function() {
 		var code =
 			'\
           <div class="setting_box" onclick="window.event.stopPropagation();">\
-              <div class="setting_header_box">${name}</div>\
+              <div class="setting_header_box">%s</div>\
               <div class="setting_body_box">\
-                  ${html}\
+                  %s\
               </div>\
               <div class="setting_footer_box">\
                   <input type="button" value="确定" id="certain" />\
                   <input type="button" value="取消" id="cancel" />\
               <div>\
           </div>\
-              ';
+              '.fill([name, html]);
 		var iniFun = function(obj, s) {
 			obj.onclick = obj.querySelector("#cancel").onclick = function() {
 				evt.removeEvent(s);

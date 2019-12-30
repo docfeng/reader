@@ -212,14 +212,12 @@ Book = (function() {
 				return this.sameAll();
 			}
 			var time=Book.arr[0].readAt;
-			console.log(time)
-			console.log(Book.arr[0].name)
+			console.log(time,Book.arr[0].name)
 			
 			time=new Date(time);
 			var s=time.getTime();
 			s+=1000*10;
 			time.setTime(s)
-			console.log(time)
 			return Git.Comment.getSince("docfeng", "book-data", 1,time).then(function(text) {
 				var arr1 = JSON.parse(text);
 				var arr2=Book.arr;
@@ -314,32 +312,52 @@ Book = (function() {
 		add: function(json) {
 			var t = this;
 			if (!json.id) {
-				var b = false;
-				Git.Comment.gets("docfeng", "book-data", 1).then(function(text) {
+				return Git.Comment.gets("docfeng", "book-data", 1).then(function(text) {
 					var json1 = JSON.parse(text);
+					var b = false;
 					for (var i1 = 0; i1 < json1.length; i1++) {
 						var json3 = JSON.parse(json1[i1].body);
 						if (json3.name == json.name) {
 							b = true;
 							json.id = json1[i1].id;
-							t.put(json);
+							//t.put(json);
 							t.write(json);
 						}
 
 					}
+					if (!b) {
+						return Git.Comment.create("docfeng", "book-data", 1, JSON.stringify(json, null, 4)).then(function(text1) {
+							var json1 = JSON.parse(text1)
+							json.id = json1.id;
+							Shelf.write(json);
+							return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
+						});
+					}
+					return true;
 				});
-				if (!b) {
-					return Git.Comment.create("docfeng", "book-data", 1, JSON.stringify(json, null, 4)).then(function(text1) {
-						var json1 = JSON.parse(text1)
-						json.id = json1.id;
-						Shelf.write(json);
-						return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
-					});
-				}
+				
 
 			} else {
+				t.write(json);
 				return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
 			}
+		},
+		readAt:function(name,title,url,index){
+			//保存记录
+			if(!Book.json||Book.json.name!=name){
+				var t=this;
+				alert(name)
+				var p=Shelf.read(name);
+			}else{
+				var p=Promise.resolve(Book.json)
+			}
+			return p.then(function(json){
+				json.readTitle = title;
+				json.readURL = url;
+				json.readIndex = index;
+				json.readAt = formatDate(new Date());
+				return Shelf.add(json);
+			});
 		},
 		delete: function(json) {
 			var id=json.id;
@@ -677,9 +695,7 @@ Book = (function() {
 		},
 		format1: function(html, url) {
 			var html = html.replace(/<img.*?>/g, "");
-			console.log(str)
             var str=html.match(/<dl[^>]*?>[\s\S]*?<\/dl>/);
-			console.log(str)
 			str=str[0];
             str=str.match(/<a[^>]*?href([^"]*?)=([^"]*?)"([^"]*?)"[^>]*?>(.*?)<\/a>/g);
             var re=[];
@@ -693,7 +709,6 @@ Book = (function() {
 				}
                 re.push(s)
             }
-            console.log(re)
 			/* var ele = document.createElement("html");
 			ele.innerHTML = html;
 			var b = document.createElement("base");
@@ -829,30 +844,67 @@ Book = (function() {
 			})
 			//Git.File.put("docfeng","book-data",name,txt)
 		},
-		put:function(name,title,txt){
-			var path="book/"+name+"/page/"+title+".txt";
-			var json=this.json;
-			if(json){
-				var b=false;
-				for(var i=0;i<json.length;i++){
-					if(path==json[i]){
-						b=true;
+		put:(function(a){
+			var arr=[];
+			var json;
+			var bool=true;
+			var put=function(path,txt){
+				return Git.File.put("docfeng","book-data",path,txt).then(function(a){
+					if(arr.length>0){
+						var arr1=arr.splice(0,1)[0];
+						var path=arr1[0];
+						var txt=arr1[1];
+						put(path,txt).then(function(re){
+							arr1[2](re);
+						});
+					}else{
+						bool=true;
+					}
+					if(a){
+						return true;
+					}else{
+						return false;
+					}
+					
+				})
+				
+			}
+			return function(name,title,txt){
+				var path="book/"+name+"/page/"+title+".txt";
+				json=json||this.json;
+				if(json){
+					var b=false;
+					for(var i=0;i<json.length;i++){
+						if(path==json[i]){
+							b=true;
+						}
+					}
+					if(!b){
+						var p;
+						if(bool){
+							bool=false;
+							p=put(path,txt);
+						}else{
+							p=new Promise(function(resolve,reject){
+								arr.push([path,txt,function(str){
+									resolve(str)
+								}]);
+							});			
+						}
+						p.then(function(re){
+							if(re){
+								json.push(path)
+							}
+						});
 					}
 				}
-				console.log(b,path,title)
-				if(!b){
-					json.push(path)
-					Git.File.put("docfeng","book-data",path,txt).then(function(a){
-						console.log(a)
-					})
-				}
 			}
-		},
+		})(),
 		get:function(name,title){
 			var name="book/"+name+"/page/"+title+".txt";
 			return Git.File.get("docfeng","book-data",name);
 		},
-		multi: function(name, url) {
+		multi: function(name, title,url) {
 			var t = this;
 			//alert(url)
 			return t.read(name, url).then(function(txt) {
@@ -864,6 +916,9 @@ Book = (function() {
 			}).catch(function() {
 				return t.remote(url).then(function(txt) {
 					if (txt) {
+						Page.write(name, title, url, txt).catch(function(e) {
+							alert("err:Page.write:\n" + e)
+						});
 						return txt;
 					} else {
 						return Promise.reject("Page.mult:\n txt:" + txt);;
@@ -917,7 +972,6 @@ Book = (function() {
 		write: function(name, title, url, txt) {
 			var t = this;
 			t.put(name,title,txt);
-			console.log(name,title)
 			var full_name = name + url;
 			var json = {
 				full_name: full_name,
@@ -1143,19 +1197,16 @@ Book = (function() {
 				return Promise.reject("err:book.search.checkCharset:\n" + a);
 			});
 		},
-		getRealPath: function(url, title) {
+		getRealPath: function(url) {
 			var t = this;
 			return getHTML(url, "real").then(function(json) {
 				var url = json.xml.getResponseHeader("url");
 				url = url || json.xml.responseURL;
-				if (title) {
-					return [url, title];
-				} else {
-					var arr = List.format1(json.html, url);
-					return [url, arr];
-				}
+				var arr = List.format1(json.html, url);
+				console.log("url",url,"arr",arr)
+				return [url, arr];
 			}).catch(function(a) {
-				return Promise.resolve("book.search.getRealPath:\n" + a);;
+				return Promise.reject("book.search.getRealPath:\n" + a);;
 			});
 		},
 		createTable: function() {
@@ -1226,7 +1277,6 @@ var a=function(){
 								j.push(json1[i1]);
 							}
 						}
-						console.log(JSON.stringify(j, null, 4));
 						return t.writeAll(j);
 					}
 				});

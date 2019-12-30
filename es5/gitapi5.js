@@ -261,18 +261,25 @@ Git = (function() {
 				"sha": sha,
 				"branch": branch
 			}
+			//console.log(url,data.content,txt)
 			return ajax(user, "put", url, true, data).then(function(re) {
 				var status = re.xml.status;
+				var bool;
 				switch (status) {
 					case 200:
 						//alert("写入成功");
+						bool=true
 						break;
 					case 201:
 						//alert("创建成功");
+						bool=true
 						break;
 					case 422:
 						//alert("false");
+						bool=false
 						break;
+					default :
+						bool=false
 				}
 				var json = JSON.parse(re.html);
 				var re = "";
@@ -280,7 +287,8 @@ Git = (function() {
 					re = json.content.sha;
 					shas[name] = re;
 				}
-				return re;
+				console.log(url,"bool",bool)
+				return bool;
 			});
 		},
 		put: function(user, repos, file, txt, message, branch) {

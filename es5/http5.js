@@ -89,25 +89,30 @@ http={
             xmlHttp.onreadystatechange=function(){
                 if(xmlHttp.readyState==4) { 
                     var re="";
+					var x = new Uint8Array(xmlHttp.response);
+					var type=xmlHttp.getResponseHeader("Content-Type");
+					if(type.match(/utf-8/i)){
+						var str =new TextDecoder('utf-8').decode(x);
+					}else{
+						var str =new TextDecoder('gbk').decode(x);
+					}
                     if(xml){
                         var re={
-                            html:xmlHttp.responseText,
+                            html:str,//xmlHttp.responseText,
                             url:xmlHttp.responseURL,
                             xml:xmlHttp
                         };
                     }else{
-                        re=xmlHttp.responseText;
+                       // re=xmlHttp.responseText;
+					   re=str
                     }
                    //alert(url)
                     resolve(re)
                 }
              }
             xmlHttp.ontimeout = function(e) {
-                //prompt(url,url);
-                //var err=new Error()
                 xmlHttp.abort();
                 reject("timeout"+url);
-                //throw setError("ajax超时20s","url:"+url);
             };
             xmlHttp.open(method,url,true); 
             if(json.head){
@@ -115,7 +120,9 @@ http={
                     xmlHttp.setRequestHeader(p,json.head[p]);
                 }
             }
-            xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+			xmlHttp.responseType="arraybuffer";
+            xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=utf-8");
+			xmlHttp.overrideMimeType("text/html;charset=utf-8")
             xmlHttp.send(str); 
         });
     }

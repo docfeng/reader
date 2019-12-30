@@ -86,7 +86,7 @@ List = (function(a) {
 		show: function(name, url, arr) {
 			Book.listarr = arr;
 			Book.name = name;
-			var url = url;
+			Book.url = url;
 			this.showarr(arr);
 			listName.innerText = name;
 			listCount.innerText = arr.length;
@@ -124,7 +124,7 @@ List = (function(a) {
 		click: function(obj) {
 			var obj = obj.parentNode;
 			var i = obj.parentNode.rowIndex; //*this.max+obj.cellIndex;
-			if(!i){
+			if(!i&&i!=0){
 				alert("i:err")
 				return 0;
 			}
@@ -137,7 +137,7 @@ List = (function(a) {
 			var title = arr[1];
 			var url = arr[0];
 			if(("string"!=typeof name)||!arr||("string"!=typeof url)||("string"!=typeof title)){
-				var str="List.click参数错误：\nname:"+name+"\ni:"+url+"\nreadIndex:"+title+"\narr:"+arr
+				var str="List.click参数错误：\nname:"+name+"\nurl:"+url+"\nreadIndex:"+title+"\narr:"+arr
 				alert(str)
 				return Promise.reject(str);
 			}
@@ -228,49 +228,19 @@ Page = (function(a) {
 			}
 			var title = arr[i][1];
 			var url = arr[i][0];
-			//保存记录
-			if(!Book.json){
-				var t=this;
-				Shelf.read(name).then(function(json) {
-					json.readTitle = title;
-					json.readURL = url;
-					json.readIndex = i;
-					json.readAt = formatDate(new Date());
-					Shelf.write(json);
-					Book.json=json;
-				});
-			}else{
-				var json=Book.json;
-				json.readTitle = title;
-				json.readURL = url;
-				json.readIndex = i;
-				json.readAt = formatDate(new Date());
-				if(json.id){
-					Shelf.write(json);
-					Shelf.put(json);
-				}else{
-					Shelf.addGit(json);
-				}
-			}
+			Shelf.readAt(name,title,url,i).then(function(json){
+				
+			}).catch(function(e){
+				console.log(e)
+			});
 			//预读
 			for(var i2=i+1;i2<i+5;i2++){
 				if(i2<arr.length&&!preArr[i2]){
 					preArr[i2]=true;
-					this.preread(i2).then(function(foo1){
-
-					}).catch(function(e){
-
-					});
+					this.preread(i2);
 				}
 			}
-			return _Page.multi(name, url).then(function(txt) {
-				Page.write(name, title, url, txt).then(function(re) {
-					//alert(re)
-				}).catch(function(e) {
-					alert("err:Page.write:\n" + e)
-				});
-				return txt;
-			})
+			return _Page.multi(name, title,url);
 		},
 		preread: function(i) {
 			var name = Book.name;
@@ -284,18 +254,9 @@ Page = (function(a) {
 			}
 			var title = arr[i][1];
 			var url = arr[i][0];
-			return _Page.multi(name, url).then(function(txt) {
-				if (txt) {
-					Page.write(name, title, url, txt).then(function(re) {
-						//alert(re)
-					}).catch(function(e) {
-						alert("err:Page.write:\n" + e)
-					});
-					return true;
-				}
-				return Promise.reject(false);;
-			})
+			return _Page.multi(name,title, url);
 		},
+		
 		show: function(txt) {
 			var txt = this.formatUI(txt);
 			//document.querySelector("#txt").innerHTML = txt;
@@ -432,13 +393,14 @@ Search=(function(a){
 				var url=re[0];
 				var arr=re[1];
 				List.show(name,url,arr);
-				Shelf.add(name,url,arr).then(function(re){
+				List.write(name,arr);
+				Shelf.updateAt(name,url,arr).then(function(re){
 					fj.tip("添加书本成功",2)
+					Shelf.showAll()
 				}).catch(function(e){
 					fj.tip("添加书本失败",2)
 				})
 				//UI.showList()
-				List.write(name,arr);
 				alert("name="+name+"\nurl="+url+"\narr:"+JSON.stringify(arr,null,4))
 				window.history.go(-1);	
 			}).catch(function(e){
@@ -495,11 +457,10 @@ Shelf=(function(a){
 				});
 			}
 		},
-		add: function(name, url, arr) {
+		updateAt: function(name, url, listArr) {
 			var t = this;
-			var arr = Book.arr;
 			var json = {};
-			
+			var arr=Book.arr
 			if(!name||!url||!arr||arr.length==0){
 				alert("Shelf.add参数错误：\nname:"+name+"\ni:"+url+"\narr:"+arr)
 				return Promise.reject("Shelf.add参数错误：\nname:"+name+"\ni:"+url+"\narr:"+arr);
@@ -513,33 +474,25 @@ Shelf=(function(a){
 			if (num == -1) {
 				json = {
 					name: name,
-					url: url,
 					creatAt: formatDate(new Date()),
 					readIndex: 0,
-					readTitle: arr[0][1],
+					readTitle: listArr[0][1],
 					readAt: formatDate(new Date()),
-					readURL: arr[0][0],
-					updateIndex: arr.length - 1,
-					updateTitle: arr[arr.length - 1][1],
-					updateAt: formatDate(new Date()),
-					updateURL: arr[arr.length - 1][0]
+					readURL: listArr[0][0]
 				}
 			} else {
 				json = arr.splice(num, 1)[0]; //arr[num];
-				
-				json.url = url;
-				json.updateIndex = arr.length - 1,
-				json.updateTitle = arr[arr.length - 1][1],
-				json.updateAt = formatDate(new Date()),
-				json.updateURL = arr[arr.length - 1][0];
+			}	
+			json.url = url;
+			json.updateIndex = listArr.length - 1,
+			json.updateTitle = listArr[listArr.length - 1][1],
+			json.updateAt = formatDate(new Date()),
+			json.updateURL = listArr[listArr.length - 1][0];
 				//this.show({index:num})
-			}
+			//console.log(arr[arr.length - 1])
 			arr.unshift(json);
-			this.showAll()
-			return this.write(json);
-		},
-		addGit:function(json){
-			return _Shelf.add(json) ;
+			
+			return this.add(json);
 		},
 		delete: function(i) {
 			var json = Book.arr[i];

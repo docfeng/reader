@@ -76,7 +76,7 @@ List = (function(a) {
 						name: "novel/data/Shelf.json",
 						txt: json
 					}).then(function(re){
-						alert(re);
+						alert("sss"+re);
 					});
 					
 				});
@@ -151,18 +151,21 @@ List = (function(a) {
 
 		update: function(url) {
 			fj.tip("开始更新");
-			var arr = Book.listarr
+			var arr = Book.listarr;
 			var name = Book.name;
+			var json = Book.json;
+			json.url=url||Book.url;
+			
 			if (!url || !arr) {
 				fj.tip("参数错误：\nurl:" + url + "\narr:" + arr, 2)
 				return false
 			}
 			var t = this;
 			this.remote(url).then(function(_arr) {
-				if (_arr.length == Book.listarr.length) {
+				if (_arr.length == arr.length) {
 					fj.tip("目前没有新更新", 1.5);
 				} else {
-					var arr = Book.listarr = _arr;
+					arr = Book.listarr = _arr;
 					t.showarr(arr);
 					t.write(name, arr).then(function(re) {
 						fj.tip("List写入成功")
@@ -172,17 +175,18 @@ List = (function(a) {
 
 					var title = arr[arr.length - 1][1];
 					var url = arr[arr.length - 1][0];
-					var newpage = title;
+					
 					fj.tip("已更新" + title, 2);
 					listNew.innerText = title;
-					var json = t.json;
-					json.url=url;
+					
 					json.updateTitle = title;
 					json.updateURL = url;
 					json.updateIndex = arr.length - 1;
 					json.updateAt = formatDate(new Date());
+
 					Shelf.write(json);
 					Shelf.put(json);
+					
 				}
 			}).catch(function(e) {
 				alert("更新出错" + e)

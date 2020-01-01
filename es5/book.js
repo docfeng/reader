@@ -68,10 +68,10 @@ Book = (function() {
 		} else {
 			URL = "http://gear.docfeng.top/get2.php";//"https://bird.ioliu.cn/v1/";
 			url = URL + "?url=" + encodeURIComponent(url);
-			alert()
 		}
 		return http.get(url, {
-			xml: xml
+			xml: xml,
+			"charset":true
 		}).then(function(html) {
 			var html = html;
 			if (!localModel && para == "search") html = eval(html);

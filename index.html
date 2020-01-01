@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns='http://www.w3.org/1999/xhtml'>
+	<!-- manifest="page5.manifest" -->
 	<head>
 		<meta http-equiv="Expires" content="0">
 		<meta http-equiv="Pragma" content="no-cache">
@@ -9,43 +10,158 @@
 		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
 		<meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8" />
 		<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<title>阅读器</title>
-		<script src="script/http.js"></script>
-		<script src="script/gitapi.js"></script>
-		<script src="script/db.js"></script>
-		<script src="script/store.js"></script>
+		<meta content="telephone=no,email=no" name="format-detection">
+		<meta name="keywords" content="阅读器" />
+		<meta name="description" content="阅读器。" />
+		<script src="es5/es6-promise.min.js"></script>
+		
+		<script src="es5/base5.js"></script>
+		<script src="es5/fj.js" type="text/javascript" charset="utf-8"></script>
+		<script src="script/flexible.0.3.4.js"></script>
 
-		<script src="script/base.js"></script>
-		<script src="script/fso.js"></script>
+		<script src="es5/http5.js"></script>
+		<script src="es5/db5.js"></script>
+		<script src="es5/store5.js"></script>
+		<script src="es5/gitapi5.js"></script>
+		<script src="es5/book.js"></script>
+		<script src="es5/reader-book.js"></script>
+		<script src="es5/index.js"></script>
 
-		<script src="script/shift.js"></script>
-		<script src="script/msg.js"></script>
+		<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 
-		<script src="script/list.js"></script>
-		<script src="script/Shelf.js"></script>
-		<script src="script/search.js"></script>
-
-		<link rel="stylesheet" href="css/main.css" type="text/css">
-		</link>
+		<link href="https://s.zhulang.com/images/zl-logo114.png" rel="apple-touch-icon-precomposed">
+		<link rel="stylesheet" type="text/css" href="css5/fj.css" />
+		<link rel="stylesheet" href="css5/msg5.css" type="text/css">
+		<!-- <link rel="stylesheet" href="https://s.zhulang.com/wap/pub/v2/style/read-3873a62e78.css" type="text/css"> -->
+		<link rel="stylesheet" href="css5/reader.css" type="text/css">
+		<link rel="stylesheet" href="css5/main5.css" type="text/css">
 		<link rel="stylesheet" href="css/test.css" type="text/css">
+		<link rel="stylesheet" type="text/css" href="fonticon/iconfont.css" />
+
+		<title>阅读器</title>
+
+		<style type="text/css">
+			.app-bar {
+				height: 1.4rem;
+				background-color: transparent;
+				padding: 0 0;
+			}
+
+			.app-bar.with-cls {
+				padding-left: 0;
+			}
+
+			.app-bar i.cls {
+				right: 1%;
+				top: -20%;
+				width: .5rem;
+				height: .5rem;
+				line-height: .5rem;
+			}
+
+			#ggList {
+				position: relative;
+				z-index: 42;
+			}
+
+			body.page-lr #ggList {
+				bottom: 0px;
+				position: fixed;
+				width: 100%;
+				z-index: 9;
+			}
+
+			#oneCls {
+				display: block;
+				position: absolute;
+				bottom: 0%;
+				right: 0%;
+				color: #dfdfdf;
+				font-weight: 100;
+				z-index: 10;
+				text-align: center;
+			}
+
+			[data-dpr="1"] #oneCls {
+				background: #333;
+				font-size: 10px;
+				opacity: .7;
+				height: 20px;
+				line-height: 20px;
+			}
+
+			[data-dpr="2"] #oneCls {
+				background: #333;
+				font-size: 20px;
+				height: 40px;
+				line-height: 40px;
+			}
+
+			[data-dpr="3"] #oneCls {
+				background: #333;
+				font-size: 30px;
+				height: 60px;
+				line-height: 60px;
+			}
+
+			.wkssp-logo {
+				display: none;
+			}
+
+			#feed_nat_1 .wkssp-s-three-image-with-title h3 {
+				font-size: 120%;
+			}
+
+			body.page-ud .rd-txt {
+				padding-bottom: 0 !important;
+			}
+
+			body.fn-on .idx-zd {
+				position: fixed;
+				display: block;
+				height: 10%;
+				width: 12%;
+				z-index: 999;
+				top: 45%;
+				left: 89%;
+				background: black;
+				opacity: 0;
+			}
+
+			.free-downs {
+				margin-right: 10px;
+				color: #EEB422;
+			}
+
+			.free-downs a {
+				color: #EEB422;
+			}
+		</style>
+		<style type="text/css">
+			body.msg-on .msg-cnt {
+				z-index: 200;
+				visibility: visible;
+				-webkit-animation-name: msgfrm;
+				animation-name: msgfrm;
+				-webkit-animation-duration: 5s;
+				animation-duration: 5s;
+				-webkit-animation-iteration-count: 1;
+				animation-iteration-count: 1
+			}
+		</style>
 		<style type='text/css'>
 			//小说
-			/*#novel_menu{width:100%;
-	position:absolute; 
-	Bottom:0px;
-	display: none;
-} */
 			//table h3{font-size:10%;}
-			input {
+			.main_contain input {
 				//height:1.5em;
 				font-size: 0.7em;
 			}
 
-			input[type=text] {
+			.main_contain input[type=text] {
 				height: 15px;
 			}
 
-			input[type=number] {
+			.main_contain input[type=number] {
 				height: 15px;
 			}
 
@@ -62,333 +178,835 @@
 				lineHeight: 16px;
 			}
 		</style>
-		<style>
-			#setting{
-  display:none;
-}
-
-.toast-wrap{
-      opacity: 0;
-      position: fixed;
-      bottom: 50%;
-      color: #fff;
-      width: 100%;
-      text-align: center;
-   }
-   .toast-msg{
-      background-color: rgba(0,0,0,0.7);
-      padding: 2px 5px;
-      border-radius: 5px;
-   }
-  .toastAnimate{
-      animation: toastKF 2s;
-  }
-  @keyframes toastKF{
-      0% {opacity: 0;}
-     25% {opacity: 1; z-index: 9999}
-     50% {opacity: 1; z-index: 9999}
-     75% {opacity: 1; z-index: 9999}
-     100% {opacity: 0; z-index: 0}
-  }
-  
-  .console{
-      display:none;
-      position: fixed;
-      bottom: 50%;
-      color: #fff;
-      background-color: rgba(0,0,0,0.7);
-      left:30%;
-      width: 40%;
-      height:50px;
-      text-align: center;
-      overflow-y:scroll;
-  }
-  
-  .refreshText {
-            width: 100%;
-            height:0px;
-            line-height: 0px;
-            text-align: center;
-            //transform: translateY(-50px);
-        }
-	.model{
-		position:fixed;
-		width: 100%;
-		height: 100%;
-		top: 0px;
-		left: 0px;
-		z-index: 100;
-		display: none;
-		background-color: #FFFFFF;
-	}
-	.show{
-		display: block;
-	}
-</style>
-	</head>
-	<body>
-		<div class="myhead" id="Mytitle" style="height:18px;"></div>
-		<div class="model show" id="shelfDiv">
-			<form id="form_3" style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;">
-				<div>
-					<input type="button" value="搜索" onclick="menu_obj.shift(3)" />
-					<input type="button" value='show' onclick="Shelf.show()" />
-					<input type="button" value='download' onclick="Shelf.download()" />
-					<input type="button" value='upload' onclick="Shelf.upload()" />
-					<input type="button" value='检查更新' onclick="Shelf.update()" />
-					<input type="button" value='删除' onclick="shelf_table.dataset.order='delete'" />
-				</div>
-				<div id="shelf_div" style="flex-grow:5;;overflow-x:hidden;overflow-y:auto;">
-					<p class="refreshText"></p>
-					<table id="shelf_table" style="table-layout:fixed" data-order="click" onclick="Shelf.click(event.srcElement,this.dataset.order);this.dataset.order='click';"></table>
-				</div>
-			</form>
-		</div>
-		<div class="alert" style="display:none">
-			<div class="alert_head">
-				<div class="alert_title">标题</div>
-				<div class="alert_close">&#8855;</div>
-			</div>
-			<div class="alert_body">
-				显示
-			</div>
-		</div>
-		<div class="toast-wrap">
-			<span class="toast-msg"></span>
-		</div>
-
-		<div class="console">
-
-		</div>
-		
-		<div class="model" id="contextmenu">
-			<div style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;">
-				<div>
-					<input type="button" value="eval" onclick="eval(evaltxt.value);" />
-					<input type="button" value="read" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){form_2.txt1.value+=txt;});}" />
-					<input type="button" value="加载script" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){eval(txt);alert(txt);});}" />
-					<input type="button" value='reload' onclick="document.location.reload();" />
-					<input type="button" value='epub' onclick='fso.writeZip(form_1.novel_name.value+".epub",form_1.novel_name.value)' />
-					<input type=button value="打开" onclick="chrome.openFile(form_1.novel_name.value+'.epub')" />
-					<input type=button value="showList" onclick="showList()" />
-					<input type=button value="showList" onclick="showSearch()" />
-					<br />
-					<input type="text" id="script1" style="height:10px" />
-				</div>
-				<textarea id="evaltxt" style="flex-grow:3;"></textarea>
-			</div>
-		</div>
-		<!--3 目录-->
-		<div class="model" id="listDiv">
-			<form id="form_4" style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;">
-				<div>
-					name:<input type="text" size=8 id="f4_name" />
-					url:<input type="text" size=14 id="f4_url" />
-					<br />
-					new:<input type="text" size=14 id="f4_new">
-					count:<input type="text" size=4 id="f4_count">
-					<input type="number" min=0 max=1000 onchange="List.scroll(this.value)" />
-					<input type="button" value="换源" onclick="List.changeSource(f4_name.value);" />
-					<input type="button" value='更新' onclick="List.update(f4_url.value)" />
-					<input type="button" value='添加' onclick="List.addBook()" />
-					<input type="button" value='顶部' onclick="List.scroll(0)" />
-					<input type="button" value='底部' onclick="List.scroll(List.arr.length-1)" />
-				</div>
-				<div id="List_Source" style="display:none;height:95%;overflow-x:hidden;overflow-y:auto;">
-					<table id="list_source" onclick="List.click(event.srcElement);"></table>
-				</div>
-				<div id=s1 style="height:90%;overflow-x:hidden;overflow-y:auto;">
-					<table id="list_table" onclick="List.click(event.srcElement);"></table>
-				</div>
-			</form>
-		</div>
-		<!--搜索-->
-		<div class="model" id="searchDiv" >
-			<form id="form_6" style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;">
-				<div>
-					<input type="text" id="f6_name" onchange="">
-					<input type="button" value="搜索" onclick="search.get2(f6_name.value);" />
-					<input type="button" value="重载" onclick="search.get3(f6_name.value);" />
-				</div>
-				<div style="width:100%;height:100%;overflow-y:scroll;">
-					<table id="f6_table" onclick="search.click(event.srcElement);" ondblclick="search.dblclick(event.srcElement);"></table>
-				</div>
-			</form>
-		</div>
-		
-		<div class="model" id="pageDiv">
-			<iframe id="pageWindow" style="width: 100%;height: 100%;"></iframe>
-		</div>	
-		<script>
-			var console = function() {
-				var task = "";
-				var bool = true;
-				var t = false;
-				document.querySelector(".console").onclick=function(){
-					this.style.display = "none";
-				}
-				var console = {
-					add: function(value) {
-						var msg=document.querySelector(".console");
-						task += value + "<br>";
-						msg.innerHTML = task;
-						msg.scrollTop = msg.scrollHeight - msg.offsetHeight;
-						if (t) clearTimeout(t)
-						t = setTimeout(function() {
-							msg.style.display = "none";
-							//alert(task);
-							task = "";
-							bool = true;
-						}, 30000);
-						if (bool) {
-							this.show()
-						}
-					},
-					show: function() {
-						bool = false;
-						setTimeout(function() {
-							var msg=document.querySelector(".console");
-							msg.style.display = "block";
-						}, 100);
-					}
-				}
-				return console;
-			}()
-
-			window.onload = function() {
-				if (browser.MyApp) chrome.computer();
-				git = new gitapi("docfeng");
-				List = window.MyObject.List;
-				Shelf = window.MyObject.Shelf;
-				Shelf.show();
-				addDownFlush(shelf_div)
+		<style type='text/css'>
+			#setting {
+				display: none;
 			}
 
-			window.onresize = function() {}
-			//window.addeventlistener("resize",function(){alert()},false);
-
-			addDownFlush = function(obj) {
-				var refreshText = obj.querySelector(".refreshText");
-				var Y = 0;
-				var M = 0;
-				var touch = function(event) {
-					var event = event || window.event;
-					switch (event.type) {
-						case "touchstart":
-							Y = event.touches[0].pageY;
-							break;
-						case "touchend":
-							if (isTop() && M > 0) {
-								if (M > 60) {
-									Shelf.update()
-								} else {
-									document.title = "end"
-								}
-								obj.style.transform = "translateY(0)";
-								refreshText.style.height = "0px";
-								refreshText.innerHTML = "";
-							}
-							M = 0;
-							return;
-							break;
-						case "touchmove":
-							M = event.touches[0].pageY - Y;
-							if (isTop() && M > 0) {
-								if (M > 60) {
-									//refreshText.style.height = "20px";
-									obj.style.transform = "translateY(20px)";
-									obj.style.transition = "all ease 0.5s";
-									refreshText.innerHTML = "释放立即刷新...";
-								} else {
-									refreshText.innerHTML = "下拉刷新...";
-								}
-							} else {
-								obj.style.transform = "translateY(0)";
-								refreshText.style.height = "0px";
-								refreshText.innerHTML = "";
-
-							}
-							//event.preventDefault();
-							//event.touches[0].clientX
-							break;
-					}
-				}
-				var isTop = function() {
-					var t = obj.scrollTop || document.documentElement.scrollTop || document.body.scrollTop;
-					return t === 0 ? true : false;
-				}
-				obj.addEventListener('touchstart', touch, false);
-				obj.addEventListener('touchmove', touch, false);
-				obj.addEventListener('touchend', touch, false);
+			.toast-wrap {
+				opacity: 0;
+				position: fixed;
+				bottom: 50%;
+				color: #fff;
+				width: 100%;
+				text-align: center;
 			}
 
-
-			get_radio = function(obj) {
-				for (var i = 0; i < obj.length; i++) {
-					if (obj[i].checked) {
-						return obj[i].value;
-					}
-				}
-				return false;
+			.toast-msg {
+				background-color: rgba(0, 0, 0, 0.7);
+				padding: 2px 5px;
+				border-radius: 5px;
 			}
 
-			shiftDiv = function(div) {
-				if (_reg.style.display == "" || _reg.style.display == "block") {
-					div.style.display = "none";
-				} else {
-					div.style.display = "block";
+			.toastAnimate {
+				animation: toastKF 2s;
+			}
+
+			@keyframes toastKF {
+				0% {
+					opacity: 0;
+				}
+
+				25% {
+					opacity: 1;
+					z-index: 9999
+				}
+
+				50% {
+					opacity: 1;
+					z-index: 9999
+				}
+
+				75% {
+					opacity: 1;
+					z-index: 9999
+				}
+
+				100% {
+					opacity: 0;
+					z-index: 0
 				}
 			}
 
-			document.oncontextmenu = function() {
-				event.returnValue = false;
-				document.querySelector("#contextmenu").style.display="block";
-				evt.addEvent(function(){
-					document.querySelector("#contextmenu").style.display="none";
-				})
+			.console {
+				display: none;
+				position: fixed;
+				bottom: 50%;
+				color: #fff;
+				background-color: rgba(0, 0, 0, 0.7);
+				left: 30%;
+				width: 40%;
+				height: 50px;
+				text-align: center;
+				overflow-y: scroll;
+			}
+
+			.refreshText {
+				width: 100%;
+				height: 0px;
+				line-height: 0px;
+				text-align: center;
+				//transform: translateY(-50px);
+			}
+		</style>
+
+		<style type="text/css">
+			#shelfDiv {
+				counter-reset: shelf_count;
+			}
+
+			#shelfDiv h1 {}
+
+			h1:before {
+				counter-increment: shelf_count;
+				content: counter(shelf_count)".";
+			}
+
+			span.alert {
+				background-color: yellow;
+			}
+
+			span.update {
+				background-color: red;
+			}
+		</style>
+		<!-- circle-menu -->
+		<style type="text/css">
+			/* //清除滚动条 */
+
+			body::-webkit-scrollbar {
+				display: none;
+			}
+
+			div::-webkit-scrollbar {
+				display: none;
+			}
+
+			.circle-menu {
+				position: absolute; //fixed;
+				bottom: 40px;
+				right: 40px;
+				width: 50px;
+				height: auto;
+				z-index: 90;
+				color: #000000;
+				font-size: 45px;
+				//background:greenyellow;
+			}
+
+			.circle-menu>div:last-child {
+				width: 50px;
+				height: 50px;
+				//display:block;
+				background-color: white;
+				border: 1px solid #AAF;
+				border-radius: 50%;
+				-moz-border-radius: 50%;
+				-webkit-border-radius: 50%;
+				filter: alpha(Opacity=80);
+				-moz-opacity: 0.5;
+				opacity: 0.5;
+				//background-color: green;
+			}
+
+
+			.circle-menu>div:first-child {
+				width: 50px;
+				height: 400px;
+				overflow-x: scroll;
+				overflow-y: hidden;
+				border: 1px;
+				display: flex;
+				flex-direction: column;
+				//flex-wrap: wrap;
+				flex-flow: column wrap;
+				//align-content: flex-start;
+				background-color: lightgray;
+
+			}
+
+			.circle-menu .icon-Button {
+				//flex: 1 1;
+				display: flex;
+				flex-direction: column;
+				flex-wrap: nowrap;
+				align-content: flex-start;
+				color: #000000;
+				background-color: #00AAFF;
+				margin: 2px 0px 2px 0px;
+				width: 48px;
+				height: 44px;
+				background-color: white;
+				border: 1px solid #AAF;
+				border-radius: 10%;
+				-moz-border-radius: 10%;
+				-webkit-border-radius: 10%;
+				//font-size: 1.2em;
+				text-align: center;
+				vertical-align: middle
+			}
+
+			.circle-menu .icon-Button>span:first-child {
+				font-size: 0.7em;
+				height: 70%;
+				text-align: center;
+				vertical-align: middle word-break: keep-all;
+				//background-color: #00AAFF;
+				border: 1px solid #AAF;
+				border-radius: 50%;
+				-moz-border-radius: 50%;
+				-webkit-border-radius: 50%;
+				filter: alpha(Opacity=80);
+				-moz-opacity: 0.5;
+				opacity: 0.5;
+			}
+
+			.circle-menu .icon-Button>span:last-child {
+				height: 20%;
+				text-align: center;
+				//word-break: keep-all;
+				font-size: 5px;
+				//background-color: #00AAFF;
+			}
+
+			/* span{
+				display: inline-block;
+				width: 28px;
+				height: 28px;
+				font-size: 1.2em;
+				text-align: center;
+			} */
+		</style>
+		<!-- head-menu -->
+		<style type="text/css">
+			.head-menu {
+				width: 100%;
+				height: auto;
+				position: relative;
+			}
+
+			.head-menu-head {
+				width: 100%;
+				height: 40px;
+			}
+
+			.head-menu-body {
+				position: absolute;
+				display: none;
+				top: 40px;
+				right: 0px;
+				width: 100%;
+				height: auto;
+				background-color: #008000;
+			}
+
+			.head-menu-body>div {
+				display: flex;
+				flex-direction: row;
+			}
+
+			.head-menu-body>div>div {
+				display: flex;
+				flex-direction: column;
+			}
+
+			.icon-Button {
+				border: 1px solid #AAF;
+				flex-direction: column;
+				width: 30px;
+			}
+
+			.icon-Button>span:first-child {
+				font-size: 2em;
+				text-align: center;
+				word-break: keep-all;
+			}
+
+			.icon-Button>span:last-child {
+				text-align: center;
+				//word-break: keep-all;
+				font-size: 0.7em;
 			}
 			
-			showList=function(){
-				document.querySelector("#listDiv").style.display="block";
-				evt.addEvent(function(){
-					document.querySelector("#listDiv").style.display="none";
-				})
+			i.iconfont{
+				display: block;
+				font-size: 3.5em;
+				opacity: 0.5;
 			}
-			showSearch=function(){
-				document.querySelector("#searchDiv").style.display="block";
-				evt.addEvent(function(){
-					document.querySelector("#searchDiv").style.display="none";
-				})
-			}
-			var toast = function() {
-				var task = [];
-				var bool = true;
 
-				function toast(msg) {
-					task[task.length] = msg;
-					var show = function() {
-						bool = false;
-						var msg = task.shift();
-						setTimeout(function() {
-							document.getElementsByClassName('toast-wrap')[0].getElementsByClassName('toast-msg')[0].innerHTML = msg;
-							var toastTag = document.getElementsByClassName('toast-wrap')[0];
-							toastTag.className = toastTag.className.replace('toastAnimate', '');
-							setTimeout(function() {
-								toastTag.className = toastTag.className + ' toastAnimate';
-								if (task.length > 0) {
-									show();
-								} else {
-									bool = true;
-								}
-							}, 1000);
-						}, 1500);
-					}
-					if (bool) {
-						show();
-					}
+		</style>
+		<!-- main_contain -->
+		<style type="text/css">
+			.main_contain {
+				position: fixed;
+				width: 100%;
+				height: 100%;
+				top: 0px;
+				left: 0px;
+				z-index: 50;
+			}
+
+			.model {
+				position: fixed;
+
+				flex-direction: column;
+				width: 100%;
+				height: 100%;
+				top: 0px;
+				left: 0px;
+				z-index: 50;
+				display: none;
+				background-color: #FFFFFF;
+			}
+
+			.model>div:first-child {
+				//flex:1 1;
+			}
+
+			.model>div:last-child {
+				//flex:1 1;
+				overflow-x: hidden;
+				overflow-y: scroll;
+				//height: 100%;
+			}
+
+			.show {
+				display: -webkit-flex;
+				display: flex;
+			}
+
+			//table-layout:fixed
+		</style>
+
+		<link rel="stylesheet" type="text/css" media="only screen and (min-device-width : 800px) and (max-device-width : 1280px), (max-device-width : 400px)"
+		 href="css5/media.css" />
+	</head>
+	<body ontouchstart class=" fstep-2 bg-2 page-lr rd-day ">
+		<progress id=p1 max=100 value="50" style="position: absolute;width: 100%;height: 4px;z-index: 500;"></progress>
+		<div class="main_contain" id="main_contain">
+			<!-- 书架 -->
+			<div class="model show" id="shelfDiv">
+				<div class="head-menu">
+					<div class="head-menu-head" onclick="var style=this.nextElementSibling.style;if(!style.display||style.display=='block'){style.display='none';}else{style.display='block';}">
+
+					</div>
+					<div class="head-menu-body" style="display: none;" onclick="this.style.display='none';">
+						<div>
+							<div class="icon-Button">
+								<span class="iconfont icon-chaxun" value="搜索" onclick="UI.showSearch()"></span>
+								<span>搜索</span>
+							</div>
+							<div class="icon-Button">
+								<span class="iconfont icon-reload" title="刷新" onclick="document.location.reload();"></span>
+								<span>刷新</span>
+							</div>
+							<div class="icon-Button">
+								<span class="iconfont icon-cloud-sync" title='同步' onclick="Shelf.same()"></span>
+								<span>同步</span>
+							</div>
+							<div class="icon-Button">
+								<span class="iconfont icon-cloud-upload" title='更新10' onclick="Shelf.updateTop10()"></span>
+								<span>更新10</span>
+							</div>
+							<div class="icon-Button">
+								<span class="iconfont icon-setting" title="设置" onclick="UI.showSetting()"></span>
+								<span>设置</span>
+							</div>
+							<div class="icon-Button">
+								<span class="iconfont icon-delete" title='删除' onclick="shelf_table.dataset.order='delete'"></span>
+								<span>删除</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="shelf_div">
+					<p class="refreshText"></p>
+					<table id="shelf_table" style="" data-order="click" onclick="Shelf.click(event.srcElement,this.dataset.order);this.dataset.order='click';"></table>
+				</div>
+			</div>
+			<!-- 目录-->
+			<div class="model" id="listDiv">
+				<div class="head-menu">
+					<div class="head-menu-head" onclick="var style=this.nextElementSibling.style;if(!style.display||style.display=='block'){style.display='none';}else{style.display='block';}">
+						name:<span id="listName"></span>
+						url:<span id="listUrl"></span>
+						new:<span id="listNew"></span>
+						count:<span id="listCount"></span>
+					</div>
+					<div class="head-menu-body" style="display: none;" onclick="this.style.display='none';">
+						<div>
+							<div class="icon-Button">
+								<span class="iconfont icon-chaxun" value="换源" onclick="List.changeSource(listName.innerText);"></span>
+								<span>换源</span>
+							</div>
+							<div class="icon-Button">
+								<span class="iconfont icon-shujishuaxin" title="更新" onclick="List.update(listUrl.innerText);"></span>
+								<span>更新</span>
+							</div>
+							<div class="icon-Button">
+								<span class="iconfont icon-plus" title='添加' onclick="List.addUrl()"></span>
+								<span>添加</span>
+							</div>
+							<div class="icon-Button">
+								<span class="iconfont icon-cloud-sync" title='检查更新' onclick="Shelf.update()"></span>
+								<span>检查更新</span>
+							</div>
+							<div class="icon-Button">
+								<span class="iconfont icon-vertical-align-top" title="顶部" onclick="List.scroll(0)"></span>
+								<span>顶部</span>
+							</div>
+							<div class="icon-Button">
+								<span class="iconfont icon-vertical-align-botto" title='底部' onclick="List.scroll(List.arr.length-1)"></span>
+								<span>底部</span>
+							</div>
+							<div class="icon-Button">
+								<span class="iconfont icon-play-square" title='继续阅读' onclick="List.showPageIndex(List.listIndex)"></span>
+								<span>继续阅读</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id=s1>
+					<table id="list_table" onclick="List.click(event.srcElement);"></table>
+				</div>
+			</div>
+			<!-- 搜索-->
+			<div class="model" id="searchDiv">
+				<div>
+					name:<input type="text" id="f6_name" onchange="" />
+					url:<input type="text" id="search_url" />
+					<input type="button" value="添加" onclick="Search.add(f6_name.value,search_url.value);" />
+					<input type="button" value="搜索" onclick="Search.search(f6_name.value);" />
+					<input type="button" value="重载" onclick="Search.update(f6_name.value);" />
+				</div>
+				<div style="width:100%;height:100%;overflow-y:scroll;">
+					<table id="f6_table" onclick="Search.click(event.srcElement);" ondblclick=""></table>
+				</div>
+			</div>
+		</div>
+
+		<!--page页-->
+		<div class="rd-cnt">
+			<!-- page头部 -->
+			<div class="rd-top" id="rd-top">
+				<!--小说名称-->
+				<span class="fl" id="page-name">标题</span>
+				<span class="fr free-downs"><a href="javascript:ini(prompt('跳转章节'))">跳转章节</a></span>
+				<!--小说页码:1/4-->
+				<span class="fr page-nav" id="page-nav"></span>
+			</div>
+			<!-- 小说txt显示页 -->
+			<div class="rd-txt" id="rd-txt">
+				<div class="ud-link" style="position:relative; z-index:38">
+					<a href="https://www.baidu.com">上一章</a>
+					<a href="https://www.baidu.com">下一章</a>
+				</div>
+			</div>
+		</div>
+		<!--设置页面-->
+		<div class="fn-cnt">
+			<!--设置页面头部-->
+			<div class="fn-top" id="fn-top">
+				<a href="javascript:UI.showMain();alert(0)" class="fl backicon">
+					<i class="iconfont icon-left"></i>
+				</a>
+				<a href="javascript:void()" class="fr backicon">
+					<i style="font-size: 3em;" id="novelName">name</i>
+				</a>
+			</div>
+			<!--设置页面底部-->
+			<div class="fn-btm fb-icon" id="fn-btm">
+				<ul>
+					<li class="night">
+						<div>
+							<i class="iconfont icon-iconset0454"></i>
+							<span>关灯</span>
+						</div>
+					</li>
+					<li class="day">
+						<div>
+							<i class="iconfont icon-iconset0451"></i>
+							<span>开灯</span>
+						</div>
+					</li>
+					<li class="night1" onclick="window.location.reload()">
+						<div>
+							<i class="iconfont icon-reload"></i>
+							<span>重载</span>
+						</div>
+					</li>
+					<li class="li-cfg">
+						<div>
+							<i class="iconfont icon-icon_shezhi"></i>
+							<span>设置</span>
+						</div>
+					</li>
+					<li class="li-cfg2">
+						<div>
+							<i class="iconfont icon-icon_shezhi"></i>
+							<span>设置2</span>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<!--设置界面面板1-->
+			<div class="cfg-pnl" id="cfg-pnl">
+				<ul>
+					<!-- 上一章||下一章 -->
+					<li class="cfg-font" id="cfg-control">
+						<label>控制</label>
+						<div>
+							<menu>
+								<menuitem class="fs-add" onclick="window.uppage()">上一章</menuitem>
+								<menuitem class="fs-rdu" onclick="window.next()">下一章</menuitem>
+								<menuitem class="fs-add" onclick="window.uppage()">上一章</menuitem>
+								<menuitem class="fs-rdu" onclick="window.next()">下一章</menuitem>
+								<menuitem class="fs-add" onclick="window.uppage()">上一章</menuitem>
+								<menuitem class="fs-rdu" onclick="window.next()">下一章</menuitem>
+							</menu>
+						</div>
+					</li>
+					<!-- 上一章||下一章 -->
+					<li class="cfg-font" id="cfg-control">
+						<label>控制</label>
+						<div>
+							<menu>
+								<menuitem class="fs-add" onclick="window.uppage()">上一章</menuitem>
+								<menuitem class="fs-rdu" onclick="window.next()">下一章</menuitem>
+							</menu>
+						</div>
+					</li>
+					<!-- 字体大小 -->
+					<li class="cfg-font" id="cfg-font">
+						<label>字体</label>
+						<div>
+							<menu>
+								<menuitem class="fs-add">
+								A<em>+</em>
+								</menuitem>
+								<menuitem class="fs-rdu">
+								A<em>-</em>
+								</menuitem>
+								<menuitem class="fs-dft">默认</menuitem>
+							</menu>
+						</div>
+					</li>
+					<!-- 滑动模式：上下||左右 -->
+					<li class="cfg-mode" id="cfg-mode">
+						<label>模式</label>
+						<div>
+							<menu>
+								<menuitem class="mode-ud">上下滑动</menuitem>
+								<menuitem class="mode-lr">左右滑动</menuitem>
+							</menu>
+						</div>
+					</li>
+					<!-- 背景色 -->
+					<li class="cfg-bg" id='cfg-bg'>
+						<label>背景</label>
+						<div>
+							<menu>
+								<menuitem data-cls="bg-1" class="bg-1"></menuitem>
+								<menuitem data-cls="bg-2" class="bg-2">
+								</menuitem>
+								<menuitem data-cls="bg-3" class="bg-3">
+								</menuitem>
+								<menuitem data-cls="bg-4" class="bg-4">
+								</menuitem>
+								<menuitem data-cls="bg-5" class="bg-5"></menuitem>
+							</menu>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<!--页面点击控制面板-->
+		<div class="tap-hdl" id="tap-hdl">
+			<div class="pg-up">
+				<p>上一页</p>
+			</div>
+			<div class="pg-up-1"></div>
+			<div class="fn-div">
+				<div>
+					<i class="bg-hand"></i>
+					<span>点击功能呼出</span>
+				</div>
+			</div>
+			<div class="pg-dn">
+				<p>下一页</p>
+			</div>
+			<div class="pg-dn-1"></div>
+			<div class="pg-lft">
+				<p>上一页</p>
+			</div>
+			<div class="pg-rit">
+				<p>下一页</p>
+			</div>
+
+			<input type="hidden" name="chpt-prev" id="prev-url" value="https://m.zhulang.com/BdRead/index/book_id/amyebGxp/ch_id/aWidZmVh/channel/aGiWZmRh.html">
+			<input type="hidden" name="next-prev" id="next-url" value="https://m.zhulang.com/BdRead/index/book_id/amyebGxp/ch_id/aWmZamti/channel/aGiWZmRh.html">
+		</div>
+		<!-- 未知 -->
+		<div class="idx-bg"></div>
+		<!-- 左侧点击面板 -->
+		<div class="idx-cnt" id="idx-cnt">
+			<div class="idx-hdl iconfont icon-indent" id="idx-hdl">
+
+			</div>
+			<!--目录点击按钮-->
+			<div class="idx-zd" id="idx-zd"></div>
+		</div>
+		<div id="msg-cnt" class="msg-cnt"><span></span></div>
+		<!-- 目录2 -->
+		<div id="listDiv2" style="position:fixed;display:none;flex-direction: column;height:100%;width:100%;top: 0px;right: 0px;z-index: 100;font-size: 2.5em;color: #000000;" onclick="this.style.display='none';">
+			<div style="width: 50%;height:24px;">
+				<div class="msg_title" id="listName2" style="float: none;">标题</div>
+				<div class="msg_close">&#8855;</div>
+			</div>
+			<div style="width: 50%;overflow-x:hidden;overflow-y:scroll;">
+				<table id="list_table2" style="width:100%;height:100%" onclick="Page.closeList(event.srcElement)">
+				</table>
+			</div>
+		</div>
+		<!-- 设置页 -->
+		<div class="model" id="contextmenu" style="font-size: 30px;">
+			<!-- <div style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;"> -->
+			<div>
+				<span class="iconfont icon-reload" onclick="document.location.reload();"></span>
+				<input type="button" value="shift" onclick="var b=setbox.style.display;setbox.style.display=b=='none'?'block':'none';evalbox.style.display=b=='none'?'none':'block';" />
+			</div>
+			<div id="setbox">
+				<form  action="javascript:void()"  onsubmit="act(this)" style="height: 500px;overflow-y: scroll;">
+					 <input type="text" name="t1" value="rff" /><br/>
+					 <fieldset>
+					    <legend>操作</legend>
+					    <input type="button" value='epub' onclick='fso.writeZip(form_1.novel_name.value+".epub",form_1.novel_name.value)' />
+					    <input type="button" value="打开" onclick="chrome.openFile(form_1.novel_name.value+'.epub')" />
+						<input type="button" value="登入" onclick="Git.User.login()" />
+						<input type="button" value="退出" onclick="Git.User.logout()" />
+					</fieldset>
+					<fieldset>
+						<legend>数据操作</legend>
+						<input type=button value="moveData" onclick="Shelf.moveData()" />
+						<input type=button value="sameAll" onclick="Shelf.sameAll()" />
+					    <input type=button value="Shelf.clear" onclick="Shelf.clear()" />
+					    <input type=button value="Book.deleteDB" onclick="Book.deleteDB();" />
+					    <input type=button value="Page.clear" onclick="Page.clear()" />
+					    <input type=button value="put模式" onclick="Book.Shelf.putModel('');" />
+						<input type=button value="shelf.delete" onclick="Shelf.delete()" />
+					    <input type=button value="清除缓存文件" onclick="window.applicationCache.update();" />
+					</fieldset>
+					<fieldset id="cors">
+					     <legend>cors</legend>
+					     <input type="button" onclick="showModel(this.parentNode)" value="showModel" />
+						 <input type="button" onclick="addModel(this.parentNode)" value="addModel" /><br />
+						 自定义模式:<input type="text"   name="cors" />
+					 </fieldset>
+					 
+					 <fieldset>
+					     <legend>cors</legend>
+					     <input type="radio" name="cors" value="" />none<br/>
+					     <input type="radio" name="cors" value="http://gear.docfeng.top/get2.php" />gear.docfeng.top<br />
+					     
+					 </fieldset>
+					 <fieldset>
+					     <legend>2</legend>
+					     <label><input type="checkbox" name="t3" value="男" />男</label>
+					     <label><input type="checkbox" name="t3" value="女" />女</label>
+					 </fieldset>
+					 <input type="submit" value="保存"/>
+					 <input type="button" onclick="act(this.parentNode)" value="act" />
+					 <input type="button" onclick="alert(this.parentNode.t1)" value="test" />
+					 
+				</form>
+			</div>
+			<div id="evalbox" style="display: none;">
+				<span class="iconfont icon-shuji">ee</span>
+				<input type="button" value="eval33" onclick="eval(evaltxt.value);" />
+				<input type="button" value="read" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){form_2.txt1.value+=txt;});}" />
+				<input type="button" value="加载script" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){eval(txt);alert(txt);});}" />
+				<input type="button" value='reload' onclick="document.location.reload();" />
+				<br />
+				<input type="text" id="script1" style="height:30px" />
+			</div>
+			<div style="flex-grow:5;">
+				<textarea id="evaltxt" style="width: 100%;height: 100%;"></textarea>
+			</div>
+
+			<!-- </div> -->
+		</div>
+		<!-- circle菜单 -->
+		<div class="circle-menu">
+			<div class="circle-menu-container">
+				<div class="icon-Button" onclick="UI.showSearch()">
+					<span class="iconfont icon-chaxun"></span>
+					<span>搜索</span>
+				</div>
+
+				<div class="icon-Button" onclick="document.location.reload();">
+					<span class="iconfont icon-reload"></span>
+					<span>刷新</span>
+				</div>
+
+				<div class="icon-Button" onclick="Shelf.checkChange()">
+					<span class="iconfont icon-cloud-sync"></span>
+					<span>check</span>
+				</div>
+
+				<div class="icon-Button" onclick="Shelf.update()">
+					<span class="iconfont icon-cloud-upload"></span>
+					<span>检查更新</span>
+				</div>
+				<div class="icon-Button" onclick="UI.showSetting()">
+					<span class="iconfont icon-setting"></span>
+					<span>设置</span>
+				</div>
+
+				<div class="icon-Button" onclick="window.open('https://so.m.sm.cn/s?uc_param_str=dnntnwvepffrgibijbprsvdsme&from=wh10516&uc_sm=1&q='+Book.name)">
+					<span class="iconfont icon-earth"></span>
+					<span>打开</span>
+				</div>
+
+				<div class="icon-Button" onclick="fullScreen()">
+					<span class="iconfont icon-fullscreen"></span>
+					<span>全屏</span>
+				</div>
+
+				<div class="icon-Button" onclick="exitScreen()">
+					<span class="iconfont icon-fullscreen-exit"></span>
+					<span>退出全屏</span>
+				</div>
+
+				<div class="icon-Button" onclick="window.history.go(-1);">
+					<span class="iconfont icon-arrowleft"></span>
+					<span>后退</span>
+				</div>
+
+				<div class="icon-Button" onclick="UI.showSearch()">
+					<span class="iconfont icon-chaxun"></span>
+					<span>搜索</span>
+				</div>
+
+				<div class="icon-Button" onclick="shelf_table.dataset.order='delete'">
+					<span class="iconfont icon-delete"></span>
+					<span>删除</span>
+				</div>
+				<!-- <div>⇶</div>
+						<div>⌂</div>
+						<div>⌫</div>
+						<div>╳</div>
+						<div>≔</div>
+					
+						<div class="iconfont">&#xe699;</div>
+						<div>⇅</div>
+						<div>⇌</div>
+						<div>💾</div>
+						<div>☾</div>
+						<div>☀</div>
+						<div></div>
+						<div>⌫</div>
+						<div>✍</div>
+						<div>✂</div>
+						<div>❏</div>
+						<div>❐</div>
+						<div>❒</div>
+						<div>⊗</div>
+						<div>🗑</div> -->
+			</div>
+			<div class="circle-menu-control1" onclick="var style=this.previousElementSibling.style;if(!style.display||style.display=='flex'){style.display='none';}else{style.display='flex';}">
+				<div></div>
+			</div>
+		</div>
+		<script type="text/javascript" src="script/geth.js"></script>
+		<script type="text/javascript" src="es5/readpage-0.1.js"></script>
+		<script type="text/javascript">
+			var act=function(a){
+			    var json={};
+			    var obj=a.elements;
+			    for(var i=0;i<obj.length;i++){
+			        switch(obj[i].type){
+			            case "text":
+			                if(obj[i].value){
+			                    json[obj[i].name]=obj[i].value;
+			                }
+			                break;
+			            case "radio":
+			                if(obj[i].checked){
+			                    json[obj[i].name]=obj[i].value;
+			                }
+			                break;
+			            case "checkbox":
+			                if(!json[obj[i].name]){
+			                    json[obj[i].name]=[];
+			                }
+			                if(obj[i].checked){
+			                    json[obj[i].name].push(obj[i].value);
+			                }
+			                break;
+			            
+			            
+			            
+			        }
+			        
+			    }
+			    //alert(JSON.stringify(json,null,4))
+				return json;
+			}
+			var addModel=function(a){
+				var json=act(a);
+				var url=json.cors;
+				alert(url)
+				Book.Shelf.setModel(url);
+			}
+			var showModel=function(obj){
+			    var html=""//"<legend>cors</legend>";
+			    //var ele=document.createDocumentFragment(html);
+			    var arr=["cors",
+					'http://gear.docfeng.top/get2.php',
+					'http://192.168.123.128/get2.php',
+					'http://gear2.docfeng.top/get2.php',
+					'http://192.168.123.92:8080/get2.php'
+					];
+			    for(var i=0;i<arr.length;i++){
+			        html+='<label><input type="radio" name="cors" value="'+arr[i] +'" />'+arr[i]+'</label>\n';
+			    }
+			    //obj.appendChild(ele);
+			    
+			    //cors.innerHTML=html;
+			    cors.insertAdjacentHTML("beforeEnd",html);
+				var model=Book.Shelf.getModel('');
+				var obj=cors.elements;
+				for(var i=0;i<obj.length;i++){
+				     if(obj[i].value&&obj[i].value== model){
+				         obj[i].checked=true;
+				     } 
 				}
-				return toast;
-			}()
+			    //cors.appendChild(ele);
+			}
+			var insert=function(obj){
+			    var html=""//"<legend>cors</legend>";
+			    //var ele=document.createDocumentFragment(html);
+			    var arr=["cors",
+					"http://www.mangg.com/id70209/",
+					'http://gear.docfeng.top/get2.php',
+					'http://192.168.123.128/get2.php',
+					'http://gear2.docfeng.top/get2.php',
+					'http://192.168.123.92:8080/get2.php'
+					];
+			    for(var i=0;i<arr.length;i++){
+			        html+='<label><input type="radio" name="cors" value="'+arr[i] +'" />'+arr[i]+'</label>\n';
+			    }
+			    //obj.appendChild(ele);
+			    
+			    //cors.innerHTML=html;
+			    cors.insertAdjacentHTML("beforeEnd",html);
+			    //cors.appendChild(ele);
+			}
 		</script>
+		<style>
+form label{
+    display: block;
+}
+</style>
 	</body>
 </html>

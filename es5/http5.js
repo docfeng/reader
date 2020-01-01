@@ -75,7 +75,7 @@ http={
         var async=json.async||true;
         var cors=json.cors||false;
         var url=json.url||"";
-        var str=json.str||json.data||null;
+        var data=json.str||json.data||null;
         if(cors){
             var corsUrl=json.corsUrl||this.corsUrl;
             url=corsUrl+"?url="+url
@@ -89,12 +89,22 @@ http={
             xmlHttp.onreadystatechange=function(){
                 if(xmlHttp.readyState==4) { 
                     var re="";
-					var x = new Uint8Array(xmlHttp.response);
-					var type=xmlHttp.getResponseHeader("Content-Type");
-					if(type.match(/utf-8/i)){
-						var str =new TextDecoder('utf-8').decode(x);
+					if(json.charset){
+						var type=xmlHttp.getResponseHeader("Content-Type");
+						if(IEVersion()!=-1){
+							if(!type.match(/utf-8/i)){
+								var str =gbk2utf8(xmlHttp.responseBody);
+							}
+						}else{
+							var x = new Uint8Array(xmlHttp.response);
+							if(type.match(/utf-8/i)){
+								var str =new TextDecoder('utf-8').decode(x);
+							}else{
+								var str =new TextDecoder('gbk').decode(x);
+							}
+						}
 					}else{
-						var str =new TextDecoder('gbk').decode(x);
+						var str =xmlHttp.responseText;
 					}
                     if(xml){
                         var re={
@@ -106,7 +116,6 @@ http={
                        // re=xmlHttp.responseText;
 					   re=str
                     }
-                   //alert(url)
                     resolve(re)
                 }
              }
@@ -120,16 +129,64 @@ http={
                     xmlHttp.setRequestHeader(p,json.head[p]);
                 }
             }
-			xmlHttp.responseType="arraybuffer";
+			if(json.charset&&IEVersion()==-1){
+				xmlHttp.responseType="arraybuffer";
+				xmlHttp.overrideMimeType("text/html;charset=utf-8")
+			}
             xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=utf-8");
-			xmlHttp.overrideMimeType("text/html;charset=utf-8")
-            xmlHttp.send(str); 
+            xmlHttp.send(data); 
         });
     }
 }
+gbk2utf8=function(body){
+ var stm=new ActiveXObject("adodb.stream")
+ stm.Type=1
+ stm.mode=3
+//stm.charset="gbk"
+ stm.open()
+ stm.Write(body)
+ stm.Position = 0
+ stm.Type= 2;
+ stm.charset="gbk"
+ 
+ var re = stm.readtext()
+ stm.Close()
+ stm=null;
+ return  re;
+}
+		function IEVersion() {
+            var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串  
+            var isIE = userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1; //判断是否IE<11浏览器  
+            var isEdge = userAgent.indexOf("Edge") > -1 && !isIE; //判断是否IE的Edge浏览器  
+            var isIE11 = userAgent.indexOf('Trident') > -1 && userAgent.indexOf("rv:11.0") > -1;
+            if(isIE) {
+                var reIE = new RegExp("MSIE (\\d+\\.\\d+);");
+                reIE.test(userAgent);
+                var fIEVersion = parseFloat(RegExp["$1"]);
+                if(fIEVersion == 7) {
+                    return 7;
+                } else if(fIEVersion == 8) {
+                    return 8;
+                } else if(fIEVersion == 9) {
+                    return 9;
+                } else if(fIEVersion == 10) {
+                    return 10;
+                } else {
+                    return 6;//IE版本<=7
+                }   
+            } else if(isEdge) {
+                return 'edge';//edge
+            } else if(isIE11) {
+                return 11; //IE11  
+            }else{
+                return -1;//不是ie浏览器
+            }
+        }
 /*var get=function(){
 http.cors("http://www.baidu.com").then(function(re){
 	alert(re)
 });
 }
 get()*/ 
+//var oalert = window.alert
+//window.alert = (...args) => { oalert(...args); console.error(new Error('someone alerted'))}

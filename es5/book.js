@@ -695,19 +695,45 @@ Book = (function() {
 		},
 		format1: function(html, url) {
 			var html = html.replace(/<img.*?>/g, "");
-            var str=html.match(/<dl[^>]*?>[\s\S]*?<\/dl>/);
-			str=str[0];
-            str=str.match(/<a[^>]*?href([^"]*?)=([^"]*?)"([^"]*?)"[^>]*?>(.*?)<\/a>/g);
-            var re=[];
-            for(i=0;i<str.length;i++){
-				var s=str[i].match(/<a[^>]*?href[^"]*?=[^"]*?"([^"]*?)"[^>]*?>(.*?)<\/a>/);
-				s.splice(0,1)
-				s[0]=s[0].getFullUrl(url);
-				var m=s[1].match(/<[^>]*?>([^<]*?)</);
-				if(m){
-					s[1]=m[1];
+			var format=function(str){
+				var str=str.match(/<a[^>]*?href([^"]*?)=([^"]*?)"([^"]*?)"[^>]*?>(.*?)<\/a>/g);
+				var re=[];
+				for(var i=0;i<str.length;i++){
+					var s=str[i].match(/<a[^>]*?href[^"]*?=[^"]*?"([^"]*?)"[^>]*?>(.*?)<\/a>/);
+					s.splice(0,1)
+					s[0]=s[0].getFullUrl(url);
+					var m=s[1].match(/<[^>]*?>([^<]*?)</);
+					if(m){
+						s[1]=m[1];
+					}
+				    re.push(s)
 				}
-                re.push(s)
+				return re;
+			}
+			var str=html.match(/<dl[^>]*?>[\s\S]*?<\/dl>/g);
+			var re=[];
+			if(str){
+				for(var i=0;i<str.length;i++){
+					var re0=format(str[i]);
+					if(re0.length>re.length){
+						re=re0;
+					}
+				}
+			}
+			str=html.match(/<ul[^>]*?>[\s\S]*?<\/ul>/g);
+			if(str){
+				for(var i=0;i<str.length;i++){
+					var re0=format(str[i]);
+					if(re0.length>re.length){
+						re=re0;
+					}
+				}
+			}
+			
+            if (re.length > 0) {
+            	return Promise.resolve(re);
+            } else {
+            	return Promise.reject("err list.format: no re");
             }
 			/* var ele = document.createElement("html");
 			ele.innerHTML = html;
@@ -739,11 +765,7 @@ Book = (function() {
 				re.push([a[i1].href, title])
 			}
 			document.head.removeChild(b); */
-			if (re.length > 0) {
-				return re;
-			} else {
-				return Promise.reject("err list.format: no re");
-			}
+			
 		},
 		format2: function(html, url) {
 			var t = this;

@@ -173,7 +173,7 @@ Book = (function() {
 			var j = [];
 			for (var i1 = 0; i1 < arr1.length; i1++) {
 				var json1 = JSON.parse(arr1[i1].body);
-				if (!json1.id) {
+				if (json1.name&&!json1.id) {
 					json1.id = arr1[i1].id;
 					this.put(json1)
 				}

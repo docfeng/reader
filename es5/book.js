@@ -729,43 +729,11 @@ Book = (function() {
 					}
 				}
 			}
-			
             if (re.length > 0) {
             	return Promise.resolve(re);
             } else {
             	return Promise.reject("err list.format: no re");
             }
-			/* var ele = document.createElement("html");
-			ele.innerHTML = html;
-			var b = document.createElement("base");
-			b.href = url.getBaseUrl();
-			document.head.appendChild(b);
-			var a = [];
-			var ul = ele.querySelectorAll("ul");
-			for (var i = 0; i < ul.length; i++) {
-				var _a = ul[i].querySelectorAll("a");
-				if (_a.length > a.length) {
-					a = _a;
-				}
-			}
-			var ul = ele.querySelectorAll("dl");
-			for (var i = 0; i < ul.length; i++) {
-				var _a = ul[i].querySelectorAll("a");
-				if (_a.length > a.length) {
-					a = _a;
-				}
-			}
-			var re = [];
-			for (var i1 = 0; i1 < a.length; i1++) {
-				var title=a[i1].innerHTML
-				var m=title.match(/<[^>]*?>([^<]*?)</);
-				if(m){
-					title-m[0];
-				}
-				re.push([a[i1].href, title])
-			}
-			document.head.removeChild(b); */
-			
 		},
 		format2: function(html, url) {
 			var t = this;
@@ -1221,10 +1189,12 @@ Book = (function() {
 		},
 		getRealPath: function(url) {
 			var t = this;
+			var url=url;
 			return getHTML(url, "real").then(function(json) {
-				var url = json.xml.getResponseHeader("url");
+				url = json.xml.getResponseHeader("url");
 				url = url || json.xml.responseURL;
-				var arr = List.format1(json.html, url);
+				return List.format1(json.html, url);
+			}).then(function(arr) {
 				console.log("url",url,"arr",arr)
 				return [url, arr];
 			}).catch(function(a) {

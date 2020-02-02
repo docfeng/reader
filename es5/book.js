@@ -433,7 +433,19 @@ Book = (function() {
 		},
 		ini: function() {
 			fj.tip("开始创建表格");
-			return Promise.all([this.createShelfTable(), this.createListTable(), this.createPageTable()]);
+			var t=this;
+			return t.createShelfTable().then(function(foo1){
+				return t.createListTable();
+			}).then(function(foo1){
+				return t.createPageTable()
+			}).then(function(foo1){
+				alert("创建表格完成")
+				return true;
+			});
+			/* return Promise.all([this.createShelfTable(), this.createListTable(), this.createPageTable()]).then(function(foo1){
+				alert("创建表格完成")
+				return true;
+			});; */
 		},
 		moveData: function() {
 			var t = this;

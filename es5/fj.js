@@ -8,8 +8,8 @@ fj = (function() {
 	}
 	var createBox = function(code, fun, cancelFun) {
 		var win = document.createElement("div");
-		win.classList.add("alert_box");
-		win.style.display = "block";
+		win.classList.add("Dialog");
+		//win.style.display = "block";
 		document.body.appendChild(win);
 		var s = evt.addEvent(function(a) {
 			document.body.removeChild(win);
@@ -31,11 +31,11 @@ fj = (function() {
 		var certain = document.createElement("input");
 		var cancel = document.createElement("input");
 
-		win.classList.add("setting_m_box");
-		box.classList.add("setting_box");
-		header.classList.add("setting_header_box");
-		section.classList.add("setting_body_box");
-		footer.classList.add("setting_footer_box");
+		win.classList.add("Dialog");
+		box.classList.add("contain");
+		header.classList.add("header");
+		section.classList.add("body");
+		footer.classList.add("footer");
 
 		certain.type = "button";
 		cancel.type = "button";
@@ -98,36 +98,63 @@ fj = (function() {
 
 		return obj;
 	}
+	
+	var querySelector=function(query){
+		switch (typeof query){
+			case "string":
+				this.obj=document.querySelector(query);
+				break;
+			case "object":
+				this.obj=query;
+				break;
+			default:
+				break;
+		}
+		this.hide=function(a){
+			this.obj.style.visibility="hidden";
+		}
+		this.show=function(a){
+			this.obj.style.visibility='visible';
+		}
+		this.toggle=function(a){
+			this.obj.style.visibility=window.getComputedStyle(this.obj,null).visibility=="hidden"?"visible":"hidden";
+		}
+	}
 
 
-	var $ = {}
+	var $ = function(query){
+		return new querySelector(query);
+	}
 	$.createBox = createBox;
 	$.createWin = function(name, html, fun) {
 		var code =
 			'\
-          <div class="setting_box" onclick="window.event.stopPropagation();">\
-              <div class="setting_header_box">%s</div>\
-              <div class="setting_body_box">\
+          <div class="contain type-2" onclick="window.event.stopPropagation();">\
+              <div class="header">\
+				<div class="title">%s</div>\
+				<div class="close">X</div>\
+			</div>\
+              <div class="body">\
                   %s\
               </div>\
-              <div class="setting_footer_box">\
-                  <input type="button" value="确定" id="certain" />\
-                  <input type="button" value="取消" id="cancel" />\
+              <div class="footer">\
+                  <div class="ok">确定</div>\
+                  <div class="no">取消</div>\
               <div>\
           </div>\
               '.fill([name, html]);
 		var iniFun = function(obj, s) {
-			obj.onclick = obj.querySelector("#cancel").onclick = function() {
+			obj.onclick = obj.querySelector(".no").onclick = function() {
 				evt.removeEvent(s);
 				obj.parentNode.removeChild(obj);
+				fun.cancel();
 				obj = null;
-				fun.cancel()
 			}
-			obj.querySelector("#certain").onclick = function(a) {
+			obj.querySelector(".ok").onclick = function(a) {
 				evt.removeEvent(s);
 				obj.parentNode.removeChild(obj);
-				obj = null;
-				fun.certain();
+				fun.certain(obj);
+				obj=null;
 			}
 			fun.ini(obj)
 		}
@@ -135,29 +162,6 @@ fj = (function() {
 			fun.cancel();
 		}
 		$.createBox(code, iniFun, cancelFun);
-	}
-
-	$.iframe = function(url) {
-		var win = document.createElement("div");
-		var iframe = document.createElement("iframe");
-
-		win.classList.add("setting_m_box");
-		//iframe.classList.add("setting_box");
-		iframe.style = "width:100%;height:100%;background:white;"
-		iframe.src = url;
-		var s = evt.addEvent(function(a) {
-			win.removeChild(iframe);
-			//exitScreen()
-			document.body.removeChild(win);
-			iframe = null;
-			win = null;
-			return true;
-		});
-
-		win.appendChild(iframe);
-		win.style.display = "block";
-		document.body.appendChild(win);
-		fullScreen(win);
 	}
 	$.iframe = function(url) {
 		var code = '<iframe style="width:100%;height:100%;background:white;" url="'+url+'"></iframe>';
@@ -203,28 +207,42 @@ fj = (function() {
 	 * @param {Array} data
 	 * @param {Number} index
 	 */
-	$.select = function(name, data, index) {
+	$.select = function(name, data, index, bool) {
 		return new Promise(function(resolve) {
-			var re = index ? data[index] : data[0];
 			var html = ""
 			for (var i = 0; i < data.length; i++) {
 				var a = data[i];
-				html += '<div>'+a+'</div>';
+				html += '<div class="item" data-index='+i+'>'+a+'</div>';
 			}
-			var code = '<div class="select_box" id="select1">'+html+'</div>';
+			var code = '<div class="select_box">'+html+'</div>';
 			var fun = {};
 			fun.cancel = function() {
 				resolve(false);
 			}
-			fun.certain = function() {
+			fun.certain = function(obj) {
+				var re=[];
+				var o=obj.querySelector(".select_box").querySelectorAll(".selected");
+				for(var i=0;i<o.length;i++){
+					re.push(o[i].innerHTML)
+				}
+				if(!bool)re=re[0]||false;
 				resolve(re);
 			}
 			fun.ini = function(obj) {
-				obj.querySelector("#select1").onclick = function(e) {
+				obj.querySelector(".select_box").onclick = function(e) {
 					var ele = e.srcElement;
 					if (ele == this) return;
-					re = ele.innerHTML;
-					ele.classList.toggle("select_item_selected");
+					if(!bool){
+						//单选
+						var o=obj.querySelector(".select_box").querySelectorAll(".item");
+						for(var i=0;i<o.length;i++){
+							o[i].classList.remove("selected");
+						}
+						ele.classList.add("selected");
+					}else{
+						//多选  未完成
+						ele.classList.toggle("selected");
+					}
 				}
 			}
 			$.createWin(name, code, fun);
@@ -359,7 +377,47 @@ fj = (function() {
 			fun = f;
 		}
 	})()
-	
+	var Dialog=function(obj){
+		var t=this;
+		var obj=obj;
+		var contain=obj.querySelector(".contain");
+		if(!contain.classList.contains("type-3")){
+			contain.onclick = function() {
+				window.event.stopPropagation();
+			}
+		}
+		var no= function() {
+			obj.classList.add("hide");
+			t.no&&t.no(obj);
+			obj = null;
+		}
+		var ok= function(a) {
+			obj.classList.add("hide");
+			t.ok&&t.ok(obj);
+			obj=null;
+		}
+		var close_button=obj.querySelector(".close");
+		close_button&&(close_button.onclick=no);
+		var no_button=obj.querySelector(".no");
+		no_button&&(no_button.onclick=no);
+		obj.onclick =  no;
+		var ok_button=obj.querySelector(".ok");
+		ok_button&&(ok_button.onclick =ok);
+		this.show=function(){
+			obj.classList.remove("hide");
+		}
+		this.hide=function(){
+			obj.classList.remove("hide");
+			obj.classList.add("hide");
+		}
+		this.title=function(txt){
+			var title=obj.querySelector(".title");
+			title&&(title.innerHTML=txt);
+		}
+	}
+	$.Dialog=function(obj){
+		return new Dialog(obj);
+	}
 	var timeout1;
 	$.tip=function(str,time,bool,fun){
 			var time = time ? 1000* time: 1000;
@@ -396,4 +454,32 @@ var tt=function(){
 	})
 	fj.tip("test",3)
 }
-
+/* 
+ <div class="Dialog hide" id="rrr">
+ 	<div class="contain type-1">
+ 		<div class="header">
+ 			<div class="title">333</div>
+ 			<div class="close">X</div>
+ 		</div>
+ 		<div class="body">
+ 			wwwwww
+ 		</div>
+ 		<div class="footer">
+ 			<div class="ok">ok</div>
+ 			<div class="no">no</div>
+ 		</div>
+ 	</div>
+ 	
+ </div>
+ */
+window.addEventListener("load",function(){
+	/* var d=fj.Dialog(shelf_control);
+	d.no=function(a){
+		var src=event.srcElement;
+		var obj;
+		src.classList.contains("item")&&(obj=src)
+		src.parentNode.classList.contains("item")&&(obj=src.parentNode)
+		obj&&(alert(obj.dataset.index))
+	}
+	d.show() */
+})

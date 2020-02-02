@@ -244,8 +244,9 @@
 			.refreshText {
 				width: 100%;
 				height: 0px;
-				line-height: 0px;
+				//line-height: 0px;
 				text-align: center;
+				background-color: #008000;
 				//transform: translateY(-50px);
 			}
 		</style>
@@ -392,7 +393,7 @@
 
 			.head-menu-body {
 				position: absolute;
-				display: none;
+				visibility:hidden;
 				top: 40px;
 				right: 0px;
 				width: 100%;
@@ -448,15 +449,28 @@
 
 			.model {
 				position: fixed;
-
+				display: flex;
+				visibility:hidden;
 				flex-direction: column;
 				width: 100%;
 				height: 100%;
 				top: 0px;
 				left: 0px;
 				z-index: 50;
-				display: none;
+				//display: none;
 				background-color: #FFFFFF;
+			}
+			.model>.header{
+				flex:1 1;
+				width: 100%;
+			}
+			.model>.body{
+				flex:20 20;
+				overflow-x: hidden;
+				overflow-y: scroll;
+			}
+			.model>.footer{
+				flex:1 1;
 			}
 
 			.model>div:first-child {
@@ -471,8 +485,25 @@
 			}
 
 			.show {
+				visibility:visible;
+			}
+			.hdie {
+				visibility:hidden;
+			}
+			.flex-row{
 				display: -webkit-flex;
 				display: flex;
+				flex-direction: row;
+			}
+			.flex-column{
+				display: -webkit-flex;
+				display: flex;
+				flex-direction: column;
+			}
+			.flex-row>div,.flex-column>div{
+				flex:1 1;
+				text-align: center;
+				vertical-align: middle word-break: keep-all;
 			}
 
 			//table-layout:fixed
@@ -486,11 +517,16 @@
 		<div class="main_contain" id="main_contain">
 			<!-- 书架 -->
 			<div class="model show" id="shelfDiv">
-				<div class="head-menu">
-					<div class="head-menu-head" onclick="var style=this.nextElementSibling.style;if(!style.display||style.display=='block'){style.display='none';}else{style.display='block';}">
-
+				<div class="header head-menu">
+					<div id="down_src" class="head-menu-head" onclick="fj(this.nextElementSibling).toggle()">
+						<div id="down_title" class="refreshText"></div>
+						<div  class="flex-row">
+							<div style="flex:10 10">书架</div>
+							<div style="flex:1 1">设置</div>
+							<div style="flex:1 1" onclick="UI.showSearch()">搜索</div>
+						</div>
 					</div>
-					<div class="head-menu-body" style="display: none;" onclick="this.style.display='none';">
+					<div class="head-menu-body" onclick="fj(this).hide();">
 						<div>
 							<div class="icon-Button">
 								<span class="iconfont icon-chaxun" value="搜索" onclick="UI.showSearch()"></span>
@@ -519,21 +555,39 @@
 						</div>
 					</div>
 				</div>
-				<div id="shelf_div">
-					<p class="refreshText"></p>
+				<div class="body" id="shelf_div">
+					<div class="refreshText"></div>
 					<table id="shelf_table" style="" data-order="click" onclick="Shelf.click(event.srcElement,this.dataset.order);this.dataset.order='click';"></table>
+					<div class="Dialog hide" id="shelf_control">
+						<div class="contain type-3">
+							<div class="body">
+								<div class="item" data-index=1><div class="">删除</div></div>
+								<div class="item" data-index=2><div class="">移动</div></div>
+								<div class="item" data-index=3><div class="">更新</div></div>
+								<div class="item" data-index=4><div class="">目录</div></div>
+								<div class="item" data-index=5><div class="">下载</div></div>
+								<div class="item" data-index=6><div class="">详情</div></div>
+								<div class="item" data-index=7><div class="">浏览器打开</div></div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="footer flex-row">
+					<div id="">书架</div>
+					<div id="">我的</div>
 				</div>
 			</div>
 			<!-- 目录-->
 			<div class="model" id="listDiv">
 				<div class="head-menu">
-					<div class="head-menu-head" onclick="var style=this.nextElementSibling.style;if(!style.display||style.display=='block'){style.display='none';}else{style.display='block';}">
+					<div class="head-menu-head" onclick="fj(this.nextElementSibling).toggle()">
 						name:<span id="listName"></span>
 						url:<span id="listUrl"></span>
 						new:<span id="listNew"></span>
 						count:<span id="listCount"></span>
 					</div>
-					<div class="head-menu-body" style="display: none;" onclick="this.style.display='none';">
+					<div class="head-menu-body" onclick="fj(this).hide();">
 						<div>
 							<div class="icon-Button">
 								<span class="iconfont icon-chaxun" value="换源" onclick="List.changeSource(listName.innerText);"></span>
@@ -583,180 +637,250 @@
 					<table id="f6_table" onclick="Search.click(event.srcElement);" ondblclick=""></table>
 				</div>
 			</div>
-		</div>
-
-		<!--page页-->
-		<div class="rd-cnt">
-			<!-- page头部 -->
-			<div class="rd-top" id="rd-top">
-				<!--小说名称-->
-				<span class="fl" id="page-name">标题</span>
-				<span class="fr free-downs"><a href="javascript:ini(prompt('跳转章节'))">跳转章节</a></span>
-				<!--小说页码:1/4-->
-				<span class="fr page-nav" id="page-nav"></span>
-			</div>
-			<!-- 小说txt显示页 -->
-			<div class="rd-txt" id="rd-txt">
-				<div class="ud-link" style="position:relative; z-index:38">
-					<a href="https://www.baidu.com">上一章</a>
-					<a href="https://www.baidu.com">下一章</a>
+			<!-- page -->
+			<div class="model" style="background-color: #f7f0e5;" id="pageDiv">
+				<!--page页-->
+				<div class="rd-cnt">
+					<!-- page头部 -->
+					<div class="rd-top" id="rd-top">
+						<!--小说名称-->
+						<span class="fl" id="page-name">标题</span>
+						<span class="fr free-downs"><a href="javascript:ini(prompt('跳转章节'))">跳转章节</a></span>
+						<!--小说页码:1/4-->
+						<span class="fr page-nav" id="page-nav"></span>
+					</div>
+					<!-- 小说txt显示页 -->
+					<div class="rd-txt" id="rd-txt">
+						<div class="ud-link" style="position:relative; z-index:38">
+							<a href="https://www.baidu.com">上一章</a>
+							<a href="https://www.baidu.com">下一章</a>
+						</div>
+					</div>
 				</div>
+				<!--设置页面-->
+				<div class="fn-cnt">
+					<!--设置页面头部-->
+					<div class="fn-top" id="fn-top">
+						<a href="javascript:UI.showMain();alert(0)" class="fl backicon">
+							<i class="iconfont icon-left"></i>
+						</a>
+						<a href="javascript:void()" class="fr backicon">
+							<i style="font-size: 3em;" id="novelName">name</i>
+						</a>
+					</div>
+					<!--设置页面底部-->
+					<div class="fn-btm fb-icon" id="fn-btm">
+						<ul>
+							<li class="night">
+								<div>
+									<i class="iconfont icon-iconset0454"></i>
+									<span>关灯</span>
+								</div>
+							</li>
+							<li class="day">
+								<div>
+									<i class="iconfont icon-iconset0451"></i>
+									<span>开灯</span>
+								</div>
+							</li>
+							<li class="night1" onclick="window.location.reload()">
+								<div>
+									<i class="iconfont icon-reload"></i>
+									<span>重载</span>
+								</div>
+							</li>
+							<li class="li-cfg">
+								<div>
+									<i class="iconfont icon-icon_shezhi"></i>
+									<span>设置</span>
+								</div>
+							</li>
+							<li class="li-cfg2">
+								<div>
+									<i class="iconfont icon-icon_shezhi"></i>
+									<span>设置2</span>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<!--设置界面面板1-->
+					<div class="cfg-pnl" id="cfg-pnl">
+						<ul>
+							<!-- 上一章||下一章 -->
+							<li class="cfg-font" id="cfg-control">
+								<label>控制</label>
+								<div>
+									<menu>
+										<menuitem class="fs-add" onclick="window.uppage()">上一章</menuitem>
+										<menuitem class="fs-rdu" onclick="window.next()">下一章</menuitem>
+										<menuitem class="fs-add" onclick="window.uppage()">上一章</menuitem>
+										<menuitem class="fs-rdu" onclick="window.next()">下一章</menuitem>
+										<menuitem class="fs-add" onclick="window.uppage()">上一章</menuitem>
+										<menuitem class="fs-rdu" onclick="window.next()">下一章</menuitem>
+									</menu>
+								</div>
+							</li>
+							<!-- 上一章||下一章 -->
+							<li class="cfg-font" id="cfg-control">
+								<label>控制</label>
+								<div>
+									<menu>
+										<menuitem class="fs-add" onclick="window.uppage()">上一章</menuitem>
+										<menuitem class="fs-rdu" onclick="window.next()">下一章</menuitem>
+									</menu>
+								</div>
+							</li>
+							<!-- 字体大小 -->
+							<li class="cfg-font" id="cfg-font">
+								<label>字体</label>
+								<div>
+									<menu>
+										<menuitem class="fs-add">
+										A<em>+</em>
+										</menuitem>
+										<menuitem class="fs-rdu">
+										A<em>-</em>
+										</menuitem>
+										<menuitem class="fs-dft">默认</menuitem>
+									</menu>
+								</div>
+							</li>
+							<!-- 滑动模式：上下||左右 -->
+							<li class="cfg-mode" id="cfg-mode">
+								<label>模式</label>
+								<div>
+									<menu>
+										<menuitem class="mode-ud">上下滑动</menuitem>
+										<menuitem class="mode-lr">左右滑动</menuitem>
+									</menu>
+								</div>
+							</li>
+							<!-- 背景色 -->
+							<li class="cfg-bg" id='cfg-bg'>
+								<label>背景</label>
+								<div>
+									<menu>
+										<menuitem data-cls="bg-1" class="bg-1"></menuitem>
+										<menuitem data-cls="bg-2" class="bg-2">
+										</menuitem>
+										<menuitem data-cls="bg-3" class="bg-3">
+										</menuitem>
+										<menuitem data-cls="bg-4" class="bg-4">
+										</menuitem>
+										<menuitem data-cls="bg-5" class="bg-5"></menuitem>
+									</menu>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<!--页面点击控制面板-->
+				<div class="tap-hdl" id="tap-hdl">
+					<div class="pg-up">
+						<p>上一页</p>
+					</div>
+					<div class="pg-up-1"></div>
+					<div class="fn-div">
+						<div>
+							<i class="bg-hand"></i>
+							<span>点击功能呼出</span>
+						</div>
+					</div>
+					<div class="pg-dn">
+						<p>下一页</p>
+					</div>
+					<div class="pg-dn-1"></div>
+					<div class="pg-lft">
+						<p>上一页</p>
+					</div>
+					<div class="pg-rit">
+						<p>下一页</p>
+					</div>
+
+					<input type="hidden" name="chpt-prev" id="prev-url" value="https://m.zhulang.com/BdRead/index/book_id/amyebGxp/ch_id/aWidZmVh/channel/aGiWZmRh.html">
+					<input type="hidden" name="next-prev" id="next-url" value="https://m.zhulang.com/BdRead/index/book_id/amyebGxp/ch_id/aWmZamti/channel/aGiWZmRh.html">
+				</div>
+				<!-- 未知 -->
+				<div class="idx-bg"></div>
+				<!-- 左侧点击面板 -->
+				<div class="idx-cnt" id="idx-cnt">
+					<div class="idx-hdl iconfont icon-indent" id="idx-hdl">
+
+					</div>
+					<!--目录点击按钮-->
+					<div class="idx-zd" id="idx-zd"></div>
+				</div>
+				<div id="msg-cnt" class="msg-cnt"><span></span></div>
 			</div>
-		</div>
-		<!--设置页面-->
-		<div class="fn-cnt">
-			<!--设置页面头部-->
-			<div class="fn-top" id="fn-top">
-				<a href="javascript:UI.showMain();alert(0)" class="fl backicon">
-					<i class="iconfont icon-left"></i>
-				</a>
-				<a href="javascript:void()" class="fr backicon">
-					<i style="font-size: 3em;" id="novelName">name</i>
-				</a>
-			</div>
-			<!--设置页面底部-->
-			<div class="fn-btm fb-icon" id="fn-btm">
-				<ul>
-					<li class="night">
-						<div>
-							<i class="iconfont icon-iconset0454"></i>
-							<span>关灯</span>
-						</div>
-					</li>
-					<li class="day">
-						<div>
-							<i class="iconfont icon-iconset0451"></i>
-							<span>开灯</span>
-						</div>
-					</li>
-					<li class="night1" onclick="window.location.reload()">
-						<div>
-							<i class="iconfont icon-reload"></i>
-							<span>重载</span>
-						</div>
-					</li>
-					<li class="li-cfg">
-						<div>
-							<i class="iconfont icon-icon_shezhi"></i>
-							<span>设置</span>
-						</div>
-					</li>
-					<li class="li-cfg2">
-						<div>
-							<i class="iconfont icon-icon_shezhi"></i>
-							<span>设置2</span>
-						</div>
-					</li>
-				</ul>
-			</div>
-			<!--设置界面面板1-->
-			<div class="cfg-pnl" id="cfg-pnl">
-				<ul>
-					<!-- 上一章||下一章 -->
-					<li class="cfg-font" id="cfg-control">
-						<label>控制</label>
-						<div>
-							<menu>
-								<menuitem class="fs-add" onclick="window.uppage()">上一章</menuitem>
-								<menuitem class="fs-rdu" onclick="window.next()">下一章</menuitem>
-								<menuitem class="fs-add" onclick="window.uppage()">上一章</menuitem>
-								<menuitem class="fs-rdu" onclick="window.next()">下一章</menuitem>
-								<menuitem class="fs-add" onclick="window.uppage()">上一章</menuitem>
-								<menuitem class="fs-rdu" onclick="window.next()">下一章</menuitem>
-							</menu>
-						</div>
-					</li>
-					<!-- 上一章||下一章 -->
-					<li class="cfg-font" id="cfg-control">
-						<label>控制</label>
-						<div>
-							<menu>
-								<menuitem class="fs-add" onclick="window.uppage()">上一章</menuitem>
-								<menuitem class="fs-rdu" onclick="window.next()">下一章</menuitem>
-							</menu>
-						</div>
-					</li>
-					<!-- 字体大小 -->
-					<li class="cfg-font" id="cfg-font">
-						<label>字体</label>
-						<div>
-							<menu>
-								<menuitem class="fs-add">
-								A<em>+</em>
-								</menuitem>
-								<menuitem class="fs-rdu">
-								A<em>-</em>
-								</menuitem>
-								<menuitem class="fs-dft">默认</menuitem>
-							</menu>
-						</div>
-					</li>
-					<!-- 滑动模式：上下||左右 -->
-					<li class="cfg-mode" id="cfg-mode">
-						<label>模式</label>
-						<div>
-							<menu>
-								<menuitem class="mode-ud">上下滑动</menuitem>
-								<menuitem class="mode-lr">左右滑动</menuitem>
-							</menu>
-						</div>
-					</li>
-					<!-- 背景色 -->
-					<li class="cfg-bg" id='cfg-bg'>
-						<label>背景</label>
-						<div>
-							<menu>
-								<menuitem data-cls="bg-1" class="bg-1"></menuitem>
-								<menuitem data-cls="bg-2" class="bg-2">
-								</menuitem>
-								<menuitem data-cls="bg-3" class="bg-3">
-								</menuitem>
-								<menuitem data-cls="bg-4" class="bg-4">
-								</menuitem>
-								<menuitem data-cls="bg-5" class="bg-5"></menuitem>
-							</menu>
-						</div>
-					</li>
-				</ul>
-			</div>
-		</div>
-		<!--页面点击控制面板-->
-		<div class="tap-hdl" id="tap-hdl">
-			<div class="pg-up">
-				<p>上一页</p>
-			</div>
-			<div class="pg-up-1"></div>
-			<div class="fn-div">
+			<!-- 设置页 -->
+			<div class="model" id="contextmenu" style="font-size: 30px;">
+				<!-- <div style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;"> -->
 				<div>
-					<i class="bg-hand"></i>
-					<span>点击功能呼出</span>
+					<span class="iconfont icon-reload" onclick="document.location.reload();"></span>
+					<input type="button" value="shift" onclick="var b=setbox.style.display;setbox.style.display=b=='none'?'block':'none';evalbox.style.display=b=='none'?'none':'block';" />
 				</div>
+				<div id="setbox">
+					<form  action="javascript:void()"  onsubmit="act(this)" style="height: 500px;overflow-y: scroll;">
+						 <input type="text" name="t1" value="rff" /><br/>
+						 <fieldset>
+						    <legend>操作</legend>
+						    <input type="button" value='epub' onclick='fso.writeZip(form_1.novel_name.value+".epub",form_1.novel_name.value)' />
+						    <input type="button" value="打开" onclick="chrome.openFile(form_1.novel_name.value+'.epub')" />
+							<input type="button" value="登入" onclick="Git.User.login()" />
+							<input type="button" value="退出" onclick="Git.User.logout()" />
+						</fieldset>
+						<fieldset>
+							<legend>数据操作</legend>
+							<input type=button value="moveData" onclick="Shelf.moveData()" />
+							<input type=button value="sameAll" onclick="Shelf.sameAll()" />
+						    <input type=button value="Shelf.clear" onclick="Shelf.clear()" />
+						    <input type=button value="Book.deleteDB" onclick="Book.deleteDB();" />
+						    <input type=button value="Page.clear" onclick="Page.clear()" />
+						    <input type=button value="put模式" onclick="Book.Shelf.putModel('');" />
+							<input type=button value="shelf.delete" onclick="Shelf.delete()" />
+						    <input type=button value="清除缓存文件" onclick="window.applicationCache.update();" />
+						</fieldset>
+						<fieldset id="cors">
+						     <legend>cors</legend>
+						     <input type="button" onclick="showModel(this.parentNode)" value="showModel" />
+							 <input type="button" onclick="addModel(this.parentNode)" value="addModel" /><br />
+							 自定义模式:<input type="text"   name="cors" />
+						 </fieldset>
+						 
+						 <fieldset>
+						     <legend>cors</legend>
+						     <input type="radio" name="cors" value="" />none<br/>
+						     <input type="radio" name="cors" value="http://gear.docfeng.top/get2.php" />gear.docfeng.top<br />
+						     
+						 </fieldset>
+						 <fieldset>
+						     <legend>2</legend>
+						     <label><input type="checkbox" name="t3" value="男" />男</label>
+						     <label><input type="checkbox" name="t3" value="女" />女</label>
+						 </fieldset>
+						 <input type="submit" value="保存"/>
+						 <input type="button" onclick="act(this.parentNode)" value="act" />
+						 <input type="button" onclick="alert(this.parentNode.t1)" value="test" />
+						 
+					</form>
+				</div>
+				<div id="evalbox" style="display: none;">
+					<span class="iconfont icon-shuji">ee</span>
+					<input type="button" value="eval33" onclick="eval(evaltxt.value);" />
+					<input type="button" value="read" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){form_2.txt1.value+=txt;});}" />
+					<input type="button" value="加载script" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){eval(txt);alert(txt);});}" />
+					<input type="button" value='reload' onclick="document.location.reload();" />
+					<br />
+					<input type="text" id="script1" style="height:30px" />
+				</div>
+				<div style="flex-grow:5;">
+					<textarea id="evaltxt" style="width: 100%;height: 100%;"></textarea>
+				</div>
+			
+				<!-- </div> -->
 			</div>
-			<div class="pg-dn">
-				<p>下一页</p>
-			</div>
-			<div class="pg-dn-1"></div>
-			<div class="pg-lft">
-				<p>上一页</p>
-			</div>
-			<div class="pg-rit">
-				<p>下一页</p>
-			</div>
-
-			<input type="hidden" name="chpt-prev" id="prev-url" value="https://m.zhulang.com/BdRead/index/book_id/amyebGxp/ch_id/aWidZmVh/channel/aGiWZmRh.html">
-			<input type="hidden" name="next-prev" id="next-url" value="https://m.zhulang.com/BdRead/index/book_id/amyebGxp/ch_id/aWmZamti/channel/aGiWZmRh.html">
+			
 		</div>
-		<!-- 未知 -->
-		<div class="idx-bg"></div>
-		<!-- 左侧点击面板 -->
-		<div class="idx-cnt" id="idx-cnt">
-			<div class="idx-hdl iconfont icon-indent" id="idx-hdl">
-
-			</div>
-			<!--目录点击按钮-->
-			<div class="idx-zd" id="idx-zd"></div>
-		</div>
-		<div id="msg-cnt" class="msg-cnt"><span></span></div>
 		<!-- 目录2 -->
 		<div id="listDiv2" style="position:fixed;display:none;flex-direction: column;height:100%;width:100%;top: 0px;right: 0px;z-index: 100;font-size: 2.5em;color: #000000;" onclick="this.style.display='none';">
 			<div style="width: 50%;height:24px;">
@@ -767,73 +891,6 @@
 				<table id="list_table2" style="width:100%;height:100%" onclick="Page.closeList(event.srcElement)">
 				</table>
 			</div>
-		</div>
-		<!-- 设置页 -->
-		<div class="model" id="contextmenu" style="font-size: 30px;">
-			<!-- <div style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;"> -->
-			<div>
-				<span class="iconfont icon-reload" onclick="document.location.reload();"></span>
-				<input type="button" value="shift" onclick="var b=setbox.style.display;setbox.style.display=b=='none'?'block':'none';evalbox.style.display=b=='none'?'none':'block';" />
-			</div>
-			<div id="setbox">
-				<form  action="javascript:void()"  onsubmit="act(this)" style="height: 500px;overflow-y: scroll;">
-					 <input type="text" name="t1" value="rff" /><br/>
-					 <fieldset>
-					    <legend>操作</legend>
-					    <input type="button" value='epub' onclick='fso.writeZip(form_1.novel_name.value+".epub",form_1.novel_name.value)' />
-					    <input type="button" value="打开" onclick="chrome.openFile(form_1.novel_name.value+'.epub')" />
-						<input type="button" value="登入" onclick="Git.User.login()" />
-						<input type="button" value="退出" onclick="Git.User.logout()" />
-					</fieldset>
-					<fieldset>
-						<legend>数据操作</legend>
-						<input type=button value="moveData" onclick="Shelf.moveData()" />
-						<input type=button value="sameAll" onclick="Shelf.sameAll()" />
-					    <input type=button value="Shelf.clear" onclick="Shelf.clear()" />
-					    <input type=button value="Book.deleteDB" onclick="Book.deleteDB();" />
-					    <input type=button value="Page.clear" onclick="Page.clear()" />
-					    <input type=button value="put模式" onclick="Book.Shelf.putModel('');" />
-						<input type=button value="shelf.delete" onclick="Shelf.delete()" />
-					    <input type=button value="清除缓存文件" onclick="window.applicationCache.update();" />
-					</fieldset>
-					<fieldset id="cors">
-					     <legend>cors</legend>
-					     <input type="button" onclick="showModel(this.parentNode)" value="showModel" />
-						 <input type="button" onclick="addModel(this.parentNode)" value="addModel" /><br />
-						 自定义模式:<input type="text"   name="cors" />
-					 </fieldset>
-					 
-					 <fieldset>
-					     <legend>cors</legend>
-					     <input type="radio" name="cors" value="" />none<br/>
-					     <input type="radio" name="cors" value="http://gear.docfeng.top/get2.php" />gear.docfeng.top<br />
-					     
-					 </fieldset>
-					 <fieldset>
-					     <legend>2</legend>
-					     <label><input type="checkbox" name="t3" value="男" />男</label>
-					     <label><input type="checkbox" name="t3" value="女" />女</label>
-					 </fieldset>
-					 <input type="submit" value="保存"/>
-					 <input type="button" onclick="act(this.parentNode)" value="act" />
-					 <input type="button" onclick="alert(this.parentNode.t1)" value="test" />
-					 
-				</form>
-			</div>
-			<div id="evalbox" style="display: none;">
-				<span class="iconfont icon-shuji">ee</span>
-				<input type="button" value="eval33" onclick="eval(evaltxt.value);" />
-				<input type="button" value="read" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){form_2.txt1.value+=txt;});}" />
-				<input type="button" value="加载script" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){eval(txt);alert(txt);});}" />
-				<input type="button" value='reload' onclick="document.location.reload();" />
-				<br />
-				<input type="text" id="script1" style="height:30px" />
-			</div>
-			<div style="flex-grow:5;">
-				<textarea id="evaltxt" style="width: 100%;height: 100%;"></textarea>
-			</div>
-
-			<!-- </div> -->
 		</div>
 		<!-- circle菜单 -->
 		<div class="circle-menu">

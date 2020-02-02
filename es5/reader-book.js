@@ -146,7 +146,7 @@ List = (function(a) {
 				window.page(i)
 			});
 			
-			UI.hidePage();
+			UI.showPage();
 		},
 
 		update: function(url) {
@@ -425,6 +425,7 @@ Search=(function(a){
 				fj.tip("已获取目录数据，开始显示",1)
 				alert(arr)
 				List.show(name,url,arr);
+				console.log(name,url,arr);
 				Shelf.add(name,url,arr).then(function(re){
 					fj.tip("添加书本成功",2)
 				}).catch(function(e){
@@ -668,6 +669,94 @@ Shelf=(function(a){
 		       // file_control.style.display=len>0?"block":"none";
 		        //normal_control.style.display=len>0?"none":"block";
 		},
+		control:function(index){
+			var json=Book.arr[index];
+			var name = json.name;
+			var url = json.url;
+			Book.json=json;
+			Book.name=name;
+			Book.url=url;
+			var readIndex=json.readIndex;
+			if(("string"!=typeof name)&&("string"!=typeof url)&&("number"!=typeof readIndex)){
+				var str="List.click参数错误：\nname:"+name+"\ni:"+url+"\nreadIndex:"+readIndex
+				alert(str)
+				return Promise.reject(str);
+			}
+			
+			var d=fj.Dialog(shelf_control);
+			d.no=function(a){
+				var src=event.srcElement;
+				var obj;
+				src.classList.contains("item")&&(obj=src)
+				src.parentNode.classList.contains("item")&&(obj=src.parentNode);
+				if(obj){
+					switch(obj.dataset.index){
+						case "1"://"删除":
+						    t.delete(index);
+						    break;
+						case "2"://"移动":
+							fj.select(json.name,["在读","其他","已读"]).then(function(re){
+								console.log(re)
+								switch(re){
+									case "在读":
+										json.sort=1;
+									    t.move(json);
+									    break;
+									case "其他":
+										json.sort=2;
+									    t.move(json);
+									    break;
+									case "已读":
+									    json.sort=3;
+									    t.move(json);
+									    break;
+								}
+							});
+							break;
+						case "7"://"浏览器打开":
+						    window.open('https://so.m.sm.cn/s?uc_param_str=dnntnwvepffrgibijbprsvdsme&from=wh10516&uc_sm=1&q='+Book.name);
+						    break;	
+						case "3"://更新
+						    List.read(name).then(function(list_arr){
+								var list_arr=list_arr;
+								return List.remote(url).then(function(_list_arr){
+									if (list_arr&&_list_arr.length == list_arr.length) {
+										fj.tip("目前没有新更新", 1.5);
+									} else {
+										var arr = Book.listarr = _list_arr;
+										List.write(name, arr).then(function(re) {
+											//fj.tip("List写入成功")
+										}).catch(function(e) {
+											fj.tip("List写入失败" + e)
+										})
+									
+										var title = arr[arr.length - 1][1];
+										var url = arr[arr.length - 1][0];
+										
+										fj.tip("已更新" + title, 2);
+										
+										json.updateTitle = title;
+										json.updateURL = url;
+										json.updateIndex = arr.length - 1;
+										json.updateAt = formatDate(new Date());
+									
+										Shelf.write(json);
+										Shelf.put(json);
+										
+										var str =Shelf.formatUI(json);
+										shelf_table.rows[index].innerHTML = str;
+									}
+									return list_arr;
+								}).catch(function(e) {
+									alert("更新出错" + e)
+								})
+						    });
+							break;	
+					}
+				}
+			}
+			d.show()
+		},
 		click:function(obj, order) {
 			var order = order ||"click"
 			var obj = obj;
@@ -680,33 +769,10 @@ Shelf=(function(a){
 				    //this.select()
 					var index=obj.parentNode.parentNode.parentNode.rowIndex;
 					console.log("index",index);
-					var json=Book.arr[index];
-					fj.select(json.name,["删除","移动"]).then(function(re){
-						switch(re){
-							case "删除":
-							    t.delete(index);
-							    break;
-							case "移动":
-							    fj.select(json.name,["在读","其他","已读"]).then(function(re){
-									console.log(re)
-							    	switch(re){
-							    		case "在读":
-											json.sort=1;
-							    		    t.move(json);
-							    		    break;
-										case "其他":
-											json.sort=2;
-										    t.move(json);
-										    break;
-							    		case "已读":
-							    		    json.sort=3;
-							    		    t.move(json);
-							    		    break;
-							    	}
-							    });
-							    break;
-						}
-					})
+					t.control(index);
+					/* fj.select(json.name,["删除","移动"]).then(function(re){
+						
+					}) */
 			        break;
 			    case "td":
 			        obj=obj.parentNode;

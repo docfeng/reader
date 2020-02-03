@@ -42,7 +42,7 @@ window.onload = function() {
 				var re=x/window.innerWidth;
 				switch (true){
 					case re<1/3:
-						alert(1)
+						deg90()
 						break;
 					case re>2/3:
 						alert(3)

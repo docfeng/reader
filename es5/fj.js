@@ -99,32 +99,55 @@ fj = (function() {
 		return obj;
 	}
 	//选择器
-	var querySelector=function(query){
-		switch (typeof query){
-			case "string":
-				this.obj=document.querySelector(query);
-				break;
-			case "object":
-				this.obj=query;
-				break;
-			default:
-				break;
-		}
-		this.hide=function(a){
-			this.obj.style.visibility="hidden";
-		}
-		this.show=function(a){
-			this.obj.style.visibility='visible';
-		}
-		this.toggle=function(a){
-			this.obj.style.visibility=window.getComputedStyle(this.obj,null).visibility=="hidden"?"visible":"hidden";
-		}
-	}
+	
 
-
-	var $ = function(query){
-		return new querySelector(query);
-	}
+	var $ =(function(){
+		var querySelector=function(query){
+			switch (typeof query){
+				case "string":
+					this.obj=document.querySelector(query);
+					break;
+				case "object":
+					this.obj=query;
+					break;
+				default:
+					break;
+			}
+			this.hide=function(a){
+				this.obj.style.visibility="hidden";
+			}
+			this.show=function(a){
+				this.obj.style.visibility='visible';
+			}
+			this.toggle=function(a){
+				this.obj.style.visibility=window.getComputedStyle(this.obj,null).visibility=="hidden"?"visible":"hidden";
+			}
+			this.deg90=function(a){
+				this.obj.classList.add("deg-90");
+				this.obj.style.height=window.innerWidth+"px"
+				this.obj.style.width=window.innerHeight+"px"
+				/* this.obj.style.top=(window.innerHeight-window.innerWidth)/2+"px"
+				this.obj.style.left=-(window.innerHeight-window.innerWidth)/2+"px"
+				 */
+				return this;
+			}
+			this.css=function(cssText){
+				this.obj.style.cssText+=cssText;
+				return this;
+			}
+			this.height=function(a){
+				return parseInt(window.getComputedStyle(this.obj).height);
+			}
+			this.width=function(a){
+				return parseInt(window.getComputedStyle(this.obj).width);
+			}
+			
+		}
+		
+		return function(query){
+			return new querySelector(query);
+		}
+	})()
 	$.createBox = createBox;
 	$.createWin = function(name, html, fun) {
 		var code =
@@ -632,4 +655,10 @@ window.addEventListener("load",function(){
 		obj&&(alert(obj.dataset.index))
 	}
 	d.show() */
+	
 })
+var deg90=function(a){
+	var len=(window.innerHeight-window.innerWidth)/2;
+	fj(".main_contain").deg90().css("top:"+len+"px;"+"left:"+(-len)+"px;");
+	//fj(".circle-menu").deg90()//.css("bottom:-160px;left:160px");
+}

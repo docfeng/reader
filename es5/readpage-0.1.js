@@ -335,7 +335,7 @@ show = function(str) {
 		}
 		//rd-txt在t秒内沿横轴移动-x个屏幕距离;
 		function scroll(x, t) {
-			var width = $(window).width();
+			var width =fj(".main_contain").width();//$(window).width();
 			var obj = "#rd-txt";
 			var x = x || pageIndex;
 			var t = t || 0;
@@ -348,12 +348,13 @@ show = function(str) {
 		function cacl(t) {
 			if ("lr" == Direction) {
 				var obj = $("#rd-txt");
-				win_width = $(window).width();
+				var win_width= fj(".main_contain").width();
+				/* win_width = $(window).width();
 				win_height = B.isMobile.iOS() ? window.innerHeight : $(window).height();
 				obj.css({
 					height: win_height,
 					width: win_width
-				});
+				}); */
 				//rd-txt长度;
 				var txt_width = document.getElementById("rd-txt").scrollWidth;
 				//计算页数

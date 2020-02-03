@@ -958,6 +958,7 @@
 					<span class="iconfont icon-delete"></span>
 					<span>删除</span>
 				</div>
+				
 				<!-- <div>⇶</div>
 						<div>⌂</div>
 						<div>⌫</div>
@@ -980,7 +981,7 @@
 						<div>⊗</div>
 						<div>🗑</div> -->
 			</div>
-			<div class="circle-menu-control1" onclick="var style=this.previousElementSibling.style;if(!style.display||style.display=='flex'){style.display='none';}else{style.display='flex';}">
+			<div class="circle-menu-control1" onclick="var style=this.previousElementSibling;fj(style).toggle()">
 				<div></div>
 			</div>
 		</div>

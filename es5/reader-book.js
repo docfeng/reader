@@ -313,7 +313,8 @@ Page = (function(a) {
 			document.querySelector("#listName2").innerHTML=name;
 			var table1=document.querySelector("#list_table2")
 			table1.innerHTML=str;
-			document.querySelector("#listDiv2").style.display="flex";
+			//document.querySelector("#listDiv2").style.display="flex";
+			fj("#listDiv2").show()
 			//目录滚动到第i个
 			var i = this.index1||Book.json.readIndex;
 			var o = table1.rows[i]

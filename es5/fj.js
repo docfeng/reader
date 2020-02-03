@@ -98,7 +98,7 @@ fj = (function() {
 
 		return obj;
 	}
-	
+	//选择器
 	var querySelector=function(query){
 		switch (typeof query){
 			case "string":
@@ -314,6 +314,123 @@ fj = (function() {
 		});
 	}
 
+	/**
+	 * 添加下拉菜单
+	 * json{
+		 src:目标节点
+		 title:标题节点
+		 move:移动-回调函数
+		 end:结束-回调函数
+	 }
+	 */
+	$.addDownFlush = (function(){
+		var isTop = function() {
+			var t = obj.scrollTop || document.documentElement.scrollTop || document.body.scrollTop;
+			//alert("t:"+t)
+			return t === 0 ? true : false;
+		}
+		return function(json){
+			var obj = json.src;
+			var title = json.title
+			var Y = 0;
+			var M = 0;
+			var X = 0;
+			var isMobile = navigator.userAgent.indexOf("Mobile")>-1;
+			var u = {
+			    //切换事件
+			    handleEvent: function(e) {
+			        switch (e.type) {
+					case "mousedown":
+			        case "touchstart":
+			            this.start(e);
+			            //show("start");
+			            break;
+					case "mousemove":
+			        case "touchmove":
+			            this.move(e);
+			            //show("move");
+			            break;
+					case "mouseup":
+			        case "touchend":
+			            this.end(e);
+			            break;
+			        case "webkitTransitionEnd":
+			        case "msTransitionEnd":
+			        case "oTransitionEnd":
+			        case "otransitionend":
+			        case "transitionend":
+			            //d(this.transitionEnd(t))
+			        }
+			        e.stopPropagation && e.stopPropagation();
+			    },
+			    start: function(e) {
+					if(e.touches){
+						Y = e.touches[0].pageY;
+						X =  e.touches[0].pageX;
+						obj.addEventListener("touchmove", this, !1),
+						obj.addEventListener("touchend", this, !1);
+					}else{
+						Y = e.pageY;
+						X=e.pageX;
+						obj.addEventListener("mousemove", this, !1),
+						obj.addEventListener("mouseup", this, !1);
+					}
+					this.setCapture && this.setCapture();
+					return 0;
+			    },
+			    move: function(e) {
+					if(e.touches){
+						M = e.touches[0].pageY - Y;
+						X =  e.touches[0].pageX;
+					}else{
+						M = e.pageY - Y;
+						X=e.pageX;
+					}
+					document.title=M
+					if (isTop() && M > 0) {
+						title.style.height = "20px";
+						obj.style.transform = "translateY(20px)";
+						obj.style.transition = "all ease 0.5s";
+						json.move(X,M);
+					} else {
+						obj.style.transform = "translateY(0)";
+						title.style.height = "0px";
+						title.innerHTML = "";
+					}
+			    },
+			    end: function(e) {
+					if (isTop() && M > 0) {
+						if (M > 60) {
+							json.end(X,M);
+							e.stopPropagation||e.stopPropagation()
+							e.preventDefault&&e.preventDefault();
+						} else {
+							//document.title = "end"
+						}
+						obj.style.transform = "translateY(0)";
+						title.style.height = "0px";
+						title.innerHTML = "";
+					}
+					M = 0;
+					if(e.touches){
+						obj.removeEventListener("touchmove", u, !1),
+						obj.removeEventListener("touchend", u, !1)
+					}else{
+						obj.removeEventListener("mousemove", u, !1),
+						obj.removeEventListener("mouseup", u, !1)
+					}
+					e.srcElement.releaseCapture && e.srcElement.releaseCapture();
+			    }
+			};
+			obj.addEventListener("touchstart", u, !1)
+			obj.addEventListener("mousedown", u, !1)
+			obj.onselectstart=function(e){
+				return false;
+			}; 
+			
+		}
+	})()
+	
 	$.addBottomEvent = (function() {
 		var fun;
 		var Y = 0;
@@ -377,49 +494,59 @@ fj = (function() {
 			fun = f;
 		}
 	})()
-	var Dialog=function(obj){
-		var t=this;
-		var obj=obj;
-		var contain=obj.querySelector(".contain");
-		if(!contain.classList.contains("type-3")){
-			contain.onclick = function() {
-				window.event.stopPropagation();
+	/**
+	 * 自定义窗口
+	 */
+	$.Dialog=(function(){
+		var Dialog=function(obj){
+			var t=this;
+			var obj=obj;
+			var contain=obj.querySelector(".contain");
+			if(!contain.classList.contains("type-3")){
+				contain.onclick = function() {
+					window.event.stopPropagation();
+				}
+			}
+			var no= function() {
+				obj.classList.add("hide");
+				t.no&&t.no(obj);
+				obj = null;
+			}
+			var ok= function(a) {
+				obj.classList.add("hide");
+				t.ok&&t.ok(obj);
+				obj=null;
+			}
+			var close_button=obj.querySelector(".close");
+			close_button&&(close_button.onclick=no);
+			var no_button=obj.querySelector(".no");
+			no_button&&(no_button.onclick=no);
+			obj.onclick =  no;
+			var ok_button=obj.querySelector(".ok");
+			ok_button&&(ok_button.onclick =ok);
+			this.show=function(){
+				obj.classList.remove("hide");
+			}
+			this.hide=function(){
+				obj.classList.remove("hide");
+				obj.classList.add("hide");
+			}
+			this.title=function(txt){
+				var title=obj.querySelector(".title");
+				title&&(title.innerHTML=txt);
 			}
 		}
-		var no= function() {
-			obj.classList.add("hide");
-			t.no&&t.no(obj);
-			obj = null;
-		}
-		var ok= function(a) {
-			obj.classList.add("hide");
-			t.ok&&t.ok(obj);
-			obj=null;
-		}
-		var close_button=obj.querySelector(".close");
-		close_button&&(close_button.onclick=no);
-		var no_button=obj.querySelector(".no");
-		no_button&&(no_button.onclick=no);
-		obj.onclick =  no;
-		var ok_button=obj.querySelector(".ok");
-		ok_button&&(ok_button.onclick =ok);
-		this.show=function(){
-			obj.classList.remove("hide");
-		}
-		this.hide=function(){
-			obj.classList.remove("hide");
-			obj.classList.add("hide");
-		}
-		this.title=function(txt){
-			var title=obj.querySelector(".title");
-			title&&(title.innerHTML=txt);
-		}
-	}
-	$.Dialog=function(obj){
+		return function(obj){
 		return new Dialog(obj);
 	}
-	var timeout1;
-	$.tip=function(str,time,bool,fun){
+	})()
+	/**
+	 * @param {Object} a
+	 * 提示窗口
+	 */
+	$.tip=(function(){
+		var timeout1;
+		return function(str,time,bool,fun){
 			var time = time ? 1000* time: 1000;
 		    var m=document.querySelector("body");
 			if(timeout1)window.clearTimeout(timeout1);
@@ -441,6 +568,30 @@ fj = (function() {
 		        fun && fun()
 		    },
 		    time)
+		}
+	})()
+	$.fullScreen = function(obj) {
+		var el = obj || document.documentElement;
+		var rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+		if (typeof rfs != "undefined" && rfs) {
+			rfs.call(el);
+		};
+		return;
+	} 
+	//退出全屏
+	$.exitScreen = function() {
+		if (document.exitFullscreen) {
+			document.exitFullscreen();
+		} else if (document.mozCancelFullScreen) {
+			document.mozCancelFullScreen();
+		} else if (document.webkitCancelFullScreen) {
+			document.webkitCancelFullScreen();
+		} else if (document.msExitFullscreen) {
+			document.msExitFullscreen();
+		}
+		if (typeof cfs != "undefined" && cfs) {
+			cfs.call(el);
+		}
 	}
 	return $;
 })()

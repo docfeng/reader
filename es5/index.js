@@ -1,9 +1,12 @@
 window.onload = function() {
 	if (browser.MyApp) chrome.computer();
+	//1.显示书架
 	Shelf.showAll().then(function(){
+		//2.比较本地与在线记录
 		Shelf.sameSince().then(function(re){
+			//3.再次显示书架
 			Shelf.showAll();
-		});;
+		});
 	});
 	var json={
 		src:shelf_div,
@@ -51,7 +54,7 @@ window.onload = function() {
 			}
 		}
 	}
-	addDownFlush(json);
+	fj.addDownFlush(json);
 }
 
 window.onresize = function() {}
@@ -61,110 +64,7 @@ window.onresize = function() {}
 	UI.show("#contextmenu");
 } */
 
-addDownFlush = function(json){
-	var obj = json.src;
-	var title = json.title
-	var Y = 0;
-	var M = 0;
-	var X = 0;
-	var isMobile = navigator.userAgent.indexOf("Mobile")>-1;
-	var u = {
-	    //切换事件
-	    handleEvent: function(e) {
-	        switch (e.type) {
-			case "mousedown":
-	        case "touchstart":
-	            this.start(e);
-	            //show("start");
-	            break;
-			case "mousemove":
-	        case "touchmove":
-	            this.move(e);
-	            //show("move");
-	            break;
-			case "mouseup":
-	        case "touchend":
-	            this.end(e);
-	            break;
-	        case "webkitTransitionEnd":
-	        case "msTransitionEnd":
-	        case "oTransitionEnd":
-	        case "otransitionend":
-	        case "transitionend":
-	            //d(this.transitionEnd(t))
-	        }
-	        e.stopPropagation && e.stopPropagation();
-	    },
-	    start: function(e) {
-			if(e.touches){
-				Y = e.touches[0].pageY;
-				X =  e.touches[0].pageX;
-				obj.addEventListener("touchmove", this, !1),
-				obj.addEventListener("touchend", this, !1);
-			}else{
-				Y = e.pageY;
-				X=e.pageX;
-				obj.addEventListener("mousemove", this, !1),
-				obj.addEventListener("mouseup", this, !1);
-			}
-			this.setCapture && this.setCapture();
-			return 0;
-	    },
-	    move: function(e) {
-			if(e.touches){
-				M = e.touches[0].pageY - Y;
-				X =  e.touches[0].pageX;
-			}else{
-				M = e.pageY - Y;
-				X=e.pageX;
-			}
-			document.title=M
-			if (isTop() && M > 0) {
-				title.style.height = "20px";
-				obj.style.transform = "translateY(20px)";
-				obj.style.transition = "all ease 0.5s";
-				json.move(X,M);
-			} else {
-				obj.style.transform = "translateY(0)";
-				title.style.height = "0px";
-				title.innerHTML = "";
-			}
-	    },
-	    end: function(e) {
-			if (isTop() && M > 0) {
-				if (M > 60) {
-					json.end(X,M);
-					e.stopPropagation||e.stopPropagation()
-					e.preventDefault&&e.preventDefault();
-				} else {
-					//document.title = "end"
-				}
-				obj.style.transform = "translateY(0)";
-				title.style.height = "0px";
-				title.innerHTML = "";
-			}
-			M = 0;
-			if(e.touches){
-				obj.removeEventListener("touchmove", u, !1),
-				obj.removeEventListener("touchend", u, !1)
-			}else{
-				obj.removeEventListener("mousemove", u, !1),
-				obj.removeEventListener("mouseup", u, !1)
-			}
-			e.srcElement.releaseCapture && e.srcElement.releaseCapture();
-	    }
-	};
-	obj.addEventListener("touchstart", u, !1)
-	obj.addEventListener("mousedown", u, !1)
-	obj.onselectstart=function(e){
-		return false;
-	}; 
-	var isTop = function() {
-		var t = obj.scrollTop || document.documentElement.scrollTop || document.body.scrollTop;
-		//alert("t:"+t)
-		return t === 0 ? true : false;
-	}
-}
+
 
 get_radio = function(obj) {
 	for (var i = 0; i < obj.length; i++) {
@@ -175,13 +75,6 @@ get_radio = function(obj) {
 	return false;
 }
 
-shiftDiv = function(div) {
-	if (_reg.style.display == "" || _reg.style.display == "block") {
-		div.style.display = "none";
-	} else {
-		div.style.display = "block";
-	}
-}
 
 /* window.applicationCache.addEventListener('updateready', function(e) {
     if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {

@@ -452,6 +452,12 @@
 				//display: none;
 				background-color: #FFFFFF;
 			}
+			/* @media screen and only screen and (min-device-width : 0px) and (max-device-width : 1380px)
+			{
+			    .type-win {
+			        width: 50%;
+			    }
+			} */
 			.model>.header{
 				flex:1 1;
 				width: 100%;
@@ -520,7 +526,7 @@
 		<progress id=p1 max=100 value="50" style="position: absolute;width: 100%;height: 4px;z-index: 500;"></progress>
 		<div class="main_contain" id="main_contain">
 			<!-- 书架 -->
-			<div class="model show" id="shelfDiv">
+			<div class="model type-win show" id="shelfDiv">
 				<div class="header head-menu">
 					<div id="down_src" class="head-menu-head" onclick="fj(this.nextElementSibling).toggle()">
 						<div id="down_title" class="refreshText"></div>
@@ -583,7 +589,7 @@
 				</div>
 			</div>
 			<!-- 目录-->
-			<div class="model" id="listDiv">
+			<div class="model type-win" id="listDiv">
 				<div class="head-menu">
 					<div class="head-menu-head" onclick="fj(this.nextElementSibling).toggle()">
 						name:<span id="listName"></span>

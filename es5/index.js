@@ -15,9 +15,9 @@ window.onload = function() {
 		title:down_title, */
 		move:function(x,y) {
 			var title=this.title;
-			y<60&&(title.innerHTML = "下拉刷新...");
-			y>120&&(title.innerHTML = "设置");
-			if(y>60&&y<120){
+			y<80&&(title.innerHTML = "下拉刷新...");
+			y>160&&(title.innerHTML = "设置");
+			if(y>80&&y<120){
 				var re=x/window.innerWidth;
 				switch (true){
 					case re<1/3:
@@ -35,10 +35,10 @@ window.onload = function() {
 		end:function(x,y) {
 			//var re=parseInt(window.innerWidth/x);
 			//alert(re)
-			if(y>120){
+			if(y>160){
 				UI.showSetting();
 			}
-			if(y>60&&y<120){
+			if(y>80&&y<160){
 				var re=x/window.innerWidth;
 				switch (true){
 					case re<1/3:

@@ -386,11 +386,9 @@ fj = (function() {
 						M = e.pageY - Y;
 						X=e.pageX;
 					}
-					document.title=M
-					if (isTop() && M > 0) {
-						title.style.height = "20px";
-						obj.style.transform = "translateY(20px)";
-						obj.style.transition = "all ease 0.5s";
+					if (isTop() && M > 0 ) {
+						title.style.height =( M>160?160:M)+"px";//"20px";
+						//obj.style.transform = "translateY(20px)";
 						json.move(X,M);
 					} else {
 						obj.style.transform = "translateY(0)";
@@ -399,16 +397,17 @@ fj = (function() {
 					}
 			    },
 			    end: function(e) {
-					if (isTop() && M > 0) {
-						if (M > 60) {
+					if (isTop() && M > 0 ) {
+						if (M > 80) {
 							json.end(X,M);
 							e.stopPropagation||e.stopPropagation()
 							e.preventDefault&&e.preventDefault();
 						} else {
 							//document.title = "end"
 						}
-						obj.style.transform = "translateY(0)";
+						//obj.style.transform = "translateY(0)";
 						title.style.height = "0px";
+						//title.style.transition = "all ease 0.5s";
 						title.innerHTML = "";
 					}
 					M = 0;

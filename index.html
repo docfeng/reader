@@ -416,7 +416,7 @@
 			}
 
 		</style>
-		<!-- main_contain model -->
+		<!-- main_contain model setting -->
 		<style type="text/css">
 			.main_contain {
 				position: fixed;
@@ -464,6 +464,8 @@
 			}
 			.model>.body{
 				flex:20 20;
+				width: 100%;
+				height: 100%;
 				overflow-x: hidden;
 				overflow-y: scroll;
 			}
@@ -481,6 +483,23 @@
 				overflow-y: scroll;
 				//height: 100%;
 			}
+			
+			.setting fieldset{
+				width: 100%;
+				border:1px solid #00F;
+				background: rgba(251,0,255,0.3);
+				border-color: red;
+				border-style: solid;
+				border-width: 2px;
+			}
+			.setting fieldset legend {  
+				color:#302A2A;
+				font: bold 16px/2 Verdana, Geneva, sans-serif;
+				font-weight: bold;
+				text-align: left;
+				text-shadow: 2px 2px 2px rgb(88, 126, 156);
+			}
+			
 			.flex-row{
 				display: -webkit-flex;
 				display: flex;
@@ -568,20 +587,6 @@
 				<div class="body" id="shelf_div">
 					<div class="refreshText"></div>
 					<table id="shelf_table" style="" data-order="click" onclick="Shelf.click(event.srcElement,this.dataset.order);this.dataset.order='click';"></table>
-					<div class="Dialog hide" id="shelf_control">
-						<div class="contain type-3">
-							<div class="body">
-								<div class="item" data-index=1><div class="">删除</div></div>
-								<div class="item" data-index=2><div class="">移动</div></div>
-								<div class="item" data-index=3><div class="">更新</div></div>
-								<div class="item" data-index=4><div class="">目录</div></div>
-								<div class="item" data-index=5><div class="">下载</div></div>
-								<div class="item" data-index=6><div class="">详情</div></div>
-								<div class="item" data-index=7><div class="">浏览器打开</div></div>
-								
-							</div>
-						</div>
-					</div>
 				</div>
 				<div class="footer flex-row">
 					<div id="">书架</div>
@@ -825,69 +830,80 @@
 			<!-- 设置页 -->
 			<div class="model" id="contextmenu" style="font-size: 30px;">
 				<!-- <div style="display: -webkit-flex;display: flex;flex-direction: column; width: 100%;height: 100%;"> -->
-				<div>
+				<div class="header">
 					<span class="iconfont icon-reload" onclick="document.location.reload();"></span>
 					<input type="button" value="shift" onclick="var b=setbox.style.display;setbox.style.display=b=='none'?'block':'none';evalbox.style.display=b=='none'?'none':'block';" />
 				</div>
-				<div id="setbox">
-					<form  action="javascript:void()"  onsubmit="act(this)" style="height: 500px;overflow-y: scroll;">
-						 <input type="text" name="t1" value="rff" /><br/>
-						 <fieldset>
-						    <legend>操作</legend>
-						    <input type="button" value='epub' onclick='fso.writeZip(form_1.novel_name.value+".epub",form_1.novel_name.value)' />
-						    <input type="button" value="打开" onclick="chrome.openFile(form_1.novel_name.value+'.epub')" />
-							<input type="button" value="登入" onclick="Git.User.login()" />
-							<input type="button" value="退出" onclick="Git.User.logout()" />
-						</fieldset>
-						<fieldset>
-							<legend>数据操作</legend>
-							<input type=button value="moveData" onclick="Shelf.moveData()" />
-							<input type=button value="sameAll" onclick="Shelf.sameAll()" />
-						    <input type=button value="Shelf.clear" onclick="Shelf.clear()" />
-						    <input type=button value="Book.deleteDB" onclick="Book.deleteDB();" />
-						    <input type=button value="Page.clear" onclick="Page.clear()" />
-						    <input type=button value="put模式" onclick="Book.Shelf.putModel('');" />
-							<input type=button value="shelf.delete" onclick="Shelf.delete()" />
-						    <input type=button value="清除缓存文件" onclick="window.applicationCache.update();" />
-						</fieldset>
-						<fieldset id="cors">
-						     <legend>cors</legend>
-						     <input type="button" onclick="showModel(this.parentNode)" value="showModel" />
-							 <input type="button" onclick="addModel(this.parentNode)" value="addModel" /><br />
-							 自定义模式:<input type="text"   name="cors" />
-						 </fieldset>
-						 
-						 <fieldset>
-						     <legend>cors</legend>
-						     <input type="radio" name="cors" value="" />none<br/>
-						     <input type="radio" name="cors" value="http://gear.docfeng.top/get2.php" />gear.docfeng.top<br />
-						     
-						 </fieldset>
-						 <fieldset>
-						     <legend>2</legend>
-						     <label><input type="checkbox" name="t3" value="男" />男</label>
-						     <label><input type="checkbox" name="t3" value="女" />女</label>
-						 </fieldset>
-						 <input type="submit" value="保存"/>
-						 <input type="button" onclick="act(this.parentNode)" value="act" />
-						 <input type="button" onclick="alert(this.parentNode.t1)" value="test" />
-						 
-					</form>
+				<div class="body ">
+					<div  id="setbox">
+						<form class="setting" action="javascript:void()"  onsubmit="act(this)" style="height: 500px;overflow-y: scroll;">
+							 <input type="text" name="t1" value="rff" /><br/>
+							 <fieldset>
+							    <legend>操作</legend>
+							    <input type="button" value='epub' onclick='fso.writeZip(form_1.novel_name.value+".epub",form_1.novel_name.value)' />
+							    <input type="button" value="打开" onclick="chrome.openFile(form_1.novel_name.value+'.epub')" />
+								<input type="button" value="登入" onclick="Git.User.login()" />
+								<input type="button" value="退出" onclick="Git.User.logout()" />
+							</fieldset>
+							<fieldset>
+								<legend>数据操作</legend>
+								<input type=button value="moveData" onclick="Shelf.moveData()" />
+								<input type=button value="sameAll" onclick="Shelf.sameAll()" />
+							    <input type=button value="Shelf.clear" onclick="Shelf.clear()" />
+							    <input type=button value="Book.deleteDB" onclick="Book.deleteDB();" />
+							    <input type=button value="Page.clear" onclick="Page.clear()" />
+							    <input type=button value="put模式" onclick="Book.Shelf.putModel('');" />
+								<input type=button value="shelf.delete" onclick="Shelf.delete()" />
+							    <input type=button value="清除缓存文件" onclick="window.applicationCache.update();" />
+							</fieldset>
+							<fieldset>
+							     <legend>cors</legend>
+							     <input type="button" onclick="showModel(this.parentNode)" value="showModel" />
+								 <input type="button" onclick="addModel(this.parentNode)" value="addModel" /><br />
+								 自定义模式:<input type="text"   name="cors" />
+								 <div id="cors">
+								 	
+								 </div>
+								 <div style="position: absolute;left: 100px;top:100px;border:1px solid #00F;height: 100px;width: 200px;background: red;" onclick="fj(this).deg90();" ondblclick="fj(this).deg0()">
+								 	123456789123<br>
+									123456
+								 </div>
+								 <div style="border:1px solid #00F;height: 100px;width: 200px;background: #000000;" >
+								 	
+								 </div>
+							 </fieldset>
+							 
+							 <fieldset>
+							     <legend>cors</legend>
+							     <label><input type="radio" name="cors" value="" />none</label>
+							     <label><input type="radio" name="cors" value="http://gear.docfeng.top/get2.php" />gear.docfeng.top</label>
+							     
+							 </fieldset>
+							 <fieldset>
+							     <legend>2</legend>
+							     <label><input type="checkbox" name="t3" value="男" />男</label>
+							     <label><input type="checkbox" name="t3" value="女" />女</label>
+							 </fieldset>
+							 <input type="submit" value="保存"/>
+							 <input type="button" onclick="act(this.parentNode)" value="act" />
+							 <input type="button" onclick="alert(this.parentNode.t1)" value="test" />
+							 
+						</form>
+					</div>
+					<div id="evalbox" style="display: none;">
+						<span class="iconfont icon-shuji">ee</span>
+						<input type="button" value="eval33" onclick="eval(evaltxt.value);" />
+						<input type="button" value="read" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){form_2.txt1.value+=txt;});}" />
+						<input type="button" value="加载script" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){eval(txt);alert(txt);});}" />
+						<input type="button" value='reload' onclick="document.location.reload();" />
+						<br />
+						<input type="text" id="script1" style="height:30px" />
+						<div style="flex-grow:5;">
+							<textarea id="evaltxt" style="width: 100%;height: 100%;"></textarea>
+						</div>
+					</div>
 				</div>
-				<div id="evalbox" style="display: none;">
-					<span class="iconfont icon-shuji">ee</span>
-					<input type="button" value="eval33" onclick="eval(evaltxt.value);" />
-					<input type="button" value="read" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){form_2.txt1.value+=txt;});}" />
-					<input type="button" value="加载script" onclick="var arr=script1.value.split(',');for(var i=0;i<arr.length;i++){get(arr[i],function(txt){eval(txt);alert(txt);});}" />
-					<input type="button" value='reload' onclick="document.location.reload();" />
-					<br />
-					<input type="text" id="script1" style="height:30px" />
-				</div>
-				<div style="flex-grow:5;">
-					<textarea id="evaltxt" style="width: 100%;height: 100%;"></textarea>
-				</div>
-			
-				<!-- </div> -->
+				
 			</div>
 			<!-- 目录2 -->
 			<div class="model" id="listDiv2" style="background-color: transparent;" onclick="fj(this).hide();">
@@ -901,6 +917,21 @@
 				</div>
 			</div>
 			
+		</div>
+		<!-- shelf 控制面板-->
+		<div class="Dialog hide" id="shelf_control">
+			<div class="contain type-3">
+				<div class="body">
+					<div class="item" data-index=1><div class="">删除</div></div>
+					<div class="item" data-index=2><div class="">移动</div></div>
+					<div class="item" data-index=3><div class="">更新</div></div>
+					<div class="item" data-index=4><div class="">目录</div></div>
+					<div class="item" data-index=5><div class="">下载</div></div>
+					<div class="item" data-index=6><div class="">详情</div></div>
+					<div class="item" data-index=7><div class="">浏览器打开</div></div>
+					
+				</div>
+			</div>
 		</div>
 		<!-- circle菜单 -->
 		<div class="circle-menu">
@@ -1012,9 +1043,6 @@
 			                    json[obj[i].name].push(obj[i].value);
 			                }
 			                break;
-			            
-			            
-			            
 			        }
 			        
 			    }
@@ -1041,10 +1069,10 @@
 			    }
 			    //obj.appendChild(ele);
 			    
-			    //cors.innerHTML=html;
-			    cors.insertAdjacentHTML("beforeEnd",html);
+			    cors.innerHTML=html;
+			    //cors.insertAdjacentHTML("beforeEnd",html);
 				var model=Book.Shelf.getModel('');
-				var obj=cors.elements;
+				var obj=cors.elements||cors.children;
 				for(var i=0;i<obj.length;i++){
 				     if(obj[i].value&&obj[i].value== model){
 				         obj[i].checked=true;

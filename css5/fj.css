@@ -1,5 +1,5 @@
 .Dialog{
-	position:fixed;
+	position:absolute;
 	top:0px;
 	left:0px;
 	width:100%;
@@ -8,7 +8,7 @@
 	font-size:1.2em; 
 }
 .Dialog>.contain{
-	position:fixed;
+	position:absolute;
 	display: -webkit-flex;
 	display: flex;
 	flex-direction: column;
@@ -149,7 +149,18 @@
     -moz-transform:rotate(90deg);    /* Firefox */
     -webkit-transform:rotate(90deg); /* Safari 和 Chrome */
     -o-transform:rotate(90deg);  /* Opera */
-	top:0px;
-	right: 0px;
+	/* top:0px;
+	right: 0px; */
+	//background-color: #008000;
+}
+
+.deg-0{
+    transform:rotate(0deg);
+    -ms-transform:rotate(0deg);     /* IE 9 */
+    -moz-transform:rotate(0deg);    /* Firefox */
+    -webkit-transform:rotate(0deg); /* Safari 和 Chrome */
+    -o-transform:rotate(0deg);  /* Opera */
+	/* top:0px;
+	right: 0px; */
 	//background-color: #008000;
 }

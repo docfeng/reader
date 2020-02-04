@@ -124,11 +124,19 @@ fj = (function() {
 			}
 			this.deg90=function(a){
 				this.obj.classList.add("deg-90");
-				this.obj.style.height=window.innerWidth+"px"
-				this.obj.style.width=window.innerHeight+"px"
-				/* this.obj.style.top=(window.innerHeight-window.innerWidth)/2+"px"
-				this.obj.style.left=-(window.innerHeight-window.innerWidth)/2+"px"
-				 */
+				var height=parseInt(window.getComputedStyle(this.obj).height);
+				var width=parseInt(window.getComputedStyle(this.obj).width);
+				this.obj.style.height=width +"px" //window.innerWidth+"px"
+				this.obj.style.width=height +"px" //window.innerHeight+"px"
+				var top=parseInt(window.getComputedStyle(this.obj).top)+(height-width)/2;
+				var left=parseInt(window.getComputedStyle(this.obj).left)-(height-width)/2
+				this.obj.style.top=top+"px"
+				this.obj.style.left=left+"px"
+				 
+				return this;
+			}
+			this.deg0=function(a){
+				this.obj.classList.remove("deg-90");
 				return this;
 			}
 			this.css=function(cssText){
@@ -347,7 +355,7 @@ fj = (function() {
 	 }
 	 */
 	$.addDownFlush = (function(){
-		var isTop = function() {
+		var isTop = function(obj) {
 			var t = obj.scrollTop || document.documentElement.scrollTop || document.body.scrollTop;
 			//alert("t:"+t)
 			return t === 0 ? true : false;
@@ -355,6 +363,7 @@ fj = (function() {
 		return function(json){
 			var obj = json.src;
 			var title = json.title
+			var istop;
 			var Y = 0;
 			var M = 0;
 			var X = 0;
@@ -387,6 +396,7 @@ fj = (function() {
 			        e.stopPropagation && e.stopPropagation();
 			    },
 			    start: function(e) {
+					istop=isTop(obj);
 					if(e.touches){
 						Y = e.touches[0].pageY;
 						X =  e.touches[0].pageX;
@@ -409,7 +419,7 @@ fj = (function() {
 						M = e.pageY - Y;
 						X=e.pageX;
 					}
-					if (isTop() && M > 0 ) {
+					if (istop && M > 0 ) {
 						title.style.height =( M>160?160:M)+"px";//"20px";
 						//obj.style.transform = "translateY(20px)";
 						json.move(X,M);
@@ -420,7 +430,7 @@ fj = (function() {
 					}
 			    },
 			    end: function(e) {
-					if (isTop() && M > 0 ) {
+					if (istop && M > 0 ) {
 						if (M > 80) {
 							json.end(X,M);
 							e.stopPropagation||e.stopPropagation()
@@ -659,6 +669,6 @@ window.addEventListener("load",function(){
 })
 var deg90=function(a){
 	var len=(window.innerHeight-window.innerWidth)/2;
-	fj(".main_contain").deg90().css("top:"+len+"px;"+"left:"+(-len)+"px;");
+	fj(".main_contain").deg90()//.css("top:"+len+"px;"+"left:"+(-len)+"px;");
 	//fj(".circle-menu").deg90()//.css("bottom:-160px;left:160px");
 }

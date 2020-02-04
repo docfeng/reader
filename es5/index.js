@@ -21,7 +21,7 @@ window.onload = function() {
 				var re=x/window.innerWidth;
 				switch (true){
 					case re<1/3:
-						title.innerHTML = "释放立即刷新...1";
+						title.innerHTML = "释放立即旋转90度";
 						break;
 					case re>2/3:
 						title.innerHTML = "释放立即刷新...2";

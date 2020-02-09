@@ -110,6 +110,10 @@ novel.get=async function(url){
 }
 novel.getpage=async function(i){
 	var list=await novel.getList();
+	if(list.length<i+1){
+		return "超过;"
+	}
+	
 	var url=list[i][0];
   var txt=await novel.read(url);
   if(txt=="false"||txt==""||!txt){

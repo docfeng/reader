@@ -1,13 +1,10 @@
 window.onload = function() {
 	if (browser.MyApp) chrome.computer();
 	//1.显示书架
-	Shelf.showAll().then(function(){
-		//2.比较本地与在线记录
-		Shelf.sameSince().then(function(re){
-			//3.再次显示书架
-			Shelf.showAll();
-		});
-	});
+	Shelf.getGIT().then(function(re){
+		Shelf.showAll();
+	}).catch(function(e){
+	})
 	var json={
 		src:shelf_div,
 		title:shelf_div.querySelector(".refreshText"),

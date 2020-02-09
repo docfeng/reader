@@ -6,3 +6,174 @@
 3.2.1
   shelf click update 时间
   list click read信息
+20191026001 List=>read&write
+	JSON.stringify parse修復儲存限制
+	Shelf.readAll().then(function(arr){
+		var text=JSON.stringify(arr)
+		alert(text)
+		})
+		
+		var name="创世神是怎样练成的"
+		Shelf.read(name).then(function(json){
+			if(!json.id){
+				Git.Comment.gets("docfeng", "book-data", 1).then(function(text) {
+					var json1 = JSON.parse(text)
+					for(var i=0;i<json1.length;i++){
+						var json2=JSON.parse(json1[i].body);
+						if(name==json2.name){
+							json.id=json2.id;
+							if(json.readAt>=json2.readAt){
+								/* 网络更新时间>=本地更新时间，用网络的版本 */
+								json=json2;
+								Shelf.write(json);
+							}else{
+								Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json,null,4)).then(function(text) {
+									alert(text)
+								});
+							}
+						}
+					} 
+					if(!json.id){
+						var text=JSON.stringify(json,null,4)
+						alert(text)
+						/* Git.Comment.create("docfeng", "book-data", 1, text).then(function(text1) {
+							alert(text1)
+							var json1 = JSON.parse(text1)
+							prompt(json1.id)
+							json.id=json1.id;
+							Shelf.write(json);
+							Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json,null,4)).then(function(text) {
+								alert(text)
+							});
+						}); */
+					}
+				});
+			}else{
+				/* Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json,null,4)).then(function(text) {
+					alert(text)
+				}); */
+				var text=JSON.stringify(json,null,4)
+				alert(text)
+			}
+		})
+
+
+
+Git.Comment.gets("docfeng", "book-data", 1).then(function(text) {
+				var json1 = JSON.parse(text);
+				return Shelf.readAll().then(function(json2){
+						var j=[];
+						for(var i1=0;i1<json1.length;i1++){
+							var json3 = JSON.parse(json1[i1].body);
+							var b=false;
+							for(var i2=0;i2<json2.length;i2++){
+								if(json3.name==json2[i2].name){
+									b=true;
+									if((json3.readAt>json2[i2].readAt)||!json2[i2].id){
+										/* 网络更新时间>本地更新时间，或者本地没有id，
+										用网络的版本（替换） */
+										j.push(json3);
+										json2[i2]=json3;
+									}
+								}
+							} 
+							/* 如果本地沒有查到name，用网络的版本（添加） */
+							if(!b){
+								j.push(json3);
+							}
+						} 
+						
+						//写入改变项
+						if(j.length>0){
+							t.writeAll(j);
+						}
+						//console.log(JSON.stringify(j,null,4));
+						//console.log(JSON.stringify(json2,null,4));
+						var p=[];
+						var addGit=function(json){
+							var text=JSON.stringify(json,null,4)
+							return Git.Comment.create("docfeng", "book-data", 1, text).then(function(text1) {
+								var json1 = JSON.parse(text1);
+								json.id=json1.id;
+								Shelf.write(json);
+								return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json,null,4)).then(function(text) {
+									return json.name
+								});
+							});
+						}
+						for(var i2=0;i2<json2.length;i2++){
+							if(!json2[i2].id){
+								p.push(addGit(json2[i2]));
+							}
+						}
+						/* Promise.all(p).then(function(re){
+							alert(JSON.stringify(re,null,4))
+						}); */
+						return Promise.all(p);
+				});
+			});
+			Shelf.sameAll()
+			
+			
+			var d = new Date("2019-10-27 19:00:00");
+			Git.Comment.getSince("docfeng", "book-data", 1, d).then(function(re) {
+				var json = JSON.parse(re);
+				for (var i = 0; i < json.length; i++) {
+					console.log(json[i].id)
+					Git.Comment.del("docfeng", "book-data", json[i].id).then(function(re) {
+						console.log(re)
+					});
+				}
+			}).catch(function(e) {
+				alert(e)
+			});
+			
+			alert(Git.Comment.gets)
+			Git.Comment.gets("docfeng", "book-data", 1).then(function(text) {
+				var json = JSON.parse(text)
+				console.log(json.length)
+				for(var i=0;i<json.length;i++){
+					console.log(json[i].body)
+					console.log(formatDate(new Date(json[i].updated_at)))
+				}
+			});
+			
+
+			var checkChange = function(user, repos, issues,time) {
+				var time = formatUTCDate(time);
+				var url = "https://api.github.com/repos/%s/%s/issues/%s/comments?since=%s".fill([user, repos, issues, time]);
+				
+				return Git.User.get(user).then(function(author) {
+					alert(author)
+					var json = {
+						url: url,
+						method: "head",
+						xml: true,
+						head: {
+							Authorization: author
+							//"If-Modified-Since": new Date().toUTCString()//"Sun, 11 Aug 2013 19:48:59 GMT"
+						},
+					}
+					if (time) {
+						json.head["If-Modified-Since"] = time//.toUTCString();
+					}
+					return http.ajax(json).then(function(re) {
+						alert(re.xml.status)
+						alert(re.html)
+						alert(re.xml.getAllResponseHeaders())
+						alert([re.xml.getResponseHeader("X-RateLimit-Remaining"),
+				re.xml.getResponseHeader("X-RateLimit-Limit"),
+				re.xml.getResponseHeader("X-RateLimit-Reset")
+			])
+						if (re.xml.status == "304") {
+							return true;
+						} else {
+							return false;
+						}
+					});
+				});
+			}
+			checkChange("docfeng", "book-data", 1,new Date("2019-11-01")).then(function(text) {
+				var json = JSON.parse(text);
+				console.log(json)
+			});

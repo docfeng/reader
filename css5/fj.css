@@ -164,3 +164,10 @@
 	right: 0px; */
 	//background-color: #008000;
 }
+
+.hide2{
+	display: none !important;
+}
+.hide1{
+	visibility:hidden !important;
+}

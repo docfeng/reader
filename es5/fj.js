@@ -113,14 +113,15 @@ fj = (function() {
 				default:
 					break;
 			}
-			this.hide=function(a){
-				this.obj.style.visibility="hidden";
+			this.hide=function(bool){
+				this.obj.classList.add(bool?"hide2":"hide1");
+				
 			}
-			this.show=function(a){
-				this.obj.style.visibility='visible';
+			this.show=function(bool,style){
+				this.obj.classList.remove(bool?"hide2":"hide1");
 			}
-			this.toggle=function(a){
-				this.obj.style.visibility=window.getComputedStyle(this.obj,null).visibility=="hidden"?"visible":"hidden";
+			this.toggle=function(bool,style){
+				this.obj.classList.toggle(bool?"hide2":"hide1");
 			}
 			this.deg90=function(a){
 				this.obj.classList.add("deg-90");
@@ -383,7 +384,8 @@ fj = (function() {
 			            //show("move");
 			            break;
 					case "mouseup":
-			        case "touchend":
+			        case "touchcancel":
+					case "touchend":
 			            this.end(e);
 			            break;
 			        case "webkitTransitionEnd":
@@ -408,7 +410,7 @@ fj = (function() {
 						obj.addEventListener("mousemove", this, !1),
 						obj.addEventListener("mouseup", this, !1);
 					}
-					this.setCapture && this.setCapture();
+					e.srcElement.setCapture && e.srcElement.setCapture();
 					return 0;
 			    },
 			    move: function(e) {
@@ -424,7 +426,7 @@ fj = (function() {
 						//obj.style.transform = "translateY(20px)";
 						json.move(X,M);
 					} else {
-						obj.style.transform = "translateY(0)";
+						//obj.style.transform = "translateY(0)";
 						title.style.height = "0px";
 						title.innerHTML = "";
 					}

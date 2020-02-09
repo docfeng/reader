@@ -373,7 +373,7 @@
 
 			.head-menu-body {
 				position: absolute;
-				visibility:hidden;
+				//visibility:hidden;
 				top: 40px;
 				right: 0px;
 				width: 100%;
@@ -555,7 +555,7 @@
 							<div style="flex:1 1" onclick="UI.showSearch()">搜索</div>
 						</div>
 					</div>
-					<div class="head-menu-body" onclick="fj(this).hide();">
+					<div class="head-menu-body hide1" onclick="fj(this).hide();">
 						<div>
 							<div class="icon-Button">
 								<span class="iconfont icon-chaxun" value="搜索" onclick="UI.showSearch()"></span>
@@ -602,7 +602,7 @@
 						new:<span id="listNew"></span>
 						count:<span id="listCount"></span>
 					</div>
-					<div class="head-menu-body" onclick="fj(this).hide();">
+					<div class="head-menu-body hide1" onclick="fj(this).hide();">
 						<div>
 							<div class="icon-Button">
 								<span class="iconfont icon-chaxun" value="换源" onclick="List.changeSource(listName.innerText);"></span>
@@ -1012,7 +1012,7 @@
 						<div>⊗</div>
 						<div>🗑</div> -->
 			</div>
-			<div class="circle-menu-control1" onclick="var style=this.previousElementSibling;fj(style).toggle()">
+			<div class="circle-menu-control1" onclick="var style=this.previousElementSibling;fj(style).toggle(true)">
 				<div></div>
 			</div>
 		</div>

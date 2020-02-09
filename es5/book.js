@@ -112,7 +112,18 @@ Book = (function() {
 				return text
 			});
 		},
-		
+		getGIT:function(){
+			var sort=sort||1;
+			var t = this;
+			return Git.Comment.gets("docfeng", "book-data", sort).then(function(text) {
+				//console.log(text)
+				var arr1 = JSON.parse(text);
+				var s=t.px(arr1);
+				var arr=s.reverse()
+				Book.arr=arr;
+				return arr;
+			});
+		},
 		put: function(json) {
 			if (!json.id) {
 				var text = JSON.stringify(json, null, 4);
@@ -120,8 +131,6 @@ Book = (function() {
 				return Git.Comment.create("docfeng", "book-data", sort, text).then(function(text1) {
 					var json1 = JSON.parse(text1)
 					json.id = json1.id;
-					Shelf.write(json);
-					//return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
 				});
 			} else {
 				return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
@@ -144,71 +153,19 @@ Book = (function() {
 			var sort=sort||1;
 			var t = this;
 			return Git.Comment.gets("docfeng", "book-data", sort).then(function(text) {
+				console.log(text)
 				var arr1 = JSON.parse(text);
 				return t.readAll().then(function(arr2) {
 					return t.compare(arr1,arr2);
-				});
-					/* var p = [];
-					var addGit = function(json) {
-						var text = JSON.stringify(json, null, 4)
-						return Git.Comment.create("docfeng", "book-data", 1, text).then(function(text1) {
-							var arr1 = JSON.parse(text1);
-							json.id = arr1.id;
-							t.write(json);
-							return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4)).then(function(text) {
-								return json.name
-							});
-						});
-					}
-					for (var i2 = 0; i2 < arr2.length; i2++) {
-						if (!arr2[i2].id) {
-							p.push(addGit(arr2[i2]));
-						}
-					}
-					Book.arr=re;
-					return Promise.all(p); */
+				}).catch(function(e){
+					alert(11)
+					return t.compare(arr1,[]);
+				})
 			});
-		},
-		compare:function(arr1,arr2){
-			var j = [];
-			for (var i1 = 0; i1 < arr1.length; i1++) {
-				var json1 = JSON.parse(arr1[i1].body);
-				if (json1.name&&!json1.id) {
-					json1.id = arr1[i1].id;
-					this.put(json1)
-				}
-				var b = false;
-				for (var i2 = 0; i2 < arr2.length; i2++) {
-					var json2= arr2[i2];
-					if (json1.name == json2.name) {
-						b = true;
-						if ((json1.readAt > json2.readAt) || !json2.id) {
-							// 网络更新时间>本地更新时间，或者本地没有id，用网络的版本（替换）
-							j.push(json1);
-							arr2[i2] = json1;
-						}
-					}
-				}
-				// 如果本地沒有查到name，用网络的版本（添加）
-				if (!b) {
-					j.push(json1);
-				}
-			}
-			//写入改变项
-			if (j.length > 0) {
-				return this.writeAll(j).then(function(foo1){
-					return Shelf.readAll().then(function(arr){
-						Book.arr=arr;
-						return arr;
-					});
-				});
-			}else{
-				return Promise.resolve(true);
-			}
 		},
 		sameSince:function(){
 			var t = this;
-			if(!Book.arr[0]){
+			if(!Book.arr||!Book.arr[0]){
 				return this.sameAll();
 			}
 			var time=Book.arr[0].readAt;
@@ -224,140 +181,85 @@ Book = (function() {
 				return t.compare(arr1,arr2);
 			});
 		},
-		
-		readAll: function() {
-			var t = this;
-			return DB.Data.getIndex("book", "shelf", "readAt", null).then(function(json) {
-				DB.DB.close();
-				var json = json.reverse();
-				Book.arr=json;
-				return json;
-			}).catch(function(e) {
-				DB.DB.close();
-				return t.ini().then(function() {
-					return DB.Data.getIndex("book", "shelf", "readAt", null).then(function(json) {
-						DB.DB.close();
-						Book.arr=json;
-						return json;
-					}).catch(function(e) {
-						DB.DB.close();
-						alert("Book.List.readAll:\n" + e)
-						return Promise.reject(e);
-					});
-				});
-			});
-		},
-		read: function(name) {
-			var t = this;
-			return DB.Data.getKey("book", "shelf", name).then(function(json) {
-				DB.DB.close();
-				return json;
-			}).catch(function(e) {
-				DB.DB.close();
-				return t.ini().then(function() {
-
-					return DB.Data.getKey("book", "shelf", name).then(function(json) {
-						DB.DB.close();
-						return true;
-					}).catch(function(e) {
-						DB.DB.close();
-						alert("Book.List.read:\n" + e)
-						return Promise.reject(e);
-					});
-				});
-			});
-		},
-		writeAll: function(json) {
-			var t = this;
-			return DB.Table.select("book", "shelf").catch(function(e) {
-				DB.DB.close();
-				return t.ini();
-			}).then(function() {
-				var re = [];
-				for (var i = 0; i < json.length; i++) {
-					var obj = json[i];
-					re.push(DB.Data.put("book", "shelf", obj));
-				}
-				return Promise.all(re);
-			}).then(function(re) {
-				return true;
-			});
-		},
-		write: function(json) {
-			var t = this;
-			return DB.Data.put("book", "shelf", json).then(function(json) {
-				DB.DB.close();
-				return true;
-			}).catch(function(e) {
-				DB.DB.close();
-				return t.ini().then(function() {
-					return DB.Data.put("book", "shelf", json).then(function(json) {
-						DB.DB.close();
-						return true;
-					}).catch(function(e) {
-						DB.DB.close();
-						alert("Book.List" + e)
-						return false
-					});
-				});
-			});
-		},
-		getId: function() {
-			return Git.Comment.create("docfeng", "book-data", 1, "test").then(function(text) {
-				var json = JSON.parse(text)
-				var id = json.id;
-				return id;
-			});
-		},
-		add: function(json) {
-			var t = this;
-			if (!json.id) {
-				return Git.Comment.gets("docfeng", "book-data", 1).then(function(text) {
-					var json1 = JSON.parse(text);
-					var b = false;
-					for (var i1 = 0; i1 < json1.length; i1++) {
-						var json3 = JSON.parse(json1[i1].body);
-						if (json3.name == json.name) {
-							b = true;
-							json.id = json1[i1].id;
-							//t.put(json);
-							t.write(json);
-						}
-
+		px:(function(){
+			var fun=function(arr,b,e,obj){
+				//console.log(arr,b,e,obj)
+			    if(e-b<2){
+					if(arr[b]&&obj.readAt>arr[b].readAt){
+					   arr.splice(e,0,obj)
+					}else{
+					    arr.splice(b,0,obj)
 					}
-					if (!b) {
-						return Git.Comment.create("docfeng", "book-data", 1, JSON.stringify(json, null, 4)).then(function(text1) {
-							var json1 = JSON.parse(text1)
-							json.id = json1.id;
-							Shelf.write(json);
-							return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
-						});
-					}
-					return true;
-				});
-				
-
-			} else {
-				t.write(json);
-				return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
+			        return arr
+			    }
+			    
+			    var i=parseInt((e+b)/2);
+			    //console.log(i)
+			    if(arr[i]&&obj.readAt>arr[i].readAt){
+			        return fun(arr,i,e,obj)
+			    }else{
+			        return  fun(arr,b,i,obj)
+			    }
 			}
+			return function(arr){
+				var re=[];
+				for(var i=0;i<arr.length;i++){
+					var obj=JSON.parse(arr[i].body);
+					obj.id=arr[i].id;
+				    fun(re,0,re.length,obj)
+				}
+				return re
+			}
+		})(),
+		updateAt: function(name, url, listArr) {
+			var t = this;
+			var json = {};
+			var arr=Book.arr
+			if(!name||!url||!arr||arr.length==0){
+				alert("Shelf.add参数错误：\nname:"+name+"\ni:"+url+"\narr:"+arr)
+				return Promise.reject("Shelf.add参数错误：\nname:"+name+"\ni:"+url+"\narr:"+arr);
+			}
+			var num = -1;
+			for (var i = 0; i < arr.length; i++) {
+				if (arr[i].name == name) {
+					num = i;
+				}
+			}
+			if (num == -1) {
+				json = {
+					name: name,
+					creatAt: formatDate(new Date()),
+					readIndex: 0,
+					readTitle: listArr[0][1],
+					readAt: formatDate(new Date()),
+					readURL: listArr[0][0]
+				}
+			} else {
+				json = arr.splice(num, 1)[0]; //arr[num];
+			}	
+			json.url = url;
+			json.updateIndex = listArr.length - 1,
+			json.updateTitle = listArr[listArr.length - 1][1],
+			json.updateAt = formatDate(new Date()),
+			json.updateURL = listArr[listArr.length - 1][0];
+				//this.show({index:num})
+			//console.log(arr[arr.length - 1])
+			arr.unshift(json);
+			return Shelf.put(json);
 		},
 		readAt:function(name,title,url,index){
 			//保存记录
 			if(!Book.json||Book.json.name!=name){
 				var t=this;
 				alert(name)
-				var p=Shelf.read(name);
 			}else{
-				var p=Promise.resolve(Book.json)
-			}
-			return p.then(function(json){
+				var json=Book.json;
 				json.readTitle = title;
 				json.readURL = url;
 				json.readIndex = index;
 				json.readAt = formatDate(new Date());
-				return Shelf.add(json);
-			});
+				return Shelf.put(json);
+			}
 		},
 		delete: function(json) {
 			var id=json.id;
@@ -366,139 +268,13 @@ Book = (function() {
 					console.log("shelf:del",re)
 				});
 			}
-			var key=json.name;
-			if(key){
-				return DB.Data.delete("book", "shelf", key).then(function(json) {
-					DB.DB.close();
-					return json;
-				}).catch(function(e) {
-					DB.DB.close();
-					return Promise.reject(e);
-				});
-			}
 		},
 		move:function(json){
 			Shelf.delete(json);
 			delete json.id;
 			Shelf.put(json)
 		},
-		createShelfTable: function() {
-			var data = {
-				key: "name",
-				index: {
-					name: true,
-					url: false,
-					id: false,
-					state: false,
-					updated_at: false,
-					created_at: false,
-					changed_at: false,
-					creatAt: false,
-					readIndex: false,
-					readTitle: false,
-					readAt: false,
-					readURL: false,
-					updateIndex: false,
-					updateTitle: false,
-					updateAt: false,
-					updateURL: false
-				}
-			};
-			return DB.Table.create("book", "shelf", data);
-		},
-		createListTable: function() {
-			var data = {
-				key: "name",
-				index: {
-					name: true,
-					arr: false
-				}
-			};
-			return DB.Table.create("book", "list", data);
-		},
-		createPageTable: function() {
-			var data = {
-				key: "full_name",
-				index: {
-					full_name: true,
-					name: false,
-					title: false,
-					txt: false,
-					url: false,
-					name: false,
-					updated_at: false,
-				}
-			};
-			return DB.Table.create("book", "page", data);
-		},
-		ini: function() {
-			fj.tip("开始创建表格");
-			var t=this;
-			return t.createShelfTable().then(function(foo1){
-				return t.createListTable();
-			}).then(function(foo1){
-				return t.createPageTable()
-			}).then(function(foo1){
-				alert("创建表格完成")
-				return true;
-			});
-			/* return Promise.all([this.createShelfTable(), this.createListTable(), this.createPageTable()]).then(function(foo1){
-				alert("创建表格完成")
-				return true;
-			});; */
-		},
-		moveData: function() {
-			var t = this;
-			var arr1, arr2;
-			var re = [];
-			return DB.Table.has("book", "shelf").catch(function(e) {
-				alert(e)
-				return t.ini();
-			}).then(function() {
-				return Git.File.get("docfeng", "page", "novel/data/Shelf.json").then(function(text) {
-					var p = [];
-					arr1 = JSON.parse(text);
-					return t.readAll();
-				}).then(function(arr) {
-					arr2 = arr;
-				}).then(function() {
-					var err = []
-					for (var i = 0; i < arr1.length; i++) {
-						for (var i2 = 0; i2 < arr2.length; i2++) {
-							if (arr1[i] && arr1[i].name) {
-								if (arr2[i2] && arr2[i2].name) {
-									if (arr1[i].name == arr2[i2].name) {
-										if (new Date(arr1[i].updateAt) > new Date(arr2[i2].updateAt)) {
-											re.push(arr1[i]);
-										} else {
-											re.push(arr2[i2]);
-										}
-										arr1.splice(i, 1);
-										arr2.splice(i2, 1);
-										i--;
-										i2--;
-									}
-								} else {
-									err.push(["i2", i2])
-								}
-							} else {
-								err.push(["i", i])
-							}
-						}
-					}
-					re = re.concat(arr1, arr2)
-					t.writeAll(re).then(function(e) {
-						alert(e)
-					}).catch(function(e) {
-						alert(e)
-					});;
-				});
-			}).then(function() {
-				alert(true)
-			}).catch(function(e) {
-				alert(e)
-			});
-		},
+		
 		putModel: function() {
 			var t = this;
 			this.readModel().then(function(re) {
@@ -540,7 +316,6 @@ Book = (function() {
 		readModel: function() {
 			return store.getItem('localModels');
 		},
-
 		setModel: function(url) {
 			var t = this;
 			if (confirm(url)) {
@@ -597,88 +372,12 @@ Book = (function() {
 			return Git.File.set("docfeng","book-data",name,txt);
 		},
 		read: function(name) {
-			var t = this;
-			return DB.Data.getKey("book", "list", name).then(function(json) {
-				DB.DB.close();
-				return json;
-			}).catch(function(e) {
-				DB.DB.close();
-				return t.createTable().then(function() {
-					return DB.Data.getKey("book", "list", name).then(function(bool) {
-						DB.DB.close();
-						if (bool) {
-							return bool;
-						} else {
-							return false;
-						}
-					}).catch(function(e) {
-						DB.DB.close();
-						alert("Book.List.read:\n" + e)
-						return Promise.reject(e);
-					});
-				});
+			return store.getItem(name).then(function(re){
+				return JSON.parse(re);
 			});
 		},
-		readAll: function() {
-			return DB.Data.getIndex("book", "shelf", "readAt", null).then(function(json) {
-				DB.DB.close();
-				var json = json.reverse();
-				return json;
-			}).catch(function(e) {
-				DB.DB.close();
-				return t.createTable().then(function() {
-					return DB.Data.getIndex("book", "shelf", "readAt", null).then(function(json) {
-						DB.DB.close();
-						return true;
-					}).catch(function(e) {
-						DB.DB.close();
-						alert("Book.List.readAll:\n" + e)
-						return Promise.reject(e);
-					});
-				});
-			});
-		},
-		write: function(json) {
-			var t = this;
-			return DB.Data.put("book", "list", json).then(function(json) {
-				DB.DB.close();
-				return true;
-			}).catch(function(e) {
-				//alert(JSON.stringify(e))
-				console.log(e)
-				DB.DB.close();
-				return DB.Table.has("book", "list").then(function(foo1) {
-
-					return false;
-				}).catch(function(e) {
-					return t.createTable().then(function() {
-						return DB.Data.put("book", "list", json).then(function(json) {
-							DB.DB.close();
-							return true;
-						}).catch(function(e) {
-							DB.DB.close();
-							alert("Book.List" + e)
-							return false
-						});
-					});
-				})
-			});
-		},
-		writeAll: function(json) {
-			var t = this;
-			return DB.Table.select("book", "shelf").catch(function(e) {
-				DB.DB.close();
-				return t.createTable();
-			}).then(function() {
-				var re = [];
-				for (var i = 0; i < json.length; i++) {
-					var obj = json[i];
-					re.push(DB.Data.put("book", "shelf", obj));
-				}
-				return Promise.all(re);
-			}).then(function(re) {
-				return true;
-			});
+		write: function(name,json) {
+			return store.setItem(name,JSON.stringify(json));
 		},
 		add: function(arr) {
 			return this.getId().then(function(id) {
@@ -815,26 +514,7 @@ Book = (function() {
 			}
 			fj.tip("开始获取html");
 			return format(html);
-		},
-		getId: function() {
-			return Git.Comment.create("docfeng", "book-data", 1, "test").then(function(text) {
-				var json = JSON.parse(text)
-				var id = json.id;
-				return id;
-			});
-		},
-		createTable: function() {
-			alert("开始List创建表格");
-			var data = {
-				key: "name",
-				index: {
-					name: true,
-					arr: false
-				}
-			};
-			return DB.Table.create("book", "list", data);
 		}
-
 	}
 
 	var Page = {

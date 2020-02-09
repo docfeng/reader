@@ -14,11 +14,7 @@ List = (function(a) {
 			});
 		},
 		write: function(name, arr) {
-			var json = {
-				"name": name,
-				"val": JSON.stringify(arr)
-			};
-			return _List.write(json);
+			return _List.write(name, arr);
 		},
 		add: function(name, url, arr) {
 			var t = this;
@@ -453,16 +449,6 @@ Shelf=(function(a){
 	var _Shelf=Book.Shelf;
 	var Arr,Json;
 	var Shelf = {
-		readAll:function() {
-			if(Book.arr){
-				return Promise.resolve(Book.arr);
-			}else{
-				return _Shelf.readAll().then(function(arr){
-					Book.arr=arr;
-					return arr;
-				});
-			}
-		},
 		updateAt: function(name, url, listArr) {
 			var t = this;
 			var json = {};
@@ -511,17 +497,6 @@ Shelf=(function(a){
 				});
 			}
 		},
-		clear: function() {
-			DB.Table.delete("book", "shelf").then(function(json) {
-				alert(json)
-				alert(JSON.stringify(json))
-				DB.DB.close();
-				return true;
-			}).catch(function(e) {
-				alert(e)
-				DB.DB.close();
-			});
-		},
 		formatUI:function(json) {
 			var span1="";
 			var span2="";
@@ -548,114 +523,25 @@ Shelf=(function(a){
 			return str;	
 		},
 		show:function(i) {
-			return this.readAll().then(function(arr){
-				var json=arr[i];
-				arr.splice(i,1);
-				arr.unshift(json);
-				var str =Shelf.formatUI(json);
-				//alert(str)
-				//var str=shelf_table.rows[i].innerHTML
-				for(;i>0;i--){
-					shelf_table.rows[i].innerHTML=shelf_table.rows[i-1].innerHTML
-				}
-				shelf_table.rows[0].innerHTML = str;
-			});
+			var arr=Book.arr;
+			var json=arr[i];
+			arr.splice(i,1);
+			arr.unshift(json);
+			var str =Shelf.formatUI(json);
+			for(;i>0;i--){
+				shelf_table.rows[i].innerHTML=shelf_table.rows[i-1].innerHTML
+			}
+			shelf_table.rows[0].innerHTML = str;
 		},
 		showAll:function() {
-			return this.readAll().then(function(arr){
-				Book.arr=arr;
-				var str="";
-				for (var i=0;i<arr.length;i++) {
-					str+=Shelf.formatUI(arr[i],i)
-				}
-				if (shelf_table) {
-					shelf_table.innerHTML = str;
-				}
-			}).catch(function(e){
-				alert("Shelf.showAll:\n"+e)
-			});
-		},
-		checkChange:function(){
-			var arr1,arr2;
-			var t=this;
-			this.getAll().then(function(arr){
-				arr1=arr;
-				return t.readAll();
-			}).then(function(arr){
-				arr2=arr;
-				for (var i = 0; i < arr1.length; i++) {
-					for (var i = 0; i < arr1.length; i++) {
-						
-					}
-				}
-			});
-		},
-		moveData:function() {
-			var t=this;
-			var arr1,arr2;
-			var re=[];
-			DB.Table.has("book","shelf").catch(function(e){
-				alert(e)
-				return t.ini();
-			}).then(function(){
-				return Git.File.get("docfeng","page", "novel/data/Shelf.json").then(function(text){
-					var p=[];
-					arr1 = JSON.parse(text);
-					return t.readAll();
-				}).then(function(arr){
-					arr2=arr;
-				}).then(function(){
-					var err=[]
-					for(var i=0;i<arr1.length;i++){
-						for(var i2=0;i2<arr2.length;i2++){
-							if(arr1[i]&&arr1[i].name){
-								if(arr2[i2]&&arr2[i2].name){
-									if(arr1[i].name==arr2[i2].name){
-										if(new Date(arr1[i].updateAt)>new Date(arr2[i2].updateAt)){
-											re.push(arr1[i]);
-										}else{
-											re.push(arr2[i2]);
-										}
-										arr1.splice(i,1);
-										arr2.splice(i2,1);
-										i--;i2--;
-									}
-								}else{
-									err.push(["i2",i2])
-								}
-							}else{
-								err.push(["i",i])
-							}
-						} 
-					} 
-					re=re.concat(arr1,arr2)
-					t.writeAll(re).then(function(e){
-						alert(e)
-					}).catch(function(e){
-						alert(e)
-					});;
-				});
-			}).then(function(){
-				alert(true)
-			}).catch(function(e){
-				alert(e)
-			});
-		},
-		upload:function() {
-			this.getAllIndexData("readAt").then(function(json){
-				var json = json.reverse();
-				json = JSON.stringify(json, null, 4);
-				git.getFile("page", "novel/data/Shelf.json").then(function(foo1){
-					git.createFile({
-						owner: "docfeng",
-						repos: "page",
-						name: "novel/data/Shelf.json",
-						txt: json
-					}).then(function(re){
-						alert(re);
-					});
-				});				
-			});			
+			var arr=Book.arr;
+			var str="";
+			for (var i=0;i<arr.length;i++) {
+				str+=Shelf.formatUI(arr[i],i)
+			}
+			if (shelf_table) {
+				shelf_table.innerHTML = str;
+			}
 		},
 		select:function(obj){
 		        //var check=obj.querySelector("input");
@@ -786,44 +672,48 @@ Shelf=(function(a){
 				return 0;
 			}
 			if (order == "click") {
-				UI.showList()
-				Shelf.show(i);
-				var json = Book.arr[i];
-				var name = json.name;
-				var url = json.url;
-				var readIndex=json.readIndex;
-				if(("string"!=typeof name)&&("string"!=typeof url)&&("number"!=typeof readIndex)){
-					var str="List.click参数错误：\nname:"+name+"\ni:"+url+"\nreadIndex:"+readIndex
-					alert(str)
-					return Promise.reject(str);
-				}
-				//显示目录
-				Book.json=json;
-				Book.name=name;
-				Book.url=url;
-				
-				List.show(name, url, []);
-				
-				List.read(name).then(function(list_arr){
-					if (!list_arr) {
-						return List.remote(url).then(function(list_arr){
-							List.write(name, list_arr);
-							return list_arr;
-						});
-					}else{
-						return list_arr;
-					}
-				}).then(function(list_arr){
-					List.arr=list_arr;
-					List.shelfIndex=i;
-					List.listIndex=readIndex
-					List.show(name, url, list_arr);
-					List.scroll(readIndex); 
-				});
+				this.showList(i);
 			}
 			if (order == "delete") {
 				this.delete(i);
 			}
+		},
+		showList:function(i){
+			UI.showList()
+			Shelf.show(i);
+			var json = Book.arr[i];
+			
+			var name = json.name;
+			var url = json.url;
+			Book.json=json;
+			Book.name=name;
+			Book.url=url;
+			
+			var readIndex=json.readIndex;
+			if(("string"!=typeof name)&&("string"!=typeof url)&&("number"!=typeof readIndex)){
+				var str="List.click参数错误：\nname:"+name+"\ni:"+url+"\nreadIndex:"+readIndex
+				alert(str)
+				return Promise.reject(str);
+			}
+			
+			List.show(name, url, []);
+			
+			List.read(name).then(function(list_arr){
+				if (!list_arr) {
+					return List.remote(url).then(function(list_arr){
+						List.write(name, list_arr);
+						return list_arr;
+					});
+				}else{
+					return list_arr;
+				}
+			}).then(function(list_arr){
+				List.arr=list_arr;
+				List.shelfIndex=i;
+				List.listIndex=readIndex
+				List.show(name, url, list_arr);
+				List.scroll(readIndex); 
+			});
 		},
 		updateTop10:function() {
 			var arr = Book.arr;
@@ -860,7 +750,6 @@ Shelf=(function(a){
 				fj.tip("完成第"+i+"个；name="+name);
 				if(json.updateIndex!=arr.length){
 						//alert(JSON.stringify(arr))
-						
 						arr = arr[arr.length-1];
 						json.updateTitle = arr[1];
 						json.updateURL = arr[0];

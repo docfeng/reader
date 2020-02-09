@@ -1021,6 +1021,20 @@
 		<script type="text/javascript">
 			//设置页操作
 			var act=function(a){
+				var q=new FormData(a);
+				var j={}
+				q.forEach(function(a,b){
+
+					if(j[b]||""==j[b]){
+						if(typeof(j[b])=='string'){
+							j[b]=[(j[b])]
+						}
+						j[b].push(a)
+					}else{
+						j[b]=a;
+					}
+				})
+				alert(JSON.stringify(j,null,4));
 			    var json={};
 			    var obj=a.elements;
 			    for(var i=0;i<obj.length;i++){
@@ -1046,7 +1060,7 @@
 			        }
 			        
 			    }
-			    //alert(JSON.stringify(json,null,4))
+			    alert(JSON.stringify(json,null,4))
 				return json;
 			}
 			var addModel=function(a){

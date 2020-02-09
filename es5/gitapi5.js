@@ -363,9 +363,10 @@ Git = (function() {
 	}
 
 	var Comment = {
-		gets: function(user, repos, issue) {
+		gets: function(user, repos, issue,count) {
 			if (!user || !repos || !issue) return false;
-			var url = "https://api.github.com/repos/%s/%s/issues/%s/comments?per_page=100".fill([user, repos, issue]);
+			var count=count||100;
+			var url = "https://api.github.com/repos/%s/%s/issues/%s/comments?per_page=%s".fill([user, repos, issue,count]);
 			return ajax(user, "get", url);
 		},
 		get: function(user, repos, number) {

@@ -25,10 +25,8 @@ store = {
 				return DB.Data.put("store", "store", json)
 			})
 		}).then(function(foo1) {
-			DB.DB.close();
 			return true;
 		}).catch(function(e) {
-			DB.DB.close();
 			return false;
 		});
 	},
@@ -38,10 +36,8 @@ store = {
 				return DB.Data.getKey("store", "store", name);
 			})
 		}).then(function(json){
-			DB.DB.close();
 			return json.val;
 		}).catch(function(e) {
-			DB.DB.close();
 			return false;
 		});
 	},
@@ -57,5 +53,19 @@ store = {
 			DB.DB.close();
 			return false;
 		});
+	}
+}
+
+if (window.indexedDB) {
+	store = {
+		setItem: function(name, value) {
+			return Promise.resolve(localStorage.setItem(name, value))
+		},
+		getItem: function(name) {
+			return Promise.resolve(localStorage.getItem(name))
+		},
+		clear: function() {
+			return Promise.resolve(localStorage.clear())
+		}
 	}
 }

@@ -52,10 +52,6 @@ DB = (function() {
 	var DB = {
 		open_db: function(db_name) {
 			this.db_name = db_name;
-			if (!window.indexedDB) {
-				window.alert("你的浏览器不支持IndexDB,请更换浏览器");
-				return Promise.reject("你的浏览器不支持IndexDB,请更换浏览器");;
-			}
 			var request = indexedDB.open(db_name);
 			var t = this;
 			return new Promise(function(resolve, reject) {
@@ -213,14 +209,19 @@ DB = (function() {
 					return Promise.reject(false);
 				}
 			});
-		},
-		
+		}
 	}
 	var Data={
 		add: function(db_name, store_name, json, key) {
 			return Table.select(db_name, store_name).then(function(store) {
 				var request = store.add(json, key);
 				return P(request);
+			}).then(function(re){
+				DB.close();
+				return re;
+			}).catch(function(){
+				DB.close();
+				return false;
 			});
 		},
 		put: function(db_name, store_name, json, key) {
@@ -231,24 +232,67 @@ DB = (function() {
 					var request = store.put(json);
 				};
 				return P(request);
+			}).then(function(re){
+				DB.close();
+				return re;
+			}).catch(function(){
+				DB.close();
+				return false;
+			});
+		},
+		putAll: function(db_name, store_name, arr) {
+			return Table.select(db_name, store_name).then(function(store) {
+				var re = [];
+				for (var i = 0; i < arr.length; i++) {
+					var obj = arr[i];
+					var request = store.put(obj);
+					re.push(P(request));
+				}
+				return Promise.all(re).then(function(re) {
+					return true;
+				});
+			}).then(function(re){
+				DB.close();
+				return re;
+			}).catch(function(){
+				DB.close();
+				return false;
 			});
 		},
 		delete: function(db_name, store_name, key) {
 			return Table.select(db_name, store_name).then(function(store) {
 				var request = store.delete(key);
 				return P(request);
+			}).then(function(re){
+				DB.close();
+				return re;
+			}).catch(function(){
+				DB.close();
+				return false;
 			});
 		},
 		count: function(db_name, store_name) {
 			return Table.select(db_name, store_name).then(function(store) {
 				var request = store.count();
 				return P(request);
+			}).then(function(re){
+				DB.close();
+				return re;
+			}).catch(function(){
+				DB.close();
+				return false;
 			});
 		},
 		getAll: function(db_name, store_name) { //return json;
 			return Table.select(db_name, store_name).then(function(store) {
 				var request = store.getAll();
 				return P(request);
+			}).then(function(re){
+				DB.close();
+				return re;
+			}).catch(function(){
+				DB.close();
+				return false;
 			});
 		},
 		getKey: function(db_name, store_name, key) { //return item=>json;
@@ -259,6 +303,12 @@ DB = (function() {
 					var request = store.getAll();
 				}
 				return P(request);
+			}).then(function(re){
+				DB.close();
+				return re;
+			}).catch(function(){
+				DB.close();
+				return false;
 			});
 		},
 		getIndex: function(db_name, store_name, index_name,index_value) { //return items=>array[{key:value}]
@@ -266,6 +316,12 @@ DB = (function() {
 				var index = store.index(index_name);
 				var request = index.getAll(index_value);
 				return P(request);
+			}).then(function(re){
+				DB.close();
+				return re;
+			}).catch(function(){
+				DB.close();
+				return false;
 			});
 		},
 		getIndexKeys: function(db_name, store_name, index_name,index_value) { //return items=>array[key]
@@ -273,6 +329,12 @@ DB = (function() {
 				var index = store.index(index_name);
 				var request = index.getAllKeys(index_value);
 				return P(request);
+			}).then(function(re){
+				DB.close();
+				return re;
+			}).catch(function(){
+				DB.close();
+				return false;
 			});
 		},
 	}
@@ -372,6 +434,70 @@ DB = (function() {
 		}
 	}
 	
+	if (window.indexedDB) {
+		window.alert("你的浏览器不支持IndexDB,请更换浏览器");
+		DB = {
+			open_db: function(db_name) {
+				return Promise.reject(false)
+			},
+			open: function(name) {
+				return Promise.reject(false)
+			},
+			names: function(db_name) {
+				return Promise.reject(false)
+			},
+			delete: function(name) {
+				return Promise.reject(false)
+			},
+			close: function() {
+			}
+		}
+		var Table={
+			create: function(db_name, store_name, json) {
+				return Promise.reject(false)
+			},
+			select: function(db_name, store_name) {
+				return Promise.reject(false)
+			},
+			clear: function(db_name, store_name) {
+				return Promise.reject(false)
+			},
+			delete: function(db_name, store_name) {
+			},
+			has: function(db_name, store_name) {
+				return Promise.reject(false)
+			}
+		}
+		var Data={
+			add: function(db_name, store_name, json, key) {
+				return Promise.reject(false)
+			},
+			put: function(db_name, store_name, json, key) {
+				return Promise.reject(false)
+			},
+			putAll: function(db_name, store_name, json, key) {
+				return Promise.reject(false)
+			},
+			delete: function(db_name, store_name, key) {
+				return Promise.reject(false)
+			},
+			count: function(db_name, store_name) {
+				return Promise.reject(false)
+			},
+			getAll: function(db_name, store_name) {
+				return Promise.reject(false)
+			},
+			getKey: function(db_name, store_name, key) {
+				return Promise.reject(false)
+			},
+			getIndex: function(db_name, store_name, index_name,index_value) {
+				return Promise.reject(false)
+			},
+			getIndexKeys: function(db_name, store_name, index_name,index_value) {
+				return Promise.reject(false)
+			},
+		}
+	}
 	return {"DB":DB,"Data":Data,"Cursor":Cursor,"Table":Table};
 })();
 
@@ -479,3 +605,38 @@ var tttttt = function() {
 	});
 	 
 }
+
+/* var px=(function(a){
+	var fun=function(arr,b,e,v){
+		//console.log(arr,b,e,v)
+	    if(e-b<2){
+			if(arr[b]&&v>arr[b]){
+			   arr.splice(e,0,v)
+			}else{
+			    arr.splice(b,0,v)
+			}
+	        return arr
+	    }
+	    
+	    var i=parseInt((e+b)/2);
+	    //console.log(i)
+	    if(arr[i]&&v>arr[i]){
+	        return fun(arr,i,e,v)
+	    }else{
+	        return  fun(arr,b,i,v)
+	    }
+	}
+	return function(arr){
+		var re=[]
+		for(var i=0;i<arr.length;i++){
+		    fun(re,0,re.length,arr[i])
+		}
+		return re
+	}
+})()
+
+
+var arr1=[3,5,7,89,0,67,46,7767,87,789,4545]
+
+console.log(JSON.stringify(px(arr1))) */
+

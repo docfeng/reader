@@ -501,19 +501,43 @@
 			}
 			
 			.flex-row{
+				display: -webkit-box;
+				display: -ms-flexbox;
 				display: -webkit-flex;
 				display: flex;
+				-webkit-box-orient: horizontal;
+				-ms-flex-direction: row;
+				-webkit-flex-direction: row;
 				flex-direction: row;
 			}
 			.flex-column{
+				display: -webkit-box;
+				display: -ms-flexbox;
 				display: -webkit-flex;
 				display: flex;
+				-webkit-box-orient: vertical;
+				-ms-flex-direction: column;
+				-webkit-flex-direction: column;
 				flex-direction: column;
 			}
 			.flex-row>div,.flex-column>div{
-				flex:1 1;
+				//flex:1 1;
 				text-align: center;
 				vertical-align: middle word-break: keep-all;
+			}
+			.graty1{
+				-webkit-box-flex: 1 1;
+				-ms-flex: 1 1;
+				-webkit-flex: 1 1;
+				flex: 1 1;
+			}
+			.graty10{
+				-moz-box-flex:10;
+				-webkit-box-flex: 10;
+				box-flex:10;
+				-ms-flex: 10 10;
+				-webkit-flex: 10 10;
+				flex: 10 10;
 			}
 
 			//table-layout:fixed
@@ -550,9 +574,9 @@
 					<div id="down_src" class="head-menu-head" onclick="fj(this.nextElementSibling).toggle()">
 						<div id="down_title" class="refreshText"></div>
 						<div  class="flex-row">
-							<div style="flex:10 10">书架</div>
-							<div style="flex:1 1">设置</div>
-							<div style="flex:1 1" onclick="UI.showSearch()">搜索</div>
+							<div class="graty10">书架</div>
+							<div class="graty1">设置</div>
+							<div class="graty1" onclick="UI.showSearch()">搜索</div>
 						</div>
 					</div>
 					<div class="head-menu-body hide1" onclick="fj(this).hide();">

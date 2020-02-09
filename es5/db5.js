@@ -53,7 +53,7 @@ DB = (function() {
 		open_db: function(db_name) {
 			this.db_name = db_name;
 			if (!window.indexedDB) {
-				window.alert("你的浏览器不支持IndexDB,请更换浏览器");
+				//window.alert("你的浏览器不支持IndexDB,请更换浏览器");
 				return Promise.reject("你的浏览器不支持IndexDB,请更换浏览器");;
 			}
 			var request = indexedDB.open(db_name);
@@ -371,7 +371,10 @@ DB = (function() {
 			});
 		}
 	}
-	
+	if (!window.indexedDB) {
+		window.alert("你的浏览器不支持IndexDB,请更换浏览器");
+		return null;
+	}
 	return {"DB":DB,"Data":Data,"Cursor":Cursor,"Table":Table};
 })();
 

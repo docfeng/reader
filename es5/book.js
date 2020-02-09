@@ -226,6 +226,14 @@ Book = (function() {
 		},
 		
 		readAll: function() {
+			if(!DB){
+				alert()
+				var re=localStorage.getItem("shelf");
+				if(!re)re="[]"
+				var json=JSON.parse(re)
+				Book.arr=json;
+				return Promise.resolve(json);
+			}
 			var t = this;
 			return DB.Data.getIndex("book", "shelf", "readAt", null).then(function(json) {
 				DB.DB.close();
@@ -248,6 +256,13 @@ Book = (function() {
 			});
 		},
 		read: function(name) {
+			if(!DB){
+				var re=localStorage.getItem("shelf");
+				if(!re)re="[]"
+				var json=JSON.parse(re)
+				Book.arr=json;
+				return Promise.resolve(json);
+			}
 			var t = this;
 			return DB.Data.getKey("book", "shelf", name).then(function(json) {
 				DB.DB.close();
@@ -268,6 +283,10 @@ Book = (function() {
 			});
 		},
 		writeAll: function(json) {
+			if(!DB){
+				var re=localStorage.setItem("shelf",JSON.stringify(json));
+				return Promise.resolve(re);
+			}
 			var t = this;
 			return DB.Table.select("book", "shelf").catch(function(e) {
 				DB.DB.close();
@@ -284,6 +303,10 @@ Book = (function() {
 			});
 		},
 		write: function(json) {
+			if(!DB){
+				
+				return Promise.resolve(true);
+			}
 			var t = this;
 			return DB.Data.put("book", "shelf", json).then(function(json) {
 				DB.DB.close();

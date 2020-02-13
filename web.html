@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<div id="contain">
+			
+		</div>
+	</body>
+	<script type="text/javascript">
+		var txt="appCodeName:"+window.navigator.appCodeName+"<br />";
+		txt+="appMinorVersion:"+window.navigator.appMinorVersion+"<br />";
+		txt+="appName:"+window.navigator.appName+"<br />";
+		txt+="appVersion:"+window.navigator.appVersion+"<br />";
+		txt+="vendor:"+window.navigator.vendor+"<br />";
+		txt+="product:"+window.navigator.product+"<br />";
+		txt+="productSub:"+window.navigator.productSub+"<br />";
+		txt+="cookieEnabled:"+window.navigator.cookieEnabled+"<br />";
+		txt+="cpuClass:"+window.navigator.cpuClass+"<br />";
+		txt+="onLine:"+window.navigator.onLine+"<br />";
+		txt+="platform:"+window.navigator.platform+"<br />";
+		txt+="systemLanguage:"+window.navigator.systemLanguage+"<br />";
+		txt+="userAgent:"+window.navigator.userAgent+"<br />";
+		alert(txt)
+		contain.innerHTML=txt;
+	</script>
+</html>

@@ -1,12 +1,14 @@
 window.onload = function() {
 	if (browser.MyApp) chrome.computer();
-	//1.显示书架
-	Shelf.showAll().then(function(){
+	Shelf.ini().then(function(foo1){
+		//1.显示书架
+		return Shelf.showAll()
+	}).then(function(){
 		//2.比较本地与在线记录
-		Shelf.sameSince().then(function(re){
-			//3.再次显示书架
-			Shelf.showAll();
-		});
+		return Shelf.sameSince();
+	}).then(function(re){
+		//3.再次显示书架
+		Shelf.showAll();
 	});
 	var json={
 		src:shelf_div,

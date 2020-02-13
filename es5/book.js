@@ -242,17 +242,8 @@ Book = (function() {
 				return json;
 			}).catch(function(e) {
 				DB.DB.close();
-				return t.ini().then(function() {
-					return DB.Data.getIndex("book", "shelf", "readAt", null).then(function(json) {
-						DB.DB.close();
-						Book.arr=json;
-						return json;
-					}).catch(function(e) {
-						DB.DB.close();
-						alert("Book.List.readAll:\n" + e)
-						return Promise.reject(e);
-					});
-				});
+				alert("Book.List.readAll:\n" + e)
+				return Promise.reject(e);
 			});
 		},
 		read: function(name) {
@@ -269,17 +260,8 @@ Book = (function() {
 				return json;
 			}).catch(function(e) {
 				DB.DB.close();
-				return t.ini().then(function() {
-
-					return DB.Data.getKey("book", "shelf", name).then(function(json) {
-						DB.DB.close();
-						return true;
-					}).catch(function(e) {
-						DB.DB.close();
-						alert("Book.List.read:\n" + e)
-						return Promise.reject(e);
-					});
-				});
+				alert("Book.List.read:\n" + e)
+				return Promise.reject(e);
 			});
 		},
 		writeAll: function(json) {
@@ -455,20 +437,25 @@ Book = (function() {
 			return DB.Table.create("book", "page", data);
 		},
 		ini: function() {
-			fj.tip("开始创建表格");
 			var t=this;
-			return t.createShelfTable().then(function(foo1){
-				return t.createListTable();
-			}).then(function(foo1){
-				return t.createPageTable()
-			}).then(function(foo1){
-				alert("创建表格完成")
-				return true;
-			});
-			/* return Promise.all([this.createShelfTable(), this.createListTable(), this.createPageTable()]).then(function(foo1){
-				alert("创建表格完成")
-				return true;
-			});; */
+			if(DB){
+				return DB.Table.has("book", "shelf").then(function(bool){
+					if(!bool){
+						fj.tip("开始创建表格");
+						return t.createShelfTable().then(function(foo1){
+							return t.createListTable();
+						}).then(function(foo1){
+							return t.createPageTable()
+						}).then(function(foo1){
+							alert("创建表格完成")
+							return true;
+						});
+					}
+					return true;
+				});
+			}else{
+				return Promise.resolve(false)
+			}
 		},
 		moveData: function() {
 			var t = this;
@@ -626,20 +613,8 @@ Book = (function() {
 				return json;
 			}).catch(function(e) {
 				DB.DB.close();
-				return t.createTable().then(function() {
-					return DB.Data.getKey("book", "list", name).then(function(bool) {
-						DB.DB.close();
-						if (bool) {
-							return bool;
-						} else {
-							return false;
-						}
-					}).catch(function(e) {
-						DB.DB.close();
-						alert("Book.List.read:\n" + e)
-						return Promise.reject(e);
-					});
-				});
+				alert("Book.List.read:\n" + e)
+				return Promise.reject(e);
 			});
 		},
 		readAll: function() {
@@ -670,38 +645,16 @@ Book = (function() {
 				//alert(JSON.stringify(e))
 				console.log(e)
 				DB.DB.close();
-				return DB.Table.has("book", "list").then(function(foo1) {
-
-					return false;
-				}).catch(function(e) {
-					return t.createTable().then(function() {
-						return DB.Data.put("book", "list", json).then(function(json) {
-							DB.DB.close();
-							return true;
-						}).catch(function(e) {
-							DB.DB.close();
-							alert("Book.List" + e)
-							return false
-						});
-					});
-				})
 			});
 		},
 		writeAll: function(json) {
 			var t = this;
-			return DB.Table.select("book", "shelf").catch(function(e) {
-				DB.DB.close();
-				return t.createTable();
-			}).then(function() {
-				var re = [];
-				for (var i = 0; i < json.length; i++) {
-					var obj = json[i];
-					re.push(DB.Data.put("book", "shelf", obj));
-				}
-				return Promise.all(re);
-			}).then(function(re) {
-				return true;
-			});
+			var re = [];
+			for (var i = 0; i < json.length; i++) {
+				var obj = json[i];
+				re.push(DB.Data.put("book", "shelf", obj));
+			}
+			return Promise.all(re);
 		},
 		add: function(arr) {
 			return this.getId().then(function(id) {

@@ -115,10 +115,11 @@ fj = (function() {
 			}
 			this.hide=function(bool){
 				this.obj.classList.add(bool?"hide2":"hide1");
-				
+				this.obj.classList.remove(bool?"show2":"show1");
 			}
 			this.show=function(bool,style){
 				this.obj.classList.remove(bool?"hide2":"hide1");
+				this.obj.classList.add(bool?"show2":"show1");
 			}
 			this.toggle=function(bool,style){
 				this.obj.classList.toggle(bool?"hide2":"hide1");

@@ -171,3 +171,9 @@
 .hide1{
 	visibility:hidden !important;
 }
+.show2{
+	display: block !important;
+}
+.show1{
+	visibility:visible !important;
+}

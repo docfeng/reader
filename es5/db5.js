@@ -210,11 +210,10 @@ DB = (function() {
 					return true;
 				} else {
 					db.close();
-					return Promise.reject(false);
+					return false;
 				}
 			});
-		},
-		
+		}
 	}
 	var Data={
 		add: function(db_name, store_name, json, key) {

@@ -26,8 +26,10 @@
 		<script src="es5/book.js"></script>
 		<script src="es5/reader-book.js"></script>
 		<script src="es5/index.js"></script>
-		<script src="script/jquery-1.8.0.js" type="text/javascript" charset="utf-8"></script>
-		<link href="" rel="apple-touch-icon-precomposed">
+
+		<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+		<link href="https://s.zhulang.com/images/zl-logo114.png" rel="apple-touch-icon-precomposed">
 		<link rel="stylesheet" type="text/css" href="css5/fj.css" />
 		<link rel="stylesheet" href="css5/msg5.css" type="text/css">
 		<!-- <link rel="stylesheet" href="https://s.zhulang.com/wap/pub/v2/style/read-3873a62e78.css" type="text/css"> -->
@@ -364,12 +366,12 @@
 				position: relative;
 			}
 
-			.head-menu>.header{
+			.head-menu-head {
 				width: 100%;
 				height: 40px;
 			}
 
-			.head-menu>.body {
+			.head-menu-body {
 				position: absolute;
 				//visibility:hidden;
 				top: 40px;
@@ -377,10 +379,14 @@
 				width: 100%;
 				height: auto;
 				background-color: #008000;
+			}
+
+			.head-menu-body>div {
 				display: flex;
 				flex-direction: row;
 			}
-			.head-menu>.body>div {
+
+			.head-menu-body>div>div {
 				display: flex;
 				flex-direction: column;
 			}
@@ -412,6 +418,27 @@
 		</style>
 		<!-- main_contain model setting -->
 		<style type="text/css">
+			.main_contain {
+				position: fixed;
+				width: 100%;
+				height: 100%;
+				top: 0px;
+				left: 0px;
+				z-index: 50;
+			}
+			.main_contain input {
+				//height:1.5em;
+				font-size: 0.7em;
+			}
+			
+			.main_contain input[type=text] {
+				height: 15px;
+			}
+			
+			.main_contain input[type=number] {
+				height: 15px;
+			}
+
 			.model {
 				position: fixed;
 				display: flex;
@@ -474,43 +501,19 @@
 			}
 			
 			.flex-row{
-				display: -webkit-box;
-				display: -ms-flexbox;
 				display: -webkit-flex;
 				display: flex;
-				-webkit-box-orient: horizontal;
-				-ms-flex-direction: row;
-				-webkit-flex-direction: row;
 				flex-direction: row;
 			}
 			.flex-column{
-				display: -webkit-box;
-				display: -ms-flexbox;
 				display: -webkit-flex;
 				display: flex;
-				-webkit-box-orient: vertical;
-				-ms-flex-direction: column;
-				-webkit-flex-direction: column;
 				flex-direction: column;
 			}
 			.flex-row>div,.flex-column>div{
-				//flex:1 1;
+				flex:1 1;
 				text-align: center;
 				vertical-align: middle word-break: keep-all;
-			}
-			.graty1{
-				-webkit-box-flex: 1 1;
-				-ms-flex: 1 1;
-				-webkit-flex: 1 1;
-				flex: 1 1;
-			}
-			.graty10{
-				-moz-box-flex:10;
-				-webkit-box-flex: 10;
-				box-flex:10;
-				-ms-flex: 10 10;
-				-webkit-flex: 10 10;
-				flex: 10 10;
 			}
 
 			//table-layout:fixed
@@ -544,15 +547,16 @@
 			<!-- 书架 -->
 			<div class="model type-win show" id="shelfDiv">
 				<div class="header head-menu">
-					<div id="down_src" class="header" onclick="fj(this.nextElementSibling).toggle()">
+					<div id="down_src" class="head-menu-head" onclick="fj(this.nextElementSibling).toggle()">
 						<div id="down_title" class="refreshText"></div>
 						<div  class="flex-row">
-							<div class="graty10">书架</div>
-							<div class="graty1">设置</div>
-							<div class="graty1" onclick="UI.showSearch()">搜索</div>
+							<div style="flex:10 10">书架</div>
+							<div style="flex:1 1">设置</div>
+							<div style="flex:1 1" onclick="UI.showSearch()">搜索</div>
 						</div>
 					</div>
-					<div class="body hide1" onclick="fj(this).hide();">
+					<div class="head-menu-body hide1" onclick="fj(this).hide();">
+						<div>
 							<div class="icon-Button">
 								<span class="iconfont icon-chaxun" value="搜索" onclick="UI.showSearch()"></span>
 								<span>搜索</span>
@@ -577,6 +581,7 @@
 								<span class="iconfont icon-delete" title='删除' onclick="shelf_table.dataset.order='delete'"></span>
 								<span>删除</span>
 							</div>
+						</div>
 					</div>
 				</div>
 				<div class="body" id="shelf_div">
@@ -584,20 +589,21 @@
 					<table id="shelf_table" style="" data-order="click" onclick="Shelf.click(event.srcElement,this.dataset.order);this.dataset.order='click';"></table>
 				</div>
 				<div class="footer flex-row">
-					<div class="graty1" id="">书架</div>
-					<div class="graty1" id="">我的</div>
+					<div id="">书架</div>
+					<div id="">我的</div>
 				</div>
 			</div>
 			<!-- 目录-->
 			<div class="model type-win" id="listDiv">
-				<div class="header head-menu">
-					<div class="header" onclick="fj(this.nextElementSibling).toggle()">
+				<div class="head-menu">
+					<div class="head-menu-head" onclick="fj(this.nextElementSibling).toggle()">
 						name:<span id="listName"></span>
+						url:<span id="listUrl"></span>
 						new:<span id="listNew"></span>
 						count:<span id="listCount"></span>
-						url:<span id="listUrl"></span>
 					</div>
-					<div class="body hide1" onclick="fj(this).hide();">
+					<div class="head-menu-body hide1" onclick="fj(this).hide();">
+						<div>
 							<div class="icon-Button">
 								<span class="iconfont icon-chaxun" value="换源" onclick="List.changeSource(listName.innerText);"></span>
 								<span>换源</span>
@@ -626,9 +632,10 @@
 								<span class="iconfont icon-play-square" title='继续阅读' onclick="List.showPageIndex(List.listIndex)"></span>
 								<span>继续阅读</span>
 							</div>
+						</div>
 					</div>
 				</div>
-				<div class="body" id=s1>
+				<div id=s1>
 					<table id="list_table" onclick="List.click(event.srcElement);"></table>
 				</div>
 			</div>

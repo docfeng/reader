@@ -1,18 +1,36 @@
-/* html,body{
+html,body{
   height:100%;
   width:100%
   padding:0;
   margin:0;
-} */
-.main_contain {
+}
+.main_contain
+ {
 	font-size: 16px;;
 	color: #000000;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	z-index: 50;
 }
 .main_contain .myhead input {
 	height: 24px;
 	background-color: "green";
 }
+.main_contain input {
+	//height:1.5em;
+	font-size: 0.7em;
+}
 
+.main_contain input[type=text] {
+	height: 15px;
+}
+
+.main_contain input[type=number] {
+	height: 15px;
+}
 .main_contain table th,.main_contain table td {
 	border: 1px solid black;
 	//background-color:red;

@@ -427,7 +427,7 @@ Search=(function(a){
 				alert(arr)
 				List.show(name,url,arr);
 				console.log(name,url,arr);
-				Shelf.add(name,url,arr).then(function(re){
+				Shelf.updateAt(name,url,arr).then(function(re){
 					fj.tip("添加书本成功",2)
 				}).catch(function(e){
 					fj.tip("添加书本失败",2)
@@ -436,6 +436,9 @@ Search=(function(a){
 				List.write(name,arr);
 				alert("name="+name+"\nurl="+url+"\narr:"+JSON.stringify(arr,null,4))
 				window.history.go(-1);	
+				setTimeout(function(){
+					UI.showList();
+				},1000);
 			}).catch(function(e){
 				alert("search.add:err:\n"+e)
 			});
@@ -794,8 +797,8 @@ Shelf=(function(a){
 				var readIndex=json.readIndex;
 				if(("string"!=typeof name)&&("string"!=typeof url)&&("number"!=typeof readIndex)){
 					var str="List.click参数错误：\nname:"+name+"\ni:"+url+"\nreadIndex:"+readIndex
-					alert(str)
-					return Promise.reject(str);
+					alert(str);
+					return 0;
 				}
 				//显示目录
 				Book.json=json;
@@ -819,7 +822,9 @@ Shelf=(function(a){
 					List.listIndex=readIndex
 					List.show(name, url, list_arr);
 					List.scroll(readIndex); 
-				});
+				}).catch(function(e){
+					alert(e);
+				})
 			}
 			if (order == "delete") {
 				this.delete(i);

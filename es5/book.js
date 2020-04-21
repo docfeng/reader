@@ -242,7 +242,7 @@ Book = (function() {
 				return json;
 			}).catch(function(e) {
 				DB.DB.close();
-				alert("Book.List.readAll:\n" + e)
+				alert("Book.Shelf.readAll:\n" + e)
 				return Promise.reject(e);
 			});
 		},
@@ -260,7 +260,7 @@ Book = (function() {
 				return json;
 			}).catch(function(e) {
 				DB.DB.close();
-				alert("Book.List.read:\n" + e)
+				alert("Book.Shelf.read:\n" + e)
 				return Promise.reject(e);
 			});
 		},
@@ -339,9 +339,11 @@ Book = (function() {
 						});
 					}
 					return true;
-				});
-				
-
+				}).catch(function(e){
+					json.id="";
+					Shelf.write(json);
+					return true;
+				})
 			} else {
 				t.write(json);
 				return Git.Comment.put("docfeng", "book-data", json.id, JSON.stringify(json, null, 4));
@@ -443,8 +445,10 @@ Book = (function() {
 					if(!bool){
 						fj.tip("开始创建表格");
 						return t.createShelfTable().then(function(foo1){
+							fj.tip("创建List表格");
 							return t.createListTable();
 						}).then(function(foo1){
+							fj.tip("创建Page表格");
 							return t.createPageTable()
 						}).then(function(foo1){
 							alert("创建表格完成")
@@ -452,6 +456,8 @@ Book = (function() {
 						});
 					}
 					return true;
+				}).catch(function(e){
+					fj.tip("创建表格失败\n"+e);
 				});
 			}else{
 				return Promise.resolve(false)

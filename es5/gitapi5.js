@@ -225,7 +225,7 @@ Git = (function() {
 			var path = path || "";
 			var url = "https://api.github.com/repos/%s/%s/contents/%s".fill([user, repos, path]);
 			return ajax(user, "get", url).then(function(text) {
-				var re = JSON.parse(text);
+				var re = text?JSON.parse(text):[];
 				for (var i = 0; i < re.length; i++) {
 					if (re[i].type == "file") {
 						shas[re[i].path] = re[i].sha;

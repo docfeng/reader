@@ -1,0 +1,417 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<META HTTP-EQUIV="pragma" CONTENT="no-cache">
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+		<META HTTP-EQUIV="expires" CONTENT="0">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>JS+CSS单篇文章内容分页</title>
+		<style type="text/css">
+			html,
+			body {
+				height: 100%;
+				width: 100%;
+				background-color: #E3EDCD;
+			}
+			*{
+				padding: 0;
+				margin: 0;
+			}
+			div::-webkit-scrollbar {
+				display: none;
+			}
+
+			#txt {
+				padding-top: 20px;
+				width: 580;
+				/*调整显示区的宽*/
+				height: 670px;
+				/*调整显示区的高*/
+				column-width: 200px;
+				-moz-column-width: 200px;
+				/* Firefox */
+				-webkit-column-width: 580px;
+				/* Safari and Chrome */
+				column-gap: 0px;
+				-webkit-column-gap: 0px;
+
+				transition-property: scrollLeft;
+				transition-duration: 1s;
+				transition-timing-function: linear;
+				transition-delay: 1s;
+
+				font-size: 30px;
+				line-height: 18px;
+				border: 0px solid #000000;
+				overflow-x: scroll;
+				overflow-y: scroll;
+				Word-break: break-all;
+				//white-space:pre-wrap;
+			}
+
+			#txt::-webkit-scrollbar {
+				display: none;
+			}
+
+			.paper {
+				column-width: 100%;
+				-moz-column-width: 100%;
+				/* Firefox */
+				-webkit-column-width: 100%;
+				/* Safari and Chrome */
+			}
+
+			a {
+				font-size: 12px;
+				color: #000000;
+				text-decoration: underline;
+			}
+
+			a:hover {
+				font-size: 12px;
+				color: #CC0000;
+				text-decoration: underline;
+			}
+
+			p {
+				text-indent: 2em;
+				margin-top: 0px;
+				margin-bottom: 0px;
+				//width:100%;
+			}
+
+			.setting_m_box {
+				position: fixed;
+				top: 0px;
+				left: 0px;
+				width: 100%;
+				height: 100%;
+				margin: 0px 0px;
+				//background-color:OrangeRed;
+				z-index: 113;
+				display: none;
+			}
+
+			.setting_box {
+				position: fixed;
+				width: 100%;
+				min-height: 50%;
+				bottom: 0px;
+				background-color: Orange;
+			}
+
+			#mess {
+				display: flex;
+				top: 0px;
+				width: 100%;
+				height: 14px;
+			}
+			
+		</style>
+		<style type="text/css">
+			.activity{
+				width: 100%;
+				height: 100%;
+			}
+			.activity>div{
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				visibility: hidden;
+				display: -webkit-box;
+				display: -ms-flexbox;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-box-orient: vertical;
+				-ms-flex-direction: column;
+				-webkit-flex-direction: column;
+				flex-direction: column;
+			}
+			.activity>.main{
+				visibility:visible !important;
+			}
+			.activity>div>.header,.activity>div>.footer{
+				height: 30px;
+				-webkit-box-flex: 1;
+				-ms-flex: 1 1;
+				-webkit-flex: 1 1;
+				flex: 1 1;
+			}
+			.activity>div>.body{
+				-webkit-box-flex: 20;
+				-ms-flex: 20 20;
+				-webkit-flex: 20 20;
+				flex: 20 20;
+				overflow-y: scroll;
+			}
+			.activity .row{
+				display: -webkit-box;
+				display: -ms-flexbox;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-box-orient: horizontal;
+				-ms-flex-direction: row;
+				-webkit-flex-direction: row;
+				flex-direction: row;
+			}
+			.activity .column{
+				display: -webkit-box;
+				display: -ms-flexbox;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-box-orient: vertical;
+				-ms-flex-direction: column;
+				-webkit-flex-direction: column;
+				flex-direction: column;
+			}
+			.activity .row>div,.activity .column>div{
+				-webkit-box-flex: 1;
+				-ms-flex: 1 1;
+				-webkit-flex: 1 1;
+				flex: 1 1;
+				text-align: center;
+				vertical-align: middle word-break: keep-all;
+			}
+			
+			
+			tr{display: block;}
+			td{width: 100%;height:30px;border:1px solid #000000;float: left;}
+		</style>
+	</head>
+	<body>
+		<div class="activity" >
+			<div class="main" id="main_activity">
+				<div class="header" name="title" style="background-color: #0000FF;">
+					title
+				</div>
+				<div class="body" style="background-color:  #008000;">
+					body
+				</div>
+				<div class="footer row" style="background-color: #0000FF;">
+					<div id="up" style="border:1px solid #000000;">
+						上一页
+					</div>
+					<div id="count" style="border:1px solid #000000;"> 
+						cont
+					</div>
+					<div id="next" style="border:1px solid #000000;">
+						下一页
+					</div>
+				</div>
+			</div>
+			<div id="main1_activity">
+				<div class="header" name="title" style="background-color: #0000FF;">
+					title
+				</div>
+				<div class="body" style="background-color:  #008000;">
+					body
+				</div>
+				<div class="footer row" style="background-color: #0000FF;">
+					<div id="up" style="border:1px solid #000000;">
+						上一页
+					</div>
+					<div id="count" style="border:1px solid #000000;"> 
+						cont
+					</div>
+					<div id="next" style="border:1px solid #000000;">
+						下一页
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		var Activity=(function(){
+			var A={};
+			var tagActivity;
+			return function(activity_id){
+				A[activity_id]=this;
+				if(tagActivity==null){
+					tagActivity=this;
+				}
+				var win;
+				var win=document.querySelector("#"+activity_id); 
+				
+				this.id=activity_id;
+				this.on=function(model,onEvent,bool){
+					this.handleEvent=onEvent;
+					win.addEventListener(model,this,bool);
+				}
+				this.$=function(selector){
+					return win.querySelector(selector); 
+				}
+				this.setTitle=function(title){
+					var obj=win.querySelector(".header").innerHTML=title
+				}
+				this.showActivity=function(activity_id,data){
+					var obj=A[activity_id];
+					if(obj!==null){
+						obj.show();
+						if(obj.onShow)obj.onShow(data)
+						tagActivity.hide();
+						tagActivity=obj
+					}
+				}
+				//this.onshow
+				this.show=function(){
+					win.style.visibility="visible";
+				}
+				this.hide=function(){
+					win.style.visibility="hidden";
+				}
+				this.close=function(){
+					var id=this.id;
+					delete A[id];
+				}
+			}
+		})();
+	</script>
+	<script type="text/javascript">
+		var List={
+			index:0,
+			arr:(function(a){
+				var arr=[];
+				for(var i=0;i<100;i++){
+					arr.push("page"+i)
+				} 
+				return arr;
+			})(),
+			up:function(){
+				var index=this.index;
+				index--;
+				var html=this.formatUI(index);
+				if(html){
+					document.querySelector(".body").innerHTML=html;
+				}
+			},
+			next:function(){
+				var index=this.index;
+				index++
+				var html=this.formatUI(index);
+				if(html){
+					document.querySelector(".body").innerHTML=html;
+				}
+			},
+			show:function(i){
+				var index=this.index=i;
+				var html=this.formatUI(index);
+				if(html){
+					document.querySelector(".body").innerHTML=html;
+				}
+			},
+			formatUI:function(len){
+				var arr=this.arr;
+				var len=len||0;
+				var length=this.length;
+				if(length==null){
+					var obj=document.querySelector(".body")
+					var height=parseInt(window.getComputedStyle(obj).height); 
+					this.length=length=parseInt((height+2)/32);
+				}
+				var re=""
+				var begin=len*length;
+				if(begin>=arr.length||begin<0){
+					return false
+				}
+				this.index=len;
+				var end=(len+1)*length;
+				end=end>arr.length?arr.length:end;
+				for(var i=begin;i<end;i++){
+					re+="<tr><td>"+arr[i]+"</td></tr>"
+				} 
+				re='<table border="0" cellspacing="0" cellpadding="0" id="shelf_table" style="box-sizing:border-box;width:100%;border-spacing:0px">'+re+"</table>";
+				return re;
+			}
+			
+		}
+		
+		window.addEventListener("load",function(a){
+			var supportCSS=function(css){
+			    if( css in document.documentElement.style){
+			      return css+":support";
+			    }else{
+			      return css+":don't support";
+			    }
+			}
+			var supportJS=function(js){
+			    if(js in window){
+			      return js+":support";
+			    }else{
+			      return js+":don't support";
+			    }
+			}
+			/* alert(supportCSS("flex"))
+			alert(supportCSS("-webkit-box-flex"))
+			alert(supportCSS("-moz-box-flex"))
+			alert(supportCSS("-webkit-flex"))
+			alert(supportCSS("-ms-flex")) */
+			
+			var activity=new Activity("main_activity");
+			var activity1=new Activity("main1_activity");
+			activity.on("click",function(event){
+				var obj=event.srcElement;
+				if("td"==obj.tagName.toLowerCase()){
+					var rowIndex=obj.parentNode.rowIndex;
+					var index=List.index;
+					var length=List.length;
+					/* alert(index*length+rowIndex)
+					alert(List.arr[index*length+rowIndex]) */
+					//window.location="http://gear.docfeng.top/dir1.php"
+					this.showActivity("main1_activity",List.arr[index*length+rowIndex]);
+				}
+				if("div"==obj.tagName.toLowerCase()){
+					var id=obj.id;
+					switch (id){
+						case "up":
+						List.up()
+							break;
+						case "next":
+							List.next()
+							break;
+						case "count":
+							break;
+						default:
+							break;
+					}
+				}
+				
+			})
+			activity1.on("click",function(event){
+				var obj=event.srcElement;
+				if("td"==obj.tagName.toLowerCase()){
+					var rowIndex=obj.parentNode.rowIndex;
+					var index=List.index;
+					var length=List.length;
+					/* alert(index*length+rowIndex)
+					alert(List.arr[index*length+rowIndex]) */
+					//window.location="http://gear.docfeng.top/dir1.php"
+					this.showActivity("main1_activity")
+					
+				}
+				if("div"==obj.tagName.toLowerCase()){
+					var id=obj.id;
+					switch (id){
+						case "up":
+						List.up()
+							break;
+						case "next":
+							this.showActivity("main_activity")
+							break;
+						case "count":
+							break;
+						default:
+							break;
+					}
+				}
+				
+			})
+			activity1.onShow=function(data){
+				this.$(".body").innerHTML=data
+			}
+			List.show(0);
+		})
+	</script>
+</html>

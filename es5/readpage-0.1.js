@@ -17,32 +17,23 @@ ini = function(index) {
 }
 
 function keyCode(i) {
-	alert(i)
+	if(i==87||i==25){
+		window.uppage()
+	}else if(i==88||i==24){
+		window.next();
+	}else{
+		alert(i)
+	}
 }
 //监听耳机按键
 function nextPage() {
-	//alert(next)
-
-	if (window.ds) {
-		window.clearTimeout(ds);
-	}
-	var next = function() {
-		window.ds = setTimeout(function() {
-			window.next();
-		}, 500);
-	}
-	var uppage = function() {
-		window.ds = setTimeout(function() {
-			window.uppage();
-		}, 500);
-	}
 	if (!window.time1) {
 		window.time1 = new Date();
-		next();
+		window.next();
 	} else {
 		var t2 = new Date();
 		var t = t2 - window.time1;
-		window.time1 = t2
+		window.time1 = t2;
 		if (t < 400) {
 			window.uppage();
 			window.uppage()
@@ -51,6 +42,9 @@ function nextPage() {
 		}
 	}
 
+}
+window.previousPage=function(a){
+	window.uppage();
 }
 window.onkeydown = function(e) {
 	switch (e.keyCode) {

@@ -17,32 +17,23 @@ ini = function(index) {
 }
 
 function keyCode(i) {
-	alert(i)
+	if(i==87||i==25){
+		window.uppage()
+	}else if(i==88||i==24){
+		window.next();
+	}else{
+		alert(i)
+	}
 }
 //监听耳机按键
 function nextPage() {
-	//alert(next)
-
-	if (window.ds) {
-		window.clearTimeout(ds);
-	}
-	var next = function() {
-		window.ds = setTimeout(function() {
-			window.next();
-		}, 500);
-	}
-	var uppage = function() {
-		window.ds = setTimeout(function() {
-			window.uppage();
-		}, 500);
-	}
 	if (!window.time1) {
 		window.time1 = new Date();
-		next();
+		window.next();
 	} else {
 		var t2 = new Date();
 		var t = t2 - window.time1;
-		window.time1 = t2
+		window.time1 = t2;
 		if (t < 400) {
 			window.uppage();
 			window.uppage()
@@ -51,6 +42,9 @@ function nextPage() {
 		}
 	}
 
+}
+window.previousPage=function(a){
+	window.uppage();
 }
 window.onkeydown = function(e) {
 	switch (e.keyCode) {
@@ -70,8 +64,9 @@ show = function(str) {
 		e.html(str)
 	}
 
-	//初始化界面
-	! function() {
+
+//初始化界面
+var PageUI=(function() {
 		function setFontSize(t, n) {
 			var ft = $("#cfg-font"),
 				ut = ft.find(".fs-add"),
@@ -249,7 +244,7 @@ show = function(str) {
 			Direction = "", //lr or ud
 			Day_Night = "", //day or night
 			pageIndex = 1,
-			Z = 0,
+			Z = 0,//阅读到位置,百分比
 			pageLeft = -342,
 			H = !1, //上下false;左右true
 			bgcolor = "bg-2", //背景色
@@ -258,8 +253,10 @@ show = function(str) {
 				range: 6,
 				cur: 3,
 				dft: 3
-			},
-			st = {
+			};
+			
+		
+		var UI = {
 				init: function() {
 					//初始化阅读界面
 					this.formatPage();
@@ -283,7 +280,8 @@ show = function(str) {
 					var e = body.attr("class");
 					//设置字体大小
 					var s = e.match(/fstep-\d/);
-					setFontSize(s ? s[0].split("-")[1] : 3, "noset");
+					var fontSize=s ? s[0].split("-")[1] : 3;
+					setFontSize(fontSize, "noset");
 					//设置背景色
 					var d = e.match(/bg-\d/);
 					d = d ? d[0].split("-")[1] : 2;
@@ -302,10 +300,7 @@ show = function(str) {
 					//y()//页面点击、窗口关闭时设置cookie
 				}
 			}
-		st.init();
-
-
-
+		UI.init();
 
 
 
@@ -330,19 +325,17 @@ show = function(str) {
 			//如果fun为function,t秒后执行fun;
 			"function" == typeof fun && setTimeout(fun, t);
 		}
-		Page.move = function(obj, t, x, y, fun) {
-			move(obj, t, x, y, fun)
-		}
-		//rd-txt在t秒内沿横轴移动-x个屏幕距离;
-		function scroll(x, t) {
+		
+		//rd-txt在time秒内沿横轴移动-index个屏幕距离;
+		function scroll(index, time) {
 			var width =fj(".main_contain").width();//$(window).width();
 			var obj = "#rd-txt";
-			var x = x || pageIndex;
-			var t = t || 0;
-			var len = -width * (x - 1);
+			var index = index || pageIndex;
+			var time = time || 0;
+			var len = -width * (index - 1);
 			pageLeft = len
-			//obj对象t毫秒内沿x轴移动len长度，y轴移动0长度;
-			move(obj, t, len, 0);
+			//obj对象time毫秒内沿x轴移动len长度，y轴移动0长度;
+			move(obj, time, len, 0);
 		}
 		//计算界面,移动到第(t*总页数)页;
 		function cacl(t) {
@@ -359,11 +352,14 @@ show = function(str) {
 				var txt_width = document.getElementById("rd-txt").scrollWidth;
 				//计算页数
 				pageCount = Math.ceil(txt_width / win_width);
-				t && (pageIndex = Math.max(Math.floor(t * pageCount), 1), scroll(pageIndex, 0));
+				if(t){
+					pageIndex = Math.max(Math.floor(t * pageCount), 1);
+					scroll(pageIndex, 0);
+				}
 				//显示页码
 				$("#page-nav").html(pageIndex + "/" + pageCount);
 				//alert(e.html())
-				window.scrollTo(0, 1);
+				//window.scrollTo(0, 1);
 			}
 		}
 		//上一章
@@ -409,11 +405,10 @@ show = function(str) {
 			pageIndex++;
 			window.section(pageIndex, t);
 		}
+		
+		//Page.move = move;
 		window.next = nextPage;
-		window.uppage = function() {
-			pageIndex--;
-			window.section(pageIndex, 0);
-		}
+		window.uppage = upPage;
 		window.section = function(i, t) {
 			document.body.classList.remove("fn-on", "cfg-on");
 			//body.removeClass("fn-on cfg-on");
@@ -430,18 +425,22 @@ show = function(str) {
 				pageIndex = pageCount;
 				nextChapter()
 			} else {
-				Z = (pageIndex / pageCount).toFixed(2);
+				Z = (pageIndex / pageCount).toFixed(2);//保留2位小数
 				scroll(pageIndex, 0==t?0:(t || 400))
 				void cacl();
 			}
 			Page.index2 = pageIndex;
 			return;
 		};
-		Page.resize = function() {
-			document.body.classList.remove("cfg-on", "fn-on")
+		/* Page.resize = function() {
+			document.body.classList.remove("cfg-on", "fn-on");
 			//body.removeClass("cfg-on").removeClass("fn-on");
-			"lr" == Direction && cacl(Z);
-		};
+			"lr" == Direction;
+			cacl(Z);
+		}; */
+		
+		
+		//切换控制
 		(function() {
 			var t = {},
 				n = {},
@@ -563,12 +562,22 @@ show = function(str) {
 			//}
 		})();
 
-		//初始化
-		window.addEventListener("load", function() {
-			//点击显示目录
-			document.getElementById("idx-zd").onclick = function() {
-				Page.showList();
-				return;
-			}
-		}, false);
-	}();
+		
+		return {
+			setFontSize:setFontSize
+		}
+	})();
+
+
+//初始化
+window.addEventListener("load", function() {
+	//点击显示目录
+	document.getElementById("idx-zd").onclick = function() {
+		Page.showList();
+		return;
+	}
+	//阅读页返回按钮
+	document.querySelector(".icon-left").onclick=function(){
+		window.history.go( - 1)
+	}
+}, false);

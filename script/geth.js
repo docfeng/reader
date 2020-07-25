@@ -322,10 +322,7 @@ geth=function(t, n, e) {
     };
     $(function() {
         d(),
-        $(".backicon").on("click",
-        function() {
-            window.history.go( - 1)
-        }),
+        
         $(".verifyimg").on("click",
         function() {
             var t = $(this),

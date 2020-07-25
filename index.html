@@ -23,8 +23,13 @@
 		<script src="es5/db5.js"></script>
 		<script src="es5/store5.js"></script>
 		<script src="es5/gitapi5.js"></script>
+		<script src="es5/app.js"></script>
+		<script src="es5/book.shelf.js"></script>
+		<script src="es5/book.list.js"></script>
+		<script src="es5/book.page.js"></script>
+		<script src="es5/book.search.js"></script>
 		<script src="es5/book.js"></script>
-		<script src="es5/reader-book.js"></script>
+		
 		<script src="es5/index.js"></script>
 		<script src="script/jquery-1.8.0.js" type="text/javascript" charset="utf-8"></script>
 		<link href="" rel="apple-touch-icon-precomposed">
@@ -673,7 +678,7 @@
 							<i class="iconfont icon-left"></i>
 						</a>
 						<a href="javascript:void(0)" class="fr backicon">
-							<i style="font-size: 2em;" id="novelName">name</i>
+							<i style="font-size: 1em;" id="novelName">name</i>
 						</a>
 					</div>
 					<!--设置页面底部-->
@@ -830,13 +835,17 @@
 				<div class="body ">
 					<div  id="setbox">
 						<form class="setting" action="javascript:void()"  onsubmit="act(this)" style="height: 500px;overflow-y: scroll;">
-							 <input type="text" name="t1" value="rff" /><br/>
+							<input type="text" name="t1" value="rff" /><br/>
+							<fieldset>
+							    <legend>用户</legend>
+							    <label id="username"></label>
+							 	<input type="button" value="登入" onclick="Git.User.login()" />
+							 	<input type="button" value="退出" onclick="Git.User.logout()" />
+							 </fieldset>
 							 <fieldset>
 							    <legend>操作</legend>
 							    <input type="button" value='epub' onclick='fso.writeZip(form_1.novel_name.value+".epub",form_1.novel_name.value)' />
 							    <input type="button" value="打开" onclick="chrome.openFile(form_1.novel_name.value+'.epub')" />
-								<input type="button" value="登入" onclick="Git.User.login()" />
-								<input type="button" value="退出" onclick="Git.User.logout()" />
 							</fieldset>
 							<fieldset>
 								<legend>数据操作</legend>
@@ -851,25 +860,18 @@
 							</fieldset>
 							<fieldset>
 							     <legend>cors</legend>
-							     <input type="button" onclick="showModel(this.parentNode)" value="showModel" />
-								 <input type="button" onclick="addModel(this.parentNode)" value="addModel" /><br />
-								 自定义模式:<input type="text"   name="cors" />
-								 <div id="cors">
-								 	
-								 </div>
-								 <div style="position: absolute;left: 100px;top:100px;border:1px solid #00F;height: 100px;width: 200px;background: red;" onclick="fj(this).deg90();" ondblclick="fj(this).deg0()">
-								 	123456789123<br>
-									123456
-								 </div>
-								 <div style="border:1px solid #00F;height: 100px;width: 200px;background: #000000;" >
+							     <input type="button" onclick="Setting.showModel()" value="showModel" />
+								 <input type="button" onclick="Setting.addModel()" value="addModel" /><br />
+								 自定义模式:<input type="text" name="cors" id="corsValue" />
+								 <div id="cors" onclick="Setting.selectModel(event.srcElement)">
 								 	
 								 </div>
 							 </fieldset>
 							 
 							 <fieldset>
-							     <legend>cors</legend>
-							     <label><input type="radio" name="cors" value="" />none</label>
-							     <label><input type="radio" name="cors" value="http://gear.docfeng.top/get2.php" />gear.docfeng.top</label>
+							     <legend>cors1</legend>
+							     <label><input type="radio" name="cors1" value="" />none</label>
+							     <label><input type="radio" name="cors1" value="http://gear.docfeng.top/get2.php" />gear.docfeng.top</label>
 							     
 							 </fieldset>
 							 <fieldset>
@@ -1011,88 +1013,6 @@
 		</div>
 		<script type="text/javascript" src="script/geth.js"></script>
 		<script type="text/javascript" src="es5/readpage-0.1.js"></script>
-		<script type="text/javascript">
-			//设置页操作
-			var act=function(a){
-			    var json={};
-			    var obj=a.elements;
-			    for(var i=0;i<obj.length;i++){
-			        switch(obj[i].type){
-			            case "text":
-			                if(obj[i].value){
-			                    json[obj[i].name]=obj[i].value;
-			                }
-			                break;
-			            case "radio":
-			                if(obj[i].checked){
-			                    json[obj[i].name]=obj[i].value;
-			                }
-			                break;
-			            case "checkbox":
-			                if(!json[obj[i].name]){
-			                    json[obj[i].name]=[];
-			                }
-			                if(obj[i].checked){
-			                    json[obj[i].name].push(obj[i].value);
-			                }
-			                break;
-			        }
-			        
-			    }
-			    //alert(JSON.stringify(json,null,4))
-				return json;
-			}
-			var addModel=function(a){
-				var json=act(a);
-				var url=json.cors;
-				alert(url)
-				Book.Shelf.setModel(url);
-			}
-			var showModel=function(obj){
-			    var html=""//"<legend>cors</legend>";
-			    //var ele=document.createDocumentFragment(html);
-			    var arr=["cors",
-					'http://gear.docfeng.top/get2.php',
-					'http://192.168.123.128/get2.php',
-					'http://gear2.docfeng.top/get2.php',
-					'http://192.168.123.92:8080/get2.php'
-					];
-			    for(var i=0;i<arr.length;i++){
-			        html+='<label><input type="radio" name="cors" value="'+arr[i] +'" />'+arr[i]+'</label>\n';
-			    }
-			    //obj.appendChild(ele);
-			    
-			    cors.innerHTML=html;
-			    //cors.insertAdjacentHTML("beforeEnd",html);
-				var model=Book.Shelf.getModel('');
-				var obj=cors.elements||cors.children;
-				for(var i=0;i<obj.length;i++){
-				     if(obj[i].value&&obj[i].value== model){
-				         obj[i].checked=true;
-				     } 
-				}
-			    //cors.appendChild(ele);
-			}
-			var insert=function(obj){
-			    var html=""//"<legend>cors</legend>";
-			    //var ele=document.createDocumentFragment(html);
-			    var arr=["cors",
-					"http://www.mangg.com/id70209/",
-					'http://gear.docfeng.top/get2.php',
-					'http://192.168.123.128/get2.php',
-					'http://gear2.docfeng.top/get2.php',
-					'http://192.168.123.92:8080/get2.php'
-					];
-			    for(var i=0;i<arr.length;i++){
-			        html+='<label><input type="radio" name="cors" value="'+arr[i] +'" />'+arr[i]+'</label>\n';
-			    }
-			    //obj.appendChild(ele);
-			    
-			    //cors.innerHTML=html;
-			    cors.insertAdjacentHTML("beforeEnd",html);
-			    //cors.appendChild(ele);
-			}
-		</script>
 		<style>
 			form label{
 			    display: block;

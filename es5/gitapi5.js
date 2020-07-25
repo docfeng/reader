@@ -66,20 +66,15 @@ Git = (function() {
 
 	var User = {
 		ini: (function() {
-			var users = {};
 			return function() {
-				if (Object.keys(users).length == 0) {
-					return store.getItem("users").then(function(_users) {
-						if (_users) {
-							users = JSON.parse(_users);
-							return users;
-						} else {
-							return User.login();
-						}
-					})
-				} else {
-					return Promise.resolve(users);
-				}
+				//if (Object.keys(users).length == 0) }
+				return APP.get("users").then(function(users) {
+					if (users) {
+						return users;
+					} else {
+						return User.login();
+					}
+				})
 			}
 		})(),
 		get: function(name) {
@@ -100,18 +95,13 @@ Git = (function() {
 				alert(JSON.stringify(users));
 				return true;
 			}).then(function() {
-				store.setItem("users", JSON.stringify(users));
+				APP.set("users", users);
 				return author;
 			});
 		},
 		login: function(name, psw) {
-			return store.getItem("users").then(function(_users) {
-				var user;
-				if (_users) {
-					users = JSON.parse(_users);
-				} else {
-					users={};
-				}
+			return APP.info.then(function(info) {
+				var users=info.users
 				if(confirm("login?")){
 					var name = name || prompt("用户名", "docfeng");
 					var author = author || prompt("author:" + name);
@@ -121,10 +111,11 @@ Git = (function() {
 					}else{
 						author = "token " + author;
 					}
-					users[name]=author;
-					if(confirm("保存?")){
-					  store.setItem("users", JSON.stringify(users));
-					  return users;
+					info.users[name]=author;
+					info.user=name;
+					if(confirm("保存?\n"+name+"\n"+author)){
+						APP.set("users", users);
+						return users;
 					}else{
 						return Promise.reject("err:uesr.ini() no cash");
 					}
@@ -134,8 +125,20 @@ Git = (function() {
 			});
 		},
 		logout: function(name) {
-			delete users[name];
-			return store.setItem("users", JSON.stringify(users));
+			return APP.info.then(function(info) {
+				if(!name){
+					name=info.user;
+				}
+				if(info.users[name]){
+					var u=info.users
+					delete u[name];
+				}
+				if(name==info.user){
+					delete info.user;
+				}
+				alert(JSON.stringify(info,null,4))
+				return APP.set("users", info.users);
+			});
 		}
 	}
 
@@ -225,7 +228,7 @@ Git = (function() {
 			var path = path || "";
 			var url = "https://api.github.com/repos/%s/%s/contents/%s".fill([user, repos, path]);
 			return ajax(user, "get", url).then(function(text) {
-				var re = JSON.parse(text);
+				var re = text?JSON.parse(text):[];
 				for (var i = 0; i < re.length; i++) {
 					if (re[i].type == "file") {
 						shas[re[i].path] = re[i].sha;

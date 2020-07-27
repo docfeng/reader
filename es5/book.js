@@ -353,7 +353,7 @@ Book = (function() {
 			//保存记录
 			if(!Book.json||Book.json.name!=name){
 				var t=this;
-				alert(name)
+				fj.tip("name:"+name)
 				var p=Shelf.read(name);
 			}else{
 				var p=Promise.resolve(Book.json)
